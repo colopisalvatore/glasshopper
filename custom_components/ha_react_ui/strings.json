@@ -1,0 +1,34 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add React Dashboard",
+        "description": "Register a new React dashboard as a Home Assistant sidebar panel.",
+        "data": {
+          "title": "Sidebar title",
+          "slug": "URL slug (lowercase, used in panel URL)",
+          "icon": "MDI icon (e.g. mdi:view-dashboard)",
+          "require_admin": "Admin users only"
+        }
+      }
+    },
+    "error": {
+      "invalid_slug": "Slug must be 2–31 chars, lowercase letters, digits, hyphens or underscores, starting with a letter or digit."
+    },
+    "abort": {
+      "already_configured": "A dashboard with this slug already exists."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Edit React Dashboard",
+        "data": {
+          "title": "Sidebar title",
+          "icon": "MDI icon",
+          "require_admin": "Admin users only"
+        }
+      }
+    }
+  }
+}
