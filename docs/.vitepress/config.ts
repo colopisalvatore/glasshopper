@@ -1,15 +1,15 @@
 import { defineConfig } from 'vitepress';
 
 export default defineConfig({
-  title: 'Stoke',
-  description: 'Stoke — React dashboards for Home Assistant.',
+  title: 'Scry',
+  description: 'Scry — React dashboards for Home Assistant.',
   cleanUrls: true,
   lastUpdated: true,
 
   head: [
     ['meta', { name: 'theme-color', content: '#0a0a0f' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: 'Stoke' }],
+    ['meta', { property: 'og:title', content: 'Scry' }],
     [
       'meta',
       {

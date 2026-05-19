@@ -1,12 +1,12 @@
 import { config } from '../config';
-import { Flame } from './Flame';
+import { Eye } from './Eye';
 
 export function Nav() {
   return (
     <nav className="nav">
-      <a href="/" className="nav__brand" aria-label="Stoke home">
+      <a href="/" className="nav__brand" aria-label="Scry home">
         <span className="nav__mark" aria-hidden>
-          <Flame size={26} />
+          <Eye size={26} />
         </span>
         <span>{config.brand}</span>
       </a>

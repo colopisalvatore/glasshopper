@@ -1,9 +1,9 @@
-# create-stoke
+# create-scry
 
-Scaffold a fresh Home Assistant React dashboard with Stoke.
+Scaffold a fresh Home Assistant React dashboard with Scry.
 
 ```bash
-npx create-stoke my-dashboard
+npx create-scry my-dashboard
 ```
 
 ## Options

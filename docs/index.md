@@ -2,9 +2,9 @@
 layout: home
 
 hero:
-  name: Stoke
+  name: Scry
   text: React dashboards for Home Assistant.
-  tagline: Stoke your home. Native panels, five hooks, zero auth.
+  tagline: See everything. Native panels, five hooks, zero auth.
   actions:
     - theme: brand
       text: Quickstart

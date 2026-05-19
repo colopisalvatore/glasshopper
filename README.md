@@ -1,15 +1,15 @@
-# Stoke
+# Scry
 
 **React dashboards for Home Assistant.** Native sidebar panels. Five hooks. Zero auth.
 
 > Status: **0.x — pre-1.0**. APIs may change before 1.0.
 
-Stoke is two things in one repo:
+Scry is two things in one repo:
 
 - A Home Assistant **custom integration** (`ha_react_ui`) that registers each React bundle you ship as a real HA sidebar panel — installable via HACS, configurable from the UI, no `panel_iframe` YAML needed.
 - A **frontend scaffold** with five React hooks (`useEntity`, `useService`, `useHistory`, `useArea`, `useTheme`) that talk to HA over the same WebSocket the rest of the frontend uses. No tokens, no CORS, no extra auth — the panel iframe inherits HA's session.
 
-Landing: [stoke.dev](https://stoke.dev) · Docs: [docs.stoke.dev](https://docs.stoke.dev)
+Landing: [scry.dev](https://scry.dev) · Docs: [docs.scry.dev](https://docs.scry.dev)
 
 ## Why
 
@@ -19,7 +19,7 @@ Home Assistant's frontend is excellent but opinionated. If you want a dashboard 
 
 ```bash
 # 1. Scaffold a fresh project
-npx create-stoke my-dashboard
+npx create-scry my-dashboard
 cd my-dashboard
 
 # 2. Install + dev
@@ -30,7 +30,7 @@ npm run dev                  # http://localhost:5173 with HMR
 # 3. Build + deploy
 npm run sync                 # builds and copies into custom_components/
 # Copy the whole repo into your HA config dir (or install via HACS)
-# Restart HA, then: Settings → Devices → Add Integration → "Stoke"
+# Restart HA, then: Settings → Devices → Add Integration → "Scry"
 ```
 
 ## Architecture
@@ -90,7 +90,7 @@ Each ConfigEntry registers one panel. Add as many as you want from the HA UI —
 | `useEntity` / `useService` / `useHistory` | ✅    |
 | `useArea` (entities per area)             | ✅    |
 | `useTheme` (HA theme tokens)              | ✅    |
-| CLI scaffold (`create-stoke`)           | ✅    |
+| CLI scaffold (`create-scry`)           | ✅    |
 | Docs site (VitePress, `docs/`)            | ✅    |
 | Landing page (Astro, `site/`)             | ✅    |
 | Template library + registry schema        | ✅    |

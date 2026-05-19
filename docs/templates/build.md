@@ -6,7 +6,7 @@ Anything you can build with the scaffold can ship as a template.
 ## 1. Scaffold
 
 ```bash
-npx create-stoke my-template
+npx create-scry my-template
 cd my-template
 npm install
 ```

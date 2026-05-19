@@ -75,7 +75,7 @@ the URL to your users — they install it via the service or the integration UI.
 
 | ID        | Tier    | Source                              |
 | --------- | ------- | ----------------------------------- |
-| `minimal` | free    | Repo root (use `create-stoke`) |
+| `minimal` | free    | Repo root (use `create-scry`) |
 | `jarvis`  | premium | See `jarvis/README.md`               |
 
 ## Contributing a template

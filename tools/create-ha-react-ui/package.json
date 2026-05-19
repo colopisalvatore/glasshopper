@@ -1,11 +1,11 @@
 {
-  "name": "create-stoke",
+  "name": "create-scry",
   "version": "0.1.0",
-  "description": "Scaffold a new Home Assistant React dashboard with Stoke.",
+  "description": "Scaffold a new Home Assistant React dashboard with Scry.",
   "type": "module",
   "license": "Apache-2.0",
   "bin": {
-    "create-stoke": "./index.mjs"
+    "create-scry": "./index.mjs"
   },
   "files": [
     "index.mjs",
@@ -15,7 +15,7 @@
     "node": ">=18"
   },
   "keywords": [
-    "stoke",
+    "scry",
     "home-assistant",
     "react",
     "dashboard",

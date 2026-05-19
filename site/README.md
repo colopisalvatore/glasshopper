@@ -1,6 +1,6 @@
-# Stoke — landing site
+# Scry — landing site
 
-React + Vite single-pager for [stoke.dev](https://stoke.dev).
+React + Vite single-pager for [scry.dev](https://scry.dev).
 
 ```bash
 cd site

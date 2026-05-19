@@ -14,7 +14,7 @@ const TEMPLATES = [
   {
     name: 'Your template',
     tier: 'community',
-    blurb: 'Ship your own bundle as a zip — distribute free or sell premium. Stoke handles install + multi-dashboard.',
+    blurb: 'Ship your own bundle as a zip — distribute free or sell premium. Scry handles install + multi-dashboard.',
     accent: '#34d399',
   },
 ];
