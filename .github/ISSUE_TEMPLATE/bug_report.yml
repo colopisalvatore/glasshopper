@@ -1,0 +1,55 @@
+name: Bug report
+description: Something is broken in the integration or scaffold.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a report. Please fill in as much as
+        you can — partial reports are still welcome.
+  - type: input
+    id: ha-version
+    attributes:
+      label: Home Assistant version
+      placeholder: '2024.7.0'
+    validations:
+      required: true
+  - type: input
+    id: hru-version
+    attributes:
+      label: ha-react-ui version
+      placeholder: '0.2.0'
+    validations:
+      required: true
+  - type: dropdown
+    id: install-method
+    attributes:
+      label: Install method
+      options:
+        - HACS
+        - Manual copy into custom_components
+        - From source
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what actually happened?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Install via HACS
+        2. Add integration from UI
+        3. ...
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: |
+        Enable `custom_components.ha_react_ui: debug` in `logger:` and paste the relevant lines.
+      render: shell
