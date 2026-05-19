@@ -1,0 +1,32 @@
+{
+  "name": "create-ha-react-ui",
+  "version": "0.1.0",
+  "description": "Scaffold a new Home Assistant React dashboard from the ha-react-ui template.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "bin": {
+    "create-ha-react-ui": "./index.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "home-assistant",
+    "react",
+    "dashboard",
+    "scaffold",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/colopisalvatore/ha-react-ui.git",
+    "directory": "tools/create-ha-react-ui"
+  },
+  "dependencies": {
+    "tiged": "^3.0.0-rc.1"
+  }
+}
