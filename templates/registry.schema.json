@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HA React UI template registry",
+  "type": "object",
+  "required": ["version", "templates"],
+  "properties": {
+    "version": { "type": "integer", "const": 1 },
+    "templates": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/template" }
+    }
+  },
+  "definitions": {
+    "template": {
+      "type": "object",
+      "required": ["id", "name", "version", "author", "license", "tier", "description"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$" },
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+" },
+        "author": { "type": "string" },
+        "license": { "type": "string" },
+        "tier": { "enum": ["free", "premium"] },
+        "description": { "type": "string" },
+        "preview": { "type": ["string", "null"], "format": "uri" },
+        "source": { "type": ["string", "null"], "format": "uri" },
+        "download": { "type": ["string", "null"], "format": "uri" }
+      }
+    }
+  }
+}
