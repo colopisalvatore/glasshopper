@@ -79,16 +79,21 @@ Each ConfigEntry registers one panel. Add as many as you want from the HA UI —
 
 ## Status
 
-| Capability                              | State |
-| --------------------------------------- | ----- |
-| Iframe panel registration (Python)      | ✅    |
-| Multi-dashboard ConfigFlow              | ✅    |
+| Capability                                | State |
+| ----------------------------------------- | ----- |
+| Iframe panel registration (Python)        | ✅    |
+| Multi-dashboard ConfigFlow + OptionsFlow  | ✅    |
+| Standalone `/custom-dashboard/<slug>/`    | ✅    |
+| Multi-template registry + install service | ✅    |
 | `useEntity` / `useService` / `useHistory` | ✅    |
-| `useArea` (entities per area)           | ⏳    |
-| `useTheme` (HA theme tokens)            | ⏳    |
-| CLI scaffold (`create-ha-react-ui`)     | ⏳    |
-| HACS default repository                 | ⏳    |
-| Docs site                               | ⏳    |
+| `useArea` (entities per area)             | ✅    |
+| `useTheme` (HA theme tokens)              | ✅    |
+| CLI scaffold (`create-ha-react-ui`)       | ✅    |
+| Docs site (VitePress, `docs/`)            | ✅    |
+| Landing page (Astro, `site/`)             | ✅    |
+| Template library + registry schema        | ✅    |
+| HACS custom repository                    | ✅    |
+| HACS default repository submission        | ⏳    |
 
 ## Contributing
 
