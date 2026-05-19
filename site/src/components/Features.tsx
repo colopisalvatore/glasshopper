@@ -35,7 +35,7 @@ export function Features() {
   return (
     <section className="features">
       <header className="section__header">
-        <span className="section__eyebrow">Why Wick</span>
+        <span className="section__eyebrow">Why Stoke</span>
         <h2 className="section__title">Six reasons it sticks.</h2>
       </header>
       <div className="features__grid">

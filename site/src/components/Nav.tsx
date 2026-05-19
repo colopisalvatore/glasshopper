@@ -4,7 +4,7 @@ import { Flame } from './Flame';
 export function Nav() {
   return (
     <nav className="nav">
-      <a href="/" className="nav__brand" aria-label="Wick home">
+      <a href="/" className="nav__brand" aria-label="Stoke home">
         <span className="nav__mark" aria-hidden>
           <Flame size={26} />
         </span>

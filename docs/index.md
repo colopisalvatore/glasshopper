@@ -2,9 +2,9 @@
 layout: home
 
 hero:
-  name: Wick
+  name: Stoke
   text: React dashboards for Home Assistant.
-  tagline: Light up your home. Native panels, five hooks, zero auth.
+  tagline: Stoke your home. Native panels, five hooks, zero auth.
   actions:
     - theme: brand
       text: Quickstart

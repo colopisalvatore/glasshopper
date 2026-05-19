@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// create-wick — scaffold a fresh Home Assistant React dashboard with Wick.
+// create-stoke — scaffold a fresh Home Assistant React dashboard with Stoke.
 //
-//   npx create-wick my-dashboard
-//   npx create-wick my-dashboard --template minimal
+//   npx create-stoke my-dashboard
+//   npx create-stoke my-dashboard --template minimal
 //
 // Clones the upstream repo (default branch) into the target directory, drops
 // the .git folder, and rewrites package.json `name` to the project slug.
@@ -36,10 +36,10 @@ function parseArgs(args) {
 }
 
 function help() {
-  stdout.write(`create-wick — scaffold a Home Assistant React dashboard
+  stdout.write(`create-stoke — scaffold a Home Assistant React dashboard
 
 Usage:
-  npx create-wick <name> [--template <id>]
+  npx create-stoke <name> [--template <id>]
 
 Templates:
 ${Object.entries(TEMPLATES)
@@ -123,7 +123,7 @@ async function main() {
     ({ default: tiged } = await import('tiged'));
   } catch {
     stderr.write(
-      'Missing dependency "tiged". Reinstall this CLI:\n  npm i -g create-wick\n',
+      'Missing dependency "tiged". Reinstall this CLI:\n  npm i -g create-stoke\n',
     );
     exit(1);
   }

@@ -1,6 +1,6 @@
-# Wick — landing site
+# Stoke — landing site
 
-React + Vite single-pager for [wick.dev](https://wick.dev).
+React + Vite single-pager for [stoke.dev](https://stoke.dev).
 
 ```bash
 cd site

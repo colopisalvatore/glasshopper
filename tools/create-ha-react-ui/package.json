@@ -1,11 +1,11 @@
 {
-  "name": "create-wick",
+  "name": "create-stoke",
   "version": "0.1.0",
-  "description": "Scaffold a new Home Assistant React dashboard with Wick.",
+  "description": "Scaffold a new Home Assistant React dashboard with Stoke.",
   "type": "module",
   "license": "Apache-2.0",
   "bin": {
-    "create-wick": "./index.mjs"
+    "create-stoke": "./index.mjs"
   },
   "files": [
     "index.mjs",
@@ -15,7 +15,7 @@
     "node": ">=18"
   },
   "keywords": [
-    "wick",
+    "stoke",
     "home-assistant",
     "react",
     "dashboard",

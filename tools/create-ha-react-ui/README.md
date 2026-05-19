@@ -1,9 +1,9 @@
-# create-wick
+# create-stoke
 
-Scaffold a fresh Home Assistant React dashboard with Wick.
+Scaffold a fresh Home Assistant React dashboard with Stoke.
 
 ```bash
-npx create-wick my-dashboard
+npx create-stoke my-dashboard
 ```
 
 ## Options

@@ -6,7 +6,7 @@ Anything you can build with the scaffold can ship as a template.
 ## 1. Scaffold
 
 ```bash
-npx create-wick my-template
+npx create-stoke my-template
 cd my-template
 npm install
 ```

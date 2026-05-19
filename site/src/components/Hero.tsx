@@ -8,7 +8,7 @@ export function Hero() {
         v0.2 · Open source · Apache-2.0
       </span>
       <h1 className="hero__title">
-        Light up your
+        Stoke your
         <br />
         <em>home</em>, in React.
       </h1>
