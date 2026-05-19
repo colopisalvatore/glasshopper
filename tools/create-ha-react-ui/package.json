@@ -1,11 +1,11 @@
 {
-  "name": "create-ha-react-ui",
+  "name": "create-tessera",
   "version": "0.1.0",
-  "description": "Scaffold a new Home Assistant React dashboard from the ha-react-ui template.",
+  "description": "Scaffold a new Home Assistant React dashboard with Tessera.",
   "type": "module",
   "license": "Apache-2.0",
   "bin": {
-    "create-ha-react-ui": "./index.mjs"
+    "create-tessera": "./index.mjs"
   },
   "files": [
     "index.mjs",
@@ -15,6 +15,7 @@
     "node": ">=18"
   },
   "keywords": [
+    "tessera",
     "home-assistant",
     "react",
     "dashboard",

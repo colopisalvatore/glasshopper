@@ -2,9 +2,9 @@
 layout: home
 
 hero:
-  name: HA React UI
-  text: Custom dashboards for Home Assistant, in React.
-  tagline: Native panels. Zero auth. Five hooks.
+  name: Tessera
+  text: React dashboards for Home Assistant.
+  tagline: Native panels. Five hooks. Zero auth. Built for the Home Assistant we wished existed.
   actions:
     - theme: brand
       text: Quickstart

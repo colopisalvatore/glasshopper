@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// create-ha-react-ui — scaffold a fresh Home Assistant React dashboard.
+// create-tessera — scaffold a fresh Home Assistant React dashboard with Tessera.
 //
-//   npx create-ha-react-ui my-dashboard
-//   npx create-ha-react-ui my-dashboard --template minimal
+//   npx create-tessera my-dashboard
+//   npx create-tessera my-dashboard --template minimal
 //
 // Clones the upstream repo (default branch) into the target directory, drops
 // the .git folder, and rewrites package.json `name` to the project slug.
@@ -36,10 +36,10 @@ function parseArgs(args) {
 }
 
 function help() {
-  stdout.write(`create-ha-react-ui — scaffold a Home Assistant React dashboard
+  stdout.write(`create-tessera — scaffold a Home Assistant React dashboard
 
 Usage:
-  npx create-ha-react-ui <name> [--template <id>]
+  npx create-tessera <name> [--template <id>]
 
 Templates:
 ${Object.entries(TEMPLATES)
@@ -123,7 +123,7 @@ async function main() {
     ({ default: tiged } = await import('tiged'));
   } catch {
     stderr.write(
-      'Missing dependency "tiged". Reinstall this CLI:\n  npm i -g create-ha-react-ui\n',
+      'Missing dependency "tiged". Reinstall this CLI:\n  npm i -g create-tessera\n',
     );
     exit(1);
   }

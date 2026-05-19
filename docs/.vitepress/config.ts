@@ -1,20 +1,20 @@
 import { defineConfig } from 'vitepress';
 
 export default defineConfig({
-  title: 'HA React UI',
-  description: 'Build custom Home Assistant dashboards in React.',
+  title: 'Tessera',
+  description: 'Tessera — React dashboards for Home Assistant.',
   cleanUrls: true,
   lastUpdated: true,
 
   head: [
     ['meta', { name: 'theme-color', content: '#0a0a0f' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: 'HA React UI' }],
+    ['meta', { property: 'og:title', content: 'Tessera' }],
     [
       'meta',
       {
         property: 'og:description',
-        content: 'Build custom Home Assistant dashboards in React.',
+        content: 'React dashboards for Home Assistant. Five hooks. Native panels. Zero auth.',
       },
     ],
   ],

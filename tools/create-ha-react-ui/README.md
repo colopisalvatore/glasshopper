@@ -1,9 +1,9 @@
-# create-ha-react-ui
+# create-tessera
 
-Scaffold a fresh Home Assistant React dashboard project from a template.
+Scaffold a fresh Home Assistant React dashboard with Tessera.
 
 ```bash
-npx create-ha-react-ui my-dashboard
+npx create-tessera my-dashboard
 ```
 
 ## Options
