@@ -1,25 +1,18 @@
-# HA React UI — landing site
+# Tessera — landing site
 
-Astro single-pager for [hareactui.dev](https://hareactui.dev).
+React + Vite single-pager for [tessera.dev](https://tessera.dev).
 
 ```bash
 cd site
 npm install
-npm run dev          # http://localhost:4321
+npm run dev          # http://localhost:5173
 npm run build        # static output to site/dist/
 ```
 
 Deploy `site/dist/` to any static host: Vercel, Netlify, Cloudflare Pages,
 GitHub Pages.
 
-## Vercel config
+## Vercel
 
-`vercel.json` at the repo root:
-
-```json
-{
-  "rewrites": [{ "source": "/(.*)", "destination": "/site/dist/$1" }]
-}
-```
-
-Or use Vercel's per-project root: `site/`.
+Set the project root to `site/`. Default build command (`npm run build`) and
+output directory (`dist`) work out of the box.
