@@ -8,9 +8,9 @@ export function Hero() {
         v0.2 · Open source · Apache-2.0
       </span>
       <h1 className="hero__title">
-        Home Assistant.
+        Light up your
         <br />
-        Now in <em>React.</em>
+        <em>home</em>, in React.
       </h1>
       <p className="hero__sub">{config.description}</p>
       <div className="hero__ctas">

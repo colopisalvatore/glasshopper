@@ -9,7 +9,7 @@ const STEPS = [
   {
     n: '02',
     title: 'Add the integration',
-    body: 'Settings → Devices → Add Integration → Tessera. Pick a template + slug.',
+    body: 'Settings → Devices → Add Integration → Wick. Pick a template + slug.',
   },
   {
     n: '03',

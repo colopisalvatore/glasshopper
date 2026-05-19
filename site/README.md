@@ -1,6 +1,6 @@
-# Tessera — landing site
+# Wick — landing site
 
-React + Vite single-pager for [tessera.dev](https://tessera.dev).
+React + Vite single-pager for [wick.dev](https://wick.dev).
 
 ```bash
 cd site

@@ -1,11 +1,12 @@
 import { config } from '../config';
+import { Flame } from './Flame';
 
 export function Nav() {
   return (
     <nav className="nav">
-      <a href="/" className="nav__brand" aria-label="Tessera home">
+      <a href="/" className="nav__brand" aria-label="Wick home">
         <span className="nav__mark" aria-hidden>
-          <Mark />
+          <Flame size={26} />
         </span>
         <span>{config.brand}</span>
       </a>
@@ -19,27 +20,6 @@ export function Nav() {
         </a>
       </div>
     </nav>
-  );
-}
-
-function Mark() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-      <rect x="3" y="3" width="8" height="8" rx="2" fill="url(#g1)" />
-      <rect x="13" y="3" width="8" height="8" rx="2" fill="url(#g2)" />
-      <rect x="3" y="13" width="8" height="8" rx="2" fill="url(#g2)" />
-      <rect x="13" y="13" width="8" height="8" rx="2" fill="url(#g1)" />
-      <defs>
-        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-          <stop stopColor="#60a5fa" />
-          <stop offset="1" stopColor="#a78bfa" />
-        </linearGradient>
-        <linearGradient id="g2" x1="1" y1="0" x2="0" y2="1">
-          <stop stopColor="#34d399" />
-          <stop offset="1" stopColor="#60a5fa" />
-        </linearGradient>
-      </defs>
-    </svg>
   );
 }
 

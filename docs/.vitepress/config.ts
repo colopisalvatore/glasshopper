@@ -1,15 +1,15 @@
 import { defineConfig } from 'vitepress';
 
 export default defineConfig({
-  title: 'Tessera',
-  description: 'Tessera — React dashboards for Home Assistant.',
+  title: 'Wick',
+  description: 'Wick — React dashboards for Home Assistant.',
   cleanUrls: true,
   lastUpdated: true,
 
   head: [
     ['meta', { name: 'theme-color', content: '#0a0a0f' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: 'Tessera' }],
+    ['meta', { property: 'og:title', content: 'Wick' }],
     [
       'meta',
       {

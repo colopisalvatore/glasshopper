@@ -1,11 +1,11 @@
 {
-  "name": "create-tessera",
+  "name": "create-wick",
   "version": "0.1.0",
-  "description": "Scaffold a new Home Assistant React dashboard with Tessera.",
+  "description": "Scaffold a new Home Assistant React dashboard with Wick.",
   "type": "module",
   "license": "Apache-2.0",
   "bin": {
-    "create-tessera": "./index.mjs"
+    "create-wick": "./index.mjs"
   },
   "files": [
     "index.mjs",
@@ -15,7 +15,7 @@
     "node": ">=18"
   },
   "keywords": [
-    "tessera",
+    "wick",
     "home-assistant",
     "react",
     "dashboard",

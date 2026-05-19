@@ -2,9 +2,9 @@
 layout: home
 
 hero:
-  name: Tessera
+  name: Wick
   text: React dashboards for Home Assistant.
-  tagline: Native panels. Five hooks. Zero auth. Built for the Home Assistant we wished existed.
+  tagline: Light up your home. Native panels, five hooks, zero auth.
   actions:
     - theme: brand
       text: Quickstart

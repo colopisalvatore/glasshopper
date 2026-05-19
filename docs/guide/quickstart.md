@@ -11,7 +11,7 @@ Get a working React dashboard running inside Home Assistant in under five minute
 ## 1. Scaffold a project
 
 ```bash
-npx create-tessera my-dashboard
+npx create-wick my-dashboard
 cd my-dashboard
 npm install
 ```

@@ -29,7 +29,7 @@ const SNIPPETS: Record<Tab, { label: string; code: ReactNode }> = {
         <Line>
           <K>import</K> {'{ '}
           <F>useEntity</F>, <F>useService</F>
-          {' }'} <K>from</K> <S>'@tessera/hooks'</S>;
+          {' }'} <K>from</K> <S>'@wick/hooks'</S>;
         </Line>
         <Line />
         <Line>
@@ -65,7 +65,7 @@ const SNIPPETS: Record<Tab, { label: string; code: ReactNode }> = {
           <C>{'# Scaffold a new dashboard'}</C>
         </Line>
         <Line>
-          <K>npx</K> create-tessera my-dashboard
+          <K>npx</K> create-wick my-dashboard
         </Line>
         <Line />
         <Line>
@@ -98,14 +98,14 @@ const SNIPPETS: Record<Tab, { label: string; code: ReactNode }> = {
           <C>{'# No YAML required — add the integration from the HA UI'}</C>
         </Line>
         <Line>
-          <C>{'# Settings → Devices → + Add Integration → Tessera'}</C>
+          <C>{'# Settings → Devices → + Add Integration → Wick'}</C>
         </Line>
         <Line />
         <Line>
           <C>{'# Or install a template via service call:'}</C>
         </Line>
         <Line>
-          <V>service</V>: tessera.<F>install_template</F>
+          <V>service</V>: wick.<F>install_template</F>
         </Line>
         <Line>
           <V>data</V>:

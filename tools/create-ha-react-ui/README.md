@@ -1,9 +1,9 @@
-# create-tessera
+# create-wick
 
-Scaffold a fresh Home Assistant React dashboard with Tessera.
+Scaffold a fresh Home Assistant React dashboard with Wick.
 
 ```bash
-npx create-tessera my-dashboard
+npx create-wick my-dashboard
 ```
 
 ## Options
