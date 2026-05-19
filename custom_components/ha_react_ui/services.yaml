@@ -1,0 +1,39 @@
+install_template:
+  name: Install template from URL
+  description: >
+    Download a React dashboard template (zip) from a URL and install it into
+    the user templates directory. The zip must contain index.html either at
+    the root or inside a single top-level folder.
+  fields:
+    url:
+      name: URL
+      description: HTTPS URL to a .zip file containing the built template.
+      required: true
+      example: "https://github.com/user/repo/releases/download/v1.0.0/jarvis.zip"
+      selector:
+        text:
+    template_id:
+      name: Template ID (optional)
+      description: >
+        Override the template id (filesystem folder name). Defaults to the
+        id in template.json or a slug derived from the zip.
+      required: false
+      example: "jarvis"
+      selector:
+        text:
+
+reload_templates:
+  name: Reload templates
+  description: Re-scan the user templates directory to pick up manual changes.
+
+remove_template:
+  name: Remove template
+  description: Delete a template directory from disk.
+  fields:
+    template_id:
+      name: Template ID
+      description: Template folder name to delete.
+      required: true
+      example: "jarvis"
+      selector:
+        text:

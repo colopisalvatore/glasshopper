@@ -1,7 +1,7 @@
 {
   "domain": "ha_react_ui",
   "name": "HA React UI",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "documentation": "https://github.com/colopisalvatore/ha-ui",
   "issue_tracker": "https://github.com/colopisalvatore/ha-ui/issues",
   "codeowners": ["@colopisalvatore"],

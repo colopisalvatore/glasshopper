@@ -3,12 +3,14 @@
     "step": {
       "user": {
         "title": "Add React Dashboard",
-        "description": "Register a new React dashboard as a Home Assistant sidebar panel.",
+        "description": "Register a new React dashboard panel from an installed template.",
         "data": {
+          "template_id": "Template",
           "title": "Sidebar title",
-          "slug": "URL slug (lowercase, used in panel URL)",
+          "slug": "URL slug (used in panel URL and /custom-dashboard/SLUG)",
           "icon": "MDI icon (e.g. mdi:view-dashboard)",
-          "require_admin": "Admin users only"
+          "require_admin": "Admin users only",
+          "public": "Public standalone URL (no Home Assistant login required)"
         }
       }
     },
@@ -16,7 +18,8 @@
       "invalid_slug": "Slug must be 2–31 chars, lowercase letters, digits, hyphens or underscores, starting with a letter or digit."
     },
     "abort": {
-      "already_configured": "A dashboard with this slug already exists."
+      "already_configured": "A dashboard with this slug already exists.",
+      "no_templates": "No templates installed. Install one via the ha_react_ui.install_template service or drop a folder in [config]/ha_react_ui_templates/ and call ha_react_ui.reload_templates."
     }
   },
   "options": {
@@ -24,10 +27,36 @@
       "init": {
         "title": "Edit React Dashboard",
         "data": {
+          "template_id": "Template",
           "title": "Sidebar title",
           "icon": "MDI icon",
-          "require_admin": "Admin users only"
+          "require_admin": "Admin users only",
+          "public": "Public standalone URL"
         }
+      }
+    },
+    "abort": {
+      "no_templates": "No templates installed."
+    }
+  },
+  "services": {
+    "install_template": {
+      "name": "Install template from URL",
+      "description": "Download and install a React dashboard template zip from a URL.",
+      "fields": {
+        "url": { "name": "URL", "description": "HTTPS URL to a .zip file." },
+        "template_id": { "name": "Template ID", "description": "Optional override for the folder name." }
+      }
+    },
+    "reload_templates": {
+      "name": "Reload templates",
+      "description": "Re-scan the user templates directory."
+    },
+    "remove_template": {
+      "name": "Remove template",
+      "description": "Delete a template directory.",
+      "fields": {
+        "template_id": { "name": "Template ID", "description": "Folder name to delete." }
       }
     }
   }
