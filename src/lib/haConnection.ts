@@ -20,6 +20,37 @@ import {
   type HassEntity,
 } from 'home-assistant-js-websocket';
 
+export type AreaRegistryEntry = {
+  area_id: string;
+  name: string;
+  picture: string | null;
+  icon: string | null;
+  floor_id: string | null;
+  labels: string[];
+  aliases: string[];
+};
+
+export type DeviceRegistryEntry = {
+  id: string;
+  name: string | null;
+  name_by_user: string | null;
+  area_id: string | null;
+  manufacturer: string | null;
+  model: string | null;
+  labels: string[];
+};
+
+export type EntityRegistryEntry = {
+  entity_id: string;
+  area_id: string | null;
+  device_id: string | null;
+  platform: string;
+  name: string | null;
+  labels: string[];
+  hidden_by: string | null;
+  disabled_by: string | null;
+};
+
 export type ConnectionStatus = 'idle' | 'connecting' | 'connected' | 'disconnected' | 'error';
 
 type EntitiesListener = (entities: HassEntities) => void;
@@ -225,4 +256,21 @@ export async function fetchHistory(
   return series
     .map((p) => ({ t: new Date(p.last_changed).getTime(), v: Number(p.state) }))
     .filter((p) => Number.isFinite(p.v));
+}
+
+async function sendMessage<T>(type: string): Promise<T> {
+  if (!connection) throw new Error('HA connection is not established');
+  return connection.sendMessagePromise<T>({ type });
+}
+
+export async function fetchAreaRegistry(): Promise<AreaRegistryEntry[]> {
+  return sendMessage<AreaRegistryEntry[]>('config/area_registry/list');
+}
+
+export async function fetchDeviceRegistry(): Promise<DeviceRegistryEntry[]> {
+  return sendMessage<DeviceRegistryEntry[]>('config/device_registry/list');
+}
+
+export async function fetchEntityRegistry(): Promise<EntityRegistryEntry[]> {
+  return sendMessage<EntityRegistryEntry[]>('config/entity_registry/list');
 }
