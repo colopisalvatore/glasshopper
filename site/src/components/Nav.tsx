@@ -1,13 +1,11 @@
 import { config } from '../config';
-import { Eye } from './Eye';
 
 export function Nav() {
   return (
     <nav className="nav">
       <a href="/" className="nav__brand" aria-label="Glasshopper home">
-        <span className="nav__mark" aria-hidden>
-          <Eye size={26} />
-        </span>
+        {/* Wordmark slot: final logo mark drops in here. */}
+        <span className="nav__mark" aria-hidden />
         <span>{config.brand}</span>
       </a>
       <div className="nav__links">
@@ -17,6 +15,9 @@ export function Nav() {
         <a href={config.repo} className="nav__github">
           <Github />
           <span>GitHub</span>
+        </a>
+        <a href={`${config.docs}/guide/quickstart`} className="nav__cta">
+          Get started
         </a>
       </div>
     </nav>

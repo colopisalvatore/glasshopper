@@ -1,33 +1,31 @@
-const FEATURES = [
+const HOOKS = [
+  { sig: "useEntity('light.kitchen')", desc: 'Live state + attributes. Re-renders on change.' },
+  { sig: "useService('light', 'turn_on')", desc: 'A typed caller for any HA service.' },
+  { sig: "useHistory('sensor.temp', 24)", desc: 'Time-series, ready to chart.' },
+  { sig: "useArea('living_room')", desc: 'Every entity and device in an area.' },
+  { sig: 'useTheme()', desc: 'HA theme tokens, light/dark aware.' },
+];
+
+const POINTS = [
   {
     title: 'Native HA panels',
-    body: 'Each dashboard lives in HA’s sidebar like a built-in. HACS-installable, configured from the UI. No panel_iframe YAML.',
-    icon: <PanelIcon />,
+    body: 'Each dashboard sits in the sidebar like a built-in. HACS-installable, configured from the UI. No panel_iframe YAML.',
   },
   {
     title: 'Zero-auth bridge',
-    body: 'In panel mode the bundle inherits the WebSocket your HA frontend already has open. No tokens. No CORS. No reverse-proxy gymnastics.',
-    icon: <KeyIcon />,
-  },
-  {
-    title: 'Five hooks',
-    body: 'useEntity. useService. useHistory. useArea. useTheme. The entire API surface fits on one screen.',
-    icon: <HookIcon />,
+    body: 'In panel mode the bundle inherits the WebSocket your HA frontend already holds open. No tokens. No CORS. No reverse proxy.',
   },
   {
     title: 'Multi-dashboard',
     body: 'One install, many panels. Each with its own slug, sidebar icon, and admin gate. One bundle, many faces.',
-    icon: <GridIcon />,
   },
   {
     title: 'Kiosk-ready',
-    body: 'Every dashboard has a /custom-dashboard/<slug>/ URL. Public-mode toggle for wall tablets. PWA-installable from iOS.',
-    icon: <TabletIcon />,
+    body: 'Every dashboard gets a /custom-dashboard/<slug>/ URL. Public-mode toggle for wall tablets. PWA-installable on iOS.',
   },
   {
     title: 'Template ecosystem',
-    body: 'Ship your dashboard as a zip. Users install via a single service call. Free or paid — your choice.',
-    icon: <BoxIcon />,
+    body: 'Ship your dashboard as a zip. Users install it with a single service call. Free or paid, your call.',
   },
 ];
 
@@ -36,66 +34,40 @@ export function Features() {
     <section className="features">
       <header className="section__header">
         <span className="section__eyebrow">Why Glasshopper</span>
-        <h2 className="section__title">Six reasons it sticks.</h2>
+        <h2 className="section__title">The whole API fits on one screen.</h2>
       </header>
-      <div className="features__grid">
-        {FEATURES.map((f) => (
-          <article key={f.title} className="feat">
-            <div className="feat__icon">{f.icon}</div>
-            <h3 className="feat__title">{f.title}</h3>
-            <p className="feat__body">{f.body}</p>
-          </article>
-        ))}
+
+      <div className="features__bento">
+        <article className="hooks-panel">
+          <header className="hooks-panel__head">
+            <span className="hooks-panel__kicker">Five hooks</span>
+            <p className="hooks-panel__lead">
+              No store to wire, no client to configure. Import a hook, read your
+              home.
+            </p>
+          </header>
+          <ul className="hooks-panel__list">
+            {HOOKS.map((h) => (
+              <li key={h.sig} className="hooks-panel__item">
+                <code className="hooks-panel__sig">{h.sig}</code>
+                <span className="hooks-panel__desc">{h.desc}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <ul className="points">
+          {POINTS.map((p) => (
+            <li key={p.title} className="points__item">
+              <span className="points__mark" aria-hidden />
+              <div>
+                <h3 className="points__title">{p.title}</h3>
+                <p className="points__body">{p.body}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
-  );
-}
-
-function PanelIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <rect x="3" y="3" width="18" height="18" rx="3" />
-      <path d="M3 9h18M9 9v12" />
-    </svg>
-  );
-}
-function KeyIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <circle cx="8" cy="15" r="4" />
-      <path d="m10.8 12.2 7.7-7.7M16 7l2 2" />
-    </svg>
-  );
-}
-function HookIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <path d="M12 4v6a4 4 0 1 1-4 4" />
-    </svg>
-  );
-}
-function GridIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <rect x="3" y="3" width="7" height="7" rx="1.5" />
-      <rect x="14" y="3" width="7" height="7" rx="1.5" />
-      <rect x="3" y="14" width="7" height="7" rx="1.5" />
-      <rect x="14" y="14" width="7" height="7" rx="1.5" />
-    </svg>
-  );
-}
-function TabletIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <rect x="5" y="3" width="14" height="18" rx="2" />
-      <path d="M11 18h2" />
-    </svg>
-  );
-}
-function BoxIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <path d="M21 8 12 3 3 8m18 0v8l-9 5-9-5V8m18 0-9 5M3 8l9 5" />
-    </svg>
   );
 }
