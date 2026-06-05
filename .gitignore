@@ -12,3 +12,5 @@ dist-ssr
 *.tsbuildinfo
 __pycache__/
 *.pyc
+docs/.vitepress/cache/
+docs/.vitepress/dist/

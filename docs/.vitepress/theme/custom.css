@@ -1,0 +1,68 @@
+/* ============================================================
+   Glasshopper brand theme for VitePress.
+   Mirrors the landing's DESIGN.md: one Hop Green accent, dark
+   near-black tinted-green surfaces. Brand green is stepped darker
+   in light mode so links keep WCAG AA contrast.
+   ============================================================ */
+
+:root {
+  /* Brand (light mode: darker green for contrast on white) */
+  --vp-c-brand-1: oklch(52% 0.14 158);
+  --vp-c-brand-2: oklch(58% 0.15 157);
+  --vp-c-brand-3: oklch(64% 0.16 156);
+  --vp-c-brand-soft: oklch(72% 0.16 156 / 0.14);
+  --vp-c-brand-softer: oklch(72% 0.16 156 / 0.08);
+
+  /* Tint neutrals a touch green so nothing is pure */
+  --vp-c-bg: oklch(99% 0.003 156);
+  --vp-c-bg-alt: oklch(97% 0.006 156);
+  --vp-c-bg-soft: oklch(97% 0.006 156);
+
+  /* Solid green button: dark text for contrast */
+  --vp-button-brand-bg: var(--vp-c-brand-3);
+  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
+  --vp-button-brand-active-bg: var(--vp-c-brand-1);
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: oklch(15% 0.018 162);
+  --vp-button-brand-hover-text: oklch(15% 0.018 162);
+
+  --vp-home-hero-name-color: var(--vp-c-brand-1);
+}
+
+.dark {
+  /* Brand (dark mode: the bright Hop Green) */
+  --vp-c-brand-1: oklch(82% 0.16 156);
+  --vp-c-brand-2: oklch(78% 0.16 156);
+  --vp-c-brand-3: oklch(64% 0.16 158);
+  --vp-c-brand-soft: oklch(80% 0.17 156 / 0.16);
+  --vp-c-brand-softer: oklch(80% 0.17 156 / 0.08);
+
+  /* Pane Black / Sunk / Elevated from DESIGN.md */
+  --vp-c-bg: oklch(15% 0.018 162);
+  --vp-c-bg-alt: oklch(12% 0.015 162);
+  --vp-c-bg-soft: oklch(19% 0.021 162);
+  --vp-c-bg-elv: oklch(19% 0.021 162);
+
+  --vp-c-divider: oklch(100% 0 0 / 0.08);
+  --vp-c-border: oklch(100% 0 0 / 0.1);
+  --vp-c-gutter: oklch(12% 0.015 162);
+
+  --vp-c-text-1: oklch(97% 0.006 162);
+  --vp-c-text-2: oklch(75% 0.012 162);
+  --vp-c-text-3: oklch(60% 0.013 162);
+
+  --vp-home-hero-name-color: oklch(82% 0.16 156);
+
+  --vp-button-brand-text: oklch(13% 0.015 162);
+  --vp-button-brand-hover-text: oklch(13% 0.015 162);
+}
+
+/* Inline code chips pick up the green softly. */
+.dark :not(pre) > code {
+  background-color: oklch(100% 0 0 / 0.05);
+}
+
+/* Custom-block (tip) accent follows the brand green. */
+.dark .custom-block.tip {
+  border-color: oklch(80% 0.17 156 / 0.3);
+}

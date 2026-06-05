@@ -5,9 +5,10 @@ export default defineConfig({
   description: 'Glasshopper — React dashboards for Home Assistant.',
   cleanUrls: true,
   lastUpdated: true,
+  appearance: 'dark',
 
   head: [
-    ['meta', { name: 'theme-color', content: '#0a0a0f' }],
+    ['meta', { name: 'theme-color', content: '#0f1311' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'Glasshopper' }],
     [
