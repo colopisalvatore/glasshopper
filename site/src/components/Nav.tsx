@@ -4,7 +4,7 @@ import { Eye } from './Eye';
 export function Nav() {
   return (
     <nav className="nav">
-      <a href="/" className="nav__brand" aria-label="Scry home">
+      <a href="/" className="nav__brand" aria-label="Glasshopper home">
         <span className="nav__mark" aria-hidden>
           <Eye size={26} />
         </span>

@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: Scry
+  name: Glasshopper
   text: React dashboards for Home Assistant.
   tagline: See everything. Native panels, five hooks, zero auth.
   actions:
@@ -11,7 +11,7 @@ hero:
       link: /guide/quickstart
     - theme: alt
       text: View on GitHub
-      link: https://github.com/colopisalvatore/ha-react-ui
+      link: https://github.com/colopisalvatore/glasshopper
 
 features:
   - title: Real panels, not iframes

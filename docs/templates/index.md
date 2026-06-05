@@ -1,6 +1,6 @@
 # Templates
 
-A **template** is a built React bundle that the `ha_react_ui` integration
+A **template** is a built React bundle that the `glasshopper` integration
 serves as a Home Assistant panel.
 
 ## First-party templates
@@ -14,10 +14,10 @@ Premium templates ship as built bundles only — source stays closed.
 
 ## Install a template
 
-See [Services / install_template](/guide/services#ha_react_ui-install_template):
+See [Services / install_template](/guide/services#glasshopper-install_template):
 
 ```yaml
-service: ha_react_ui.install_template
+service: glasshopper.install_template
 data:
   url: https://example.com/my-template.zip
 ```
@@ -30,7 +30,7 @@ See [Build your own template](./build).
 
 If your template is open-source and you want it listed in the public registry:
 
-1. Fork [`colopisalvatore/ha-react-ui`](https://github.com/colopisalvatore/ha-react-ui).
+1. Fork [`colopisalvatore/glasshopper`](https://github.com/colopisalvatore/glasshopper).
 2. Add an entry to `templates/registry.json` with a working `download` URL.
 3. Open a PR.
 

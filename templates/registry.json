@@ -6,12 +6,12 @@
       "id": "minimal",
       "name": "Minimal",
       "version": "0.1.0",
-      "author": "ha-react-ui",
+      "author": "glasshopper",
       "license": "Apache-2.0",
       "tier": "free",
       "description": "Bare React + TypeScript + Vite scaffold with the five core hooks wired. Start here.",
       "preview": null,
-      "source": "https://github.com/colopisalvatore/ha-react-ui",
+      "source": "https://github.com/colopisalvatore/glasshopper",
       "download": null
     },
     {

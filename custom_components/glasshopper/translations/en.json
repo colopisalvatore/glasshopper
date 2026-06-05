@@ -19,7 +19,7 @@
     },
     "abort": {
       "already_configured": "A dashboard with this slug already exists.",
-      "no_templates": "No templates installed. Install one via the ha_react_ui.install_template service or drop a folder in [config]/ha_react_ui_templates/ and call ha_react_ui.reload_templates."
+      "no_templates": "No templates installed. Install one via the glasshopper.install_template service or drop a folder in [config]/glasshopper_templates/ and call glasshopper.reload_templates."
     }
   },
   "options": {

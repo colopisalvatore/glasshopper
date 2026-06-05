@@ -36,7 +36,7 @@ npm run dev
 # Open http://localhost:5173/?token=PASTE_TOKEN_HERE
 ```
 
-The token is saved to `localStorage` under `ha_react_ui_token`. Reload without the `?token=` next time.
+The token is saved to `localStorage` under `glasshopper_token`. Reload without the `?token=` next time.
 
 ## Hot reload
 
@@ -59,7 +59,7 @@ Nothing to switch. The connection logic detects `window.parent.hassConnection`. 
 npm run sync
 ```
 
-This builds with `VITE_BASE=/ha_react_ui_files/` so asset URLs resolve under HA's static path.
+This builds with `VITE_BASE=/glasshopper_files/` so asset URLs resolve under HA's static path.
 
 ## Tips
 

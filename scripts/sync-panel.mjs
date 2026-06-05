@@ -13,11 +13,11 @@ const distDir = resolve(repoRoot, "dist");
 const target = resolve(
   repoRoot,
   "custom_components",
-  "ha_react_ui",
+  "glasshopper",
   "frontend",
 );
 
-const env = { ...process.env, VITE_BASE: "/ha_react_ui_files/" };
+const env = { ...process.env, VITE_BASE: "/glasshopper_files/" };
 const npm = process.platform === "win32" ? "npm.cmd" : "npm";
 
 const build = spawnSync(npm, ["run", "build"], {

@@ -10,9 +10,9 @@ For a one-off personal dashboard, build into the integration's `frontend/` folde
 npm run sync
 ```
 
-This runs `tsc -b && vite build` with `VITE_BASE=/ha_react_ui_files/`, then copies `dist/` into `custom_components/ha_react_ui/frontend/`.
+This runs `tsc -b && vite build` with `VITE_BASE=/glasshopper_files/`, then copies `dist/` into `custom_components/glasshopper/frontend/`.
 
-Copy the whole `custom_components/ha_react_ui/` folder into HA's config dir and restart HA. Or commit it to a private HACS repo.
+Copy the whole `custom_components/glasshopper/` folder into HA's config dir and restart HA. Or commit it to a private HACS repo.
 
 ## Path B — Publish as a template
 
@@ -40,7 +40,7 @@ zip -r my-template.zip .
 Host the zip on a public URL (GitHub release, S3, Gumroad). Users install with:
 
 ```yaml
-service: ha_react_ui.install_template
+service: glasshopper.install_template
 data:
   url: https://example.com/my-template.zip
 ```

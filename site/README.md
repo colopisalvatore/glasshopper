@@ -1,6 +1,6 @@
-# Scry — landing site
+# Glasshopper — landing site
 
-React + Vite single-pager for [scry.dev](https://scry.dev).
+React + Vite single-pager for [glasshopper.dev](https://glasshopper.dev).
 
 ```bash
 cd site

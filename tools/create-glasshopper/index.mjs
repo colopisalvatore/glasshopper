@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// create-scry — scaffold a fresh Home Assistant React dashboard with Scry.
+// create-glasshopper — scaffold a fresh Home Assistant React dashboard with Glasshopper.
 //
-//   npx create-scry my-dashboard
-//   npx create-scry my-dashboard --template minimal
+//   npx create-glasshopper my-dashboard
+//   npx create-glasshopper my-dashboard --template minimal
 //
 // Clones the upstream repo (default branch) into the target directory, drops
 // the .git folder, and rewrites package.json `name` to the project slug.
@@ -12,7 +12,7 @@ import { resolve, relative, basename } from 'node:path';
 import { argv, exit, stdout, stderr } from 'node:process';
 import { createInterface } from 'node:readline/promises';
 
-const REPO = 'colopisalvatore/ha-react-ui';
+const REPO = 'colopisalvatore/glasshopper';
 const DEFAULT_BRANCH = 'main';
 
 // Templates ship as subpaths of the upstream repo. The "minimal" template is
@@ -36,10 +36,10 @@ function parseArgs(args) {
 }
 
 function help() {
-  stdout.write(`create-scry — scaffold a Home Assistant React dashboard
+  stdout.write(`create-glasshopper — scaffold a Home Assistant React dashboard
 
 Usage:
-  npx create-scry <name> [--template <id>]
+  npx create-glasshopper <name> [--template <id>]
 
 Templates:
 ${Object.entries(TEMPLATES)
@@ -123,7 +123,7 @@ async function main() {
     ({ default: tiged } = await import('tiged'));
   } catch {
     stderr.write(
-      'Missing dependency "tiged". Reinstall this CLI:\n  npm i -g create-scry\n',
+      'Missing dependency "tiged". Reinstall this CLI:\n  npm i -g create-glasshopper\n',
     );
     exit(1);
   }
@@ -169,7 +169,7 @@ Done. Next steps:
 Build for HA panel:
   npm run sync                    # builds and copies dist/ into custom_components/
 
-Then copy custom_components/ha_react_ui/ to your HA config dir (or install via HACS).
+Then copy custom_components/glasshopper/ to your HA config dir (or install via HACS).
 
 Docs: https://github.com/${REPO}#quick-start
 `);

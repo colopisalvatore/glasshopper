@@ -29,7 +29,7 @@ HA REST API:
 curl -X POST -H "Authorization: Bearer $TOKEN" \
      -H "Content-Type: application/json" \
      "$HA/api/config/config_entries/flow" \
-     -d '{"handler": "ha_react_ui"}'
+     -d '{"handler": "glasshopper"}'
 ```
 
 Then continue with the returned flow_id.

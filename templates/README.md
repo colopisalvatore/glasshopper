@@ -1,9 +1,9 @@
 # Templates
 
-A **template** is a built React dashboard that the `ha_react_ui` integration
+A **template** is a built React dashboard that the `glasshopper` integration
 serves as a Home Assistant panel. Users install templates by dropping a folder
-into `<config>/ha_react_ui_templates/<id>/` or calling the
-`ha_react_ui.install_template` service with a URL to a zip.
+into `<config>/glasshopper_templates/<id>/` or calling the
+`glasshopper.install_template` service with a URL to a zip.
 
 This directory holds the **template registry** and **first-party templates**.
 
@@ -22,7 +22,7 @@ Schema:
       "id": "minimal",                    // matches the directory name once installed
       "name": "Minimal",                  // human-readable
       "version": "0.1.0",
-      "author": "ha-react-ui",
+      "author": "glasshopper",
       "license": "Apache-2.0",
       "tier": "free",                     // "free" | "premium"
       "description": "...",
@@ -51,9 +51,9 @@ A template is a directory containing at minimum:
 ```bash
 # In your scaffold project:
 npm run build                         # produces dist/
-mkdir -p custom_components/ha_react_ui_templates_dev/my-template
-cp -r dist/* custom_components/ha_react_ui_templates_dev/my-template/
-cat > custom_components/ha_react_ui_templates_dev/my-template/template.json <<EOF
+mkdir -p custom_components/glasshopper_templates_dev/my-template
+cp -r dist/* custom_components/glasshopper_templates_dev/my-template/
+cat > custom_components/glasshopper_templates_dev/my-template/template.json <<EOF
 {
   "id": "my-template",
   "name": "My Template",
@@ -64,7 +64,7 @@ cat > custom_components/ha_react_ui_templates_dev/my-template/template.json <<EO
 EOF
 
 # Zip it
-cd custom_components/ha_react_ui_templates_dev
+cd custom_components/glasshopper_templates_dev
 zip -r my-template.zip my-template/
 ```
 
@@ -75,7 +75,7 @@ the URL to your users — they install it via the service or the integration UI.
 
 | ID        | Tier    | Source                              |
 | --------- | ------- | ----------------------------------- |
-| `minimal` | free    | Repo root (use `create-scry`) |
+| `minimal` | free    | Repo root (use `create-glasshopper`) |
 | `jarvis`  | premium | See `jarvis/README.md`               |
 
 ## Contributing a template

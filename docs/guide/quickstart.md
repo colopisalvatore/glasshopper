@@ -11,7 +11,7 @@ Get a working React dashboard running inside Home Assistant in under five minute
 ## 1. Scaffold a project
 
 ```bash
-npx create-scry my-dashboard
+npx create-glasshopper my-dashboard
 cd my-dashboard
 npm install
 ```
@@ -40,14 +40,14 @@ You should see the scaffold UI with a `connected` status pill, a `sun.sun` card,
 
 ```bash
 npm run sync
-# Builds dist/ and copies it into custom_components/ha_react_ui/frontend/
+# Builds dist/ and copies it into custom_components/glasshopper/frontend/
 ```
 
-Copy the `custom_components/ha_react_ui/` folder into your HA `config/custom_components/`. Restart HA.
+Copy the `custom_components/glasshopper/` folder into your HA `config/custom_components/`. Restart HA.
 
 ## 5. Register the panel
 
-In HA: **Settings → Devices → Add Integration → "HA React UI"**.
+In HA: **Settings → Devices → Add Integration → "Glasshopper"**.
 
 Fill in:
 

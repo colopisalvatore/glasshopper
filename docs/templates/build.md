@@ -6,7 +6,7 @@ Anything you can build with the scaffold can ship as a template.
 ## 1. Scaffold
 
 ```bash
-npx create-scry my-template
+npx create-glasshopper my-template
 cd my-template
 npm install
 ```
@@ -71,12 +71,12 @@ Pick one:
 ## 7. Install on HA
 
 ```yaml
-service: ha_react_ui.install_template
+service: glasshopper.install_template
 data:
   url: https://github.com/you/your-repo/releases/download/v0.1.0/my-template-0.1.0.zip
 ```
 
-Then **Settings → Devices → Add Integration → HA React UI** and pick your
+Then **Settings → Devices → Add Integration → Glasshopper** and pick your
 template.
 
 ## Release automation
@@ -113,12 +113,12 @@ Now your users install with the release URL — no manual upload step.
 - **Naming** — `id` matches the folder name once installed. Use lowercase
   letters, digits, `-`, `_`.
 - **Preview image** — 16:10, ≤ 1 MB. Lets the registry render a thumbnail.
-- **Branding** — your template, your brand. Use the HA React UI mark only when
+- **Branding** — your template, your brand. Use the Glasshopper mark only when
   describing platform compatibility.
 
 ## Submitting to the public registry
 
 Open a PR adding an entry to
-[`templates/registry.json`](https://github.com/colopisalvatore/ha-react-ui/blob/main/templates/registry.json).
+[`templates/registry.json`](https://github.com/colopisalvatore/glasshopper/blob/main/templates/registry.json).
 We'll review for: license clarity, security (no inline tokens), build
 reproducibility, and that the preview matches reality.

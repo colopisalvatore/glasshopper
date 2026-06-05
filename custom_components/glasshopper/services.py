@@ -149,7 +149,7 @@ async def _install_from_url(
     registry.ensure_root()
 
     def _do_extract() -> str:
-        with tempfile.TemporaryDirectory(prefix="ha_react_ui_") as tmp:
+        with tempfile.TemporaryDirectory(prefix="glasshopper_") as tmp:
             tmp_path = Path(tmp)
             _safe_extract(data, tmp_path)
             normalized = _normalize_extracted(tmp_path)
@@ -162,7 +162,7 @@ async def _install_from_url(
 
     tid = await hass.async_add_executor_job(_do_extract)
     registry.scan()
-    _LOGGER.info("ha_react_ui: installed template %s from %s", tid, url)
+    _LOGGER.info("glasshopper: installed template %s from %s", tid, url)
     return tid
 
 

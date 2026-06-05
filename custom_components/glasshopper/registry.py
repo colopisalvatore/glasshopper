@@ -49,7 +49,7 @@ class Template:
 
 
 class TemplateRegistry:
-    """Filesystem-backed template registry rooted at <config>/ha_react_ui_templates."""
+    """Filesystem-backed template registry rooted at <config>/glasshopper_templates."""
 
     def __init__(self, config_dir: Path) -> None:
         self.root: Path = config_dir / USER_TEMPLATES_DIRNAME
@@ -71,7 +71,7 @@ class TemplateRegistry:
                 continue
             if not tpl.is_valid():
                 _LOGGER.warning(
-                    "ha_react_ui: template %s missing %s — skipped",
+                    "glasshopper: template %s missing %s — skipped",
                     tpl.id,
                     FRONTEND_INDEX,
                 )
@@ -80,7 +80,7 @@ class TemplateRegistry:
 
         self._templates = found
         _LOGGER.info(
-            "ha_react_ui: registry loaded %d template(s): %s",
+            "glasshopper: registry loaded %d template(s): %s",
             len(found),
             ", ".join(sorted(found.keys())) or "(none)",
         )
@@ -89,7 +89,7 @@ class TemplateRegistry:
     def _load_one(self, path: Path) -> Template | None:
         tid = path.name
         if not TEMPLATE_ID_RE.match(tid):
-            _LOGGER.warning("ha_react_ui: invalid template dir name %s — skipped", tid)
+            _LOGGER.warning("glasshopper: invalid template dir name %s — skipped", tid)
             return None
 
         manifest_path = path / TEMPLATE_MANIFEST
@@ -99,7 +99,7 @@ class TemplateRegistry:
                 meta = json.loads(manifest_path.read_text(encoding="utf-8"))
             except (OSError, json.JSONDecodeError) as exc:
                 _LOGGER.warning(
-                    "ha_react_ui: bad %s in %s: %s — using defaults",
+                    "glasshopper: bad %s in %s: %s — using defaults",
                     TEMPLATE_MANIFEST,
                     tid,
                     exc,
@@ -136,7 +136,7 @@ class TemplateRegistry:
         try:
             shutil.rmtree(tpl.path)
         except OSError as exc:
-            _LOGGER.error("ha_react_ui: failed removing template %s: %s", template_id, exc)
+            _LOGGER.error("glasshopper: failed removing template %s: %s", template_id, exc)
             return False
         self._templates.pop(template_id, None)
         return True

@@ -20,12 +20,12 @@ iOS-Home-inspired premium dashboard for Home Assistant.
 
 ```yaml
 # Developer Tools → Services
-service: ha_react_ui.install_template
+service: glasshopper.install_template
 data:
   url: https://gumroad.com/.../jarvis-v0.1.0.zip
 ```
 
-Then go to **Settings → Devices → Add Integration → HA React UI** and select
+Then go to **Settings → Devices → Add Integration → Glasshopper** and select
 **Jarvis** as the template.
 
 ## License

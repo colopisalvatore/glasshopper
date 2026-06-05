@@ -1,8 +1,8 @@
-"""HA React UI integration.
+"""Glasshopper integration.
 
 Multi-template platform: discovers user-installed templates from
-<config>/ha_react_ui_templates/<id>/, registers a static path per template
-under /ha_react_ui_files/<id>/, and creates one iframe sidebar panel per
+<config>/glasshopper_templates/<id>/, registers a static path per template
+under /glasshopper_files/<id>/, and creates one iframe sidebar panel per
 ConfigEntry. Each entry also gets a standalone full-page route at
 /custom-dashboard/<slug> served by the StandaloneDashboardView.
 """
@@ -69,7 +69,7 @@ async def _ensure_static_for_template(hass: HomeAssistant, template_id: str) -> 
 
     tpl = registry.get(template_id)
     if tpl is None:
-        _LOGGER.error("ha_react_ui: cannot register static for missing template %s", template_id)
+        _LOGGER.error("glasshopper: cannot register static for missing template %s", template_id)
         return False
 
     url = f"{URL_STATIC_BASE}/{template_id}"
@@ -77,7 +77,7 @@ async def _ensure_static_for_template(hass: HomeAssistant, template_id: str) -> 
         [StaticPathConfig(url, str(tpl.path), cache_headers=False)]
     )
     statics.add(template_id)
-    _LOGGER.info("ha_react_ui: registered static %s -> %s", url, tpl.path)
+    _LOGGER.info("glasshopper: registered static %s -> %s", url, tpl.path)
     return True
 
 
@@ -97,7 +97,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     if registry.get(template_id) is None:
         _LOGGER.error(
-            "ha_react_ui: entry %s references template %s which is not installed",
+            "glasshopper: entry %s references template %s which is not installed",
             slug,
             template_id,
         )
@@ -133,7 +133,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     try:
         async_remove_panel(hass, slug)
     except Exception:  # noqa: BLE001
-        _LOGGER.exception("ha_react_ui: failed to remove panel %s", slug)
+        _LOGGER.exception("glasshopper: failed to remove panel %s", slug)
         return False
 
     entries_by_slug: dict = domain_data.get(DATA_ENTRIES_BY_SLUG, {})

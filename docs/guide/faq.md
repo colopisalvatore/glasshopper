@@ -30,12 +30,12 @@ also renders panels in a WebView, so it works there too.
 
 ## How do I update without losing my dashboards?
 
-The integration code lives in `custom_components/ha_react_ui/`. The
+The integration code lives in `custom_components/glasshopper/`. The
 ConfigEntries that hold your dashboards live in HA's storage (`.storage/`).
 Updating one doesn't affect the other.
 
 When updating: HACS replaces the integration files; ConfigEntries stay
-intact; your installed templates in `<config>/ha_react_ui_templates/` are
+intact; your installed templates in `<config>/glasshopper_templates/` are
 untouched.
 
 ## What's the API stability story?
@@ -46,7 +46,7 @@ Pre-1.0 — minor versions may rename hooks or change service signatures. After
 
 ## Where are templates stored?
 
-`<config>/ha_react_ui_templates/<id>/`. Created automatically by the
+`<config>/glasshopper_templates/<id>/`. Created automatically by the
 integration. Anything you drop there shows up in the template picker after a
 `reload_templates` call.
 
@@ -55,7 +55,7 @@ integration. Anything you drop there shows up in the template picker after a
 `panel_custom` lets you point HA at a JS file. You handle bundling, auth,
 asset paths, multi-dashboard config, and updates yourself.
 
-HA React UI gives you: HACS install, UI config flow, multi-dashboard,
+Glasshopper gives you: HACS install, UI config flow, multi-dashboard,
 standalone URLs, public-mode gating, install-from-zip service, and a
 TypeScript hook API to call from React. The scaffold and CLI cover the dev
 loop.
@@ -63,6 +63,6 @@ loop.
 ## Can I share my dashboard with others?
 
 Yes — package your built bundle as a template zip and host the URL. Anyone
-running HA React UI can install it with `ha_react_ui.install_template`.
+running Glasshopper can install it with `glasshopper.install_template`.
 
 See [Build your own template](/templates/build).

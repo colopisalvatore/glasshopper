@@ -1,5 +1,5 @@
 {
-  "name": "ha-react-ui",
+  "name": "glasshopper",
   "private": true,
   "version": "0.1.0",
   "description": "Scaffold and React hooks for building custom Home Assistant dashboards as native sidebar panels.",

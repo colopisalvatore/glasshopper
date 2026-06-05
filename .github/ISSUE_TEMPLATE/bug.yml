@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a problem with ha-react-ui
+description: Report a problem with glasshopper
 labels: ["bug"]
 body:
   - type: textarea
@@ -28,7 +28,7 @@ body:
   - type: input
     id: pkg-version
     attributes:
-      label: ha-react-ui version (or commit SHA)
+      label: glasshopper version (or commit SHA)
     validations:
       required: true
   - type: textarea

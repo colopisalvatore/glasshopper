@@ -9,16 +9,16 @@ export function Eye({ size = 28 }: { size?: number }) {
       aria-hidden
     >
       <defs>
-        <linearGradient id="scryPanel" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id="glasshopperPanel" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#1a1a24" />
           <stop offset="1" stopColor="#0d0d12" />
         </linearGradient>
-        <linearGradient id="scryIris" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id="glasshopperIris" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#a78bfa" />
           <stop offset="0.5" stopColor="#60a5fa" />
           <stop offset="1" stopColor="#34d399" />
         </linearGradient>
-        <radialGradient id="scryPupil" cx="0.5" cy="0.4" r="0.5">
+        <radialGradient id="glasshopperPupil" cx="0.5" cy="0.4" r="0.5">
           <stop offset="0" stopColor="#fef3c7" stopOpacity="0.95" />
           <stop offset="0.5" stopColor="#60a5fa" stopOpacity="0.6" />
           <stop offset="1" stopColor="#0d0d12" stopOpacity="0" />
@@ -32,7 +32,7 @@ export function Eye({ size = 28 }: { size?: number }) {
         width="24"
         height="24"
         rx="6"
-        fill="url(#scryPanel)"
+        fill="url(#glasshopperPanel)"
         stroke="rgba(255,255,255,0.12)"
         strokeWidth="1"
       />
@@ -43,12 +43,12 @@ export function Eye({ size = 28 }: { size?: number }) {
         cy="14"
         r="7"
         fill="none"
-        stroke="url(#scryIris)"
+        stroke="url(#glasshopperIris)"
         strokeWidth="2"
       />
 
       {/* Inner pupil / glow */}
-      <circle cx="14" cy="14" r="5.5" fill="url(#scryPupil)" />
+      <circle cx="14" cy="14" r="5.5" fill="url(#glasshopperPupil)" />
 
       {/* Highlight */}
       <circle cx="12" cy="12" r="1.4" fill="#ffffff" opacity="0.85" />

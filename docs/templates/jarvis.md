@@ -1,7 +1,7 @@
 # Jarvis — premium template
 
 iOS-Home-inspired premium dashboard for Home Assistant. The reference build of
-what HA React UI can produce — multi-room, energy view, weather, all on one
+what Glasshopper can produce — multi-room, energy view, weather, all on one
 bundle.
 
 ![Jarvis preview](https://jarvis.salvatorecolopi.com/preview.png)
@@ -23,12 +23,12 @@ bundle.
 2. In HA: **Developer Tools → Services**:
 
    ```yaml
-   service: ha_react_ui.install_template
+   service: glasshopper.install_template
    data:
      url: <your private download URL>
    ```
 
-3. **Settings → Devices → Add Integration → HA React UI** and pick
+3. **Settings → Devices → Add Integration → Glasshopper** and pick
    **Jarvis** as the template.
 
 ## License
@@ -40,6 +40,6 @@ built artifact only.
 
 ## Support
 
-- Bug reports: <https://github.com/colopisalvatore/ha-react-ui/issues> (tag with `template:jarvis`).
+- Bug reports: <https://github.com/colopisalvatore/glasshopper/issues> (tag with `template:jarvis`).
 - Updates: announced on the [release page](https://jarvis.salvatorecolopi.com/releases).
 - Feature requests: PRs not accepted (closed source), but issues are welcome.

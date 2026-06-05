@@ -6,7 +6,7 @@ ConfigEntry points at one installed template.
 ## Where templates live
 
 ```
-<config>/ha_react_ui_templates/
+<config>/glasshopper_templates/
 ├── minimal/
 │   ├── index.html
 │   ├── assets/
@@ -21,7 +21,7 @@ ConfigEntry points at one installed template.
 ```
 
 Templates are discovered at startup and re-scanned whenever you call
-`ha_react_ui.reload_templates`.
+`glasshopper.reload_templates`.
 
 ## Installing
 
@@ -30,22 +30,22 @@ Three options:
 1. **Service call** — easiest:
 
    ```yaml
-   service: ha_react_ui.install_template
+   service: glasshopper.install_template
    data:
      url: https://example.com/my-template.zip
    ```
 
-2. **Manual drop** — extract a zip into `<config>/ha_react_ui_templates/<id>/`,
-   then call `ha_react_ui.reload_templates`.
+2. **Manual drop** — extract a zip into `<config>/glasshopper_templates/<id>/`,
+   then call `glasshopper.reload_templates`.
 
 3. **Build locally** — `npm run sync` builds into
-   `custom_components/ha_react_ui/frontend/` for a single-bundled deployment.
+   `custom_components/glasshopper/frontend/` for a single-bundled deployment.
    Use this for personal dashboards that don't need to be redistributable.
 
 ## Removing
 
 ```yaml
-service: ha_react_ui.remove_template
+service: glasshopper.remove_template
 data:
   template_id: my-template
 ```

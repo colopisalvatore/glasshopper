@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "HA React UI template registry",
+  "title": "Glasshopper template registry",
   "type": "object",
   "required": ["version", "templates"],
   "properties": {

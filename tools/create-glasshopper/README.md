@@ -1,9 +1,9 @@
-# create-scry
+# create-glasshopper
 
-Scaffold a fresh Home Assistant React dashboard with Scry.
+Scaffold a fresh Home Assistant React dashboard with Glasshopper.
 
 ```bash
-npx create-scry my-dashboard
+npx create-glasshopper my-dashboard
 ```
 
 ## Options
@@ -21,7 +21,7 @@ npx create-scry my-dashboard
 
 ## What it does
 
-1. Fetches the chosen template subfolder from [`colopisalvatore/ha-react-ui`](https://github.com/colopisalvatore/ha-react-ui) using `tiged` (no git history).
+1. Fetches the chosen template subfolder from [`colopisalvatore/glasshopper`](https://github.com/colopisalvatore/glasshopper) using `tiged` (no git history).
 2. Renames `package.json#name` to your project slug.
 3. Prints next steps for installing deps and running the dev server.
 
@@ -34,7 +34,7 @@ npm install
 npm run dev
 ```
 
-For panel-mode deployment, see the parent project's [Quick start](https://github.com/colopisalvatore/ha-react-ui#quick-start).
+For panel-mode deployment, see the parent project's [Quick start](https://github.com/colopisalvatore/glasshopper#quick-start).
 
 ## License
 

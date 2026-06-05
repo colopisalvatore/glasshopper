@@ -29,7 +29,7 @@ const SNIPPETS: Record<Tab, { label: string; code: ReactNode }> = {
         <Line>
           <K>import</K> {'{ '}
           <F>useEntity</F>, <F>useService</F>
-          {' }'} <K>from</K> <S>'@scry/hooks'</S>;
+          {' }'} <K>from</K> <S>'@glasshopper/hooks'</S>;
         </Line>
         <Line />
         <Line>
@@ -65,7 +65,7 @@ const SNIPPETS: Record<Tab, { label: string; code: ReactNode }> = {
           <C>{'# Scaffold a new dashboard'}</C>
         </Line>
         <Line>
-          <K>npx</K> create-scry my-dashboard
+          <K>npx</K> create-glasshopper my-dashboard
         </Line>
         <Line />
         <Line>
@@ -98,14 +98,14 @@ const SNIPPETS: Record<Tab, { label: string; code: ReactNode }> = {
           <C>{'# No YAML required — add the integration from the HA UI'}</C>
         </Line>
         <Line>
-          <C>{'# Settings → Devices → + Add Integration → Scry'}</C>
+          <C>{'# Settings → Devices → + Add Integration → Glasshopper'}</C>
         </Line>
         <Line />
         <Line>
           <C>{'# Or install a template via service call:'}</C>
         </Line>
         <Line>
-          <V>service</V>: scry.<F>install_template</F>
+          <V>service</V>: glasshopper.<F>install_template</F>
         </Line>
         <Line>
           <V>data</V>:

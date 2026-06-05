@@ -15,7 +15,7 @@ Thanks for considering a contribution. This document covers the basics — file 
 npm install
 cp .env.example .env.local        # set VITE_HA_URL
 npm run dev                       # standalone mode (long-lived token via ?token=...)
-npm run sync                      # build + copy bundle into custom_components/ha_react_ui/frontend/
+npm run sync                      # build + copy bundle into custom_components/glasshopper/frontend/
 npm run typecheck
 ```
 

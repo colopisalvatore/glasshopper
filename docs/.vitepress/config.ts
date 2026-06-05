@@ -1,15 +1,15 @@
 import { defineConfig } from 'vitepress';
 
 export default defineConfig({
-  title: 'Scry',
-  description: 'Scry — React dashboards for Home Assistant.',
+  title: 'Glasshopper',
+  description: 'Glasshopper — React dashboards for Home Assistant.',
   cleanUrls: true,
   lastUpdated: true,
 
   head: [
     ['meta', { name: 'theme-color', content: '#0a0a0f' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: 'Scry' }],
+    ['meta', { property: 'og:title', content: 'Glasshopper' }],
     [
       'meta',
       {
@@ -26,7 +26,7 @@ export default defineConfig({
       { text: 'Templates', link: '/templates/' },
       {
         text: '0.x',
-        items: [{ text: 'Changelog', link: 'https://github.com/colopisalvatore/ha-react-ui/blob/main/CHANGELOG.md' }],
+        items: [{ text: 'Changelog', link: 'https://github.com/colopisalvatore/glasshopper/blob/main/CHANGELOG.md' }],
       },
     ],
 
@@ -85,7 +85,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/colopisalvatore/ha-react-ui' },
+      { icon: 'github', link: 'https://github.com/colopisalvatore/glasshopper' },
     ],
 
     footer: {

@@ -3,10 +3,10 @@
  *
  * Two modes:
  * 1. Panel mode (default in production): the bundle is loaded inside an iframe
- *    served by the `ha_react_ui` custom_component. The parent HA frame exposes
+ *    served by the `glasshopper` custom_component. The parent HA frame exposes
  *    `window.parent.hassConnection` — we reuse it so there is zero auth setup.
  * 2. Standalone mode (dev): provide `VITE_HA_URL` and a long-lived token via
- *    URL `?token=` or `localStorage.ha_react_ui_token`. Used with `npm run dev`.
+ *    URL `?token=` or `localStorage.glasshopper_token`. Used with `npm run dev`.
  */
 
 import {
@@ -55,7 +55,7 @@ export type ConnectionStatus = 'idle' | 'connecting' | 'connected' | 'disconnect
 
 type EntitiesListener = (entities: HassEntities) => void;
 
-const STORAGE_TOKEN_KEY = 'ha_react_ui_token';
+const STORAGE_TOKEN_KEY = 'glasshopper_token';
 
 let connection: Connection | null = null;
 let entities: HassEntities = {};

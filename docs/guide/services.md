@@ -1,8 +1,8 @@
 # Services
 
-The integration exposes three services under the `ha_react_ui` domain.
+The integration exposes three services under the `glasshopper` domain.
 
-## `ha_react_ui.install_template`
+## `glasshopper.install_template`
 
 Download a zip and install it as a template.
 
@@ -19,21 +19,21 @@ Constraints:
 - Zip must contain `index.html` at root or one level deep.
 
 ```yaml
-service: ha_react_ui.install_template
+service: glasshopper.install_template
 data:
   url: https://github.com/.../releases/download/v0.1.0/template.zip
   template_id: my-dashboard
 ```
 
-## `ha_react_ui.reload_templates`
+## `glasshopper.reload_templates`
 
-Re-scan `<config>/ha_react_ui_templates/`. Use after manual file changes.
+Re-scan `<config>/glasshopper_templates/`. Use after manual file changes.
 
 ```yaml
-service: ha_react_ui.reload_templates
+service: glasshopper.reload_templates
 ```
 
-## `ha_react_ui.remove_template`
+## `glasshopper.remove_template`
 
 Delete a template directory from disk.
 
@@ -42,7 +42,7 @@ Delete a template directory from disk.
 | `template_id` | string | yes      | Folder name to delete.   |
 
 ```yaml
-service: ha_react_ui.remove_template
+service: glasshopper.remove_template
 data:
   template_id: my-dashboard
 ```

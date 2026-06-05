@@ -1,11 +1,11 @@
 {
-  "name": "create-scry",
+  "name": "create-glasshopper",
   "version": "0.1.0",
-  "description": "Scaffold a new Home Assistant React dashboard with Scry.",
+  "description": "Scaffold a new Home Assistant React dashboard with Glasshopper.",
   "type": "module",
   "license": "Apache-2.0",
   "bin": {
-    "create-scry": "./index.mjs"
+    "create-glasshopper": "./index.mjs"
   },
   "files": [
     "index.mjs",
@@ -15,7 +15,7 @@
     "node": ">=18"
   },
   "keywords": [
-    "scry",
+    "glasshopper",
     "home-assistant",
     "react",
     "dashboard",
@@ -24,8 +24,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/colopisalvatore/ha-react-ui.git",
-    "directory": "tools/create-ha-react-ui"
+    "url": "https://github.com/colopisalvatore/glasshopper.git",
+    "directory": "tools/create-glasshopper"
   },
   "dependencies": {
     "tiged": "^3.0.0-rc.1"

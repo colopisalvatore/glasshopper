@@ -1,4 +1,4 @@
-"""Config flow for HA React UI."""
+"""Config flow for Glasshopper."""
 
 from __future__ import annotations
 
@@ -86,7 +86,7 @@ def _template_selector(hass: HomeAssistant) -> SelectSelector:
 
 
 class HaReactUiConfigFlow(ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for HA React UI dashboards."""
+    """Handle a config flow for Glasshopper dashboards."""
 
     VERSION = 2
 

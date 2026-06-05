@@ -31,7 +31,7 @@ class StandaloneDashboardView(HomeAssistantView):
 
     url = URL_STANDALONE_BASE + "/{slug}"
     extra_urls = [URL_STANDALONE_BASE + "/{slug}/{path:.+}"]
-    name = "api:ha_react_ui:standalone"
+    name = "api:glasshopper:standalone"
     # Always allow unauthenticated requests at the view layer; we re-check per
     # request based on the dashboard's `public` flag.
     requires_auth = False
@@ -60,7 +60,7 @@ class StandaloneDashboardView(HomeAssistantView):
         tpl = registry.get(template_id)
         if tpl is None:
             _LOGGER.warning(
-                "ha_react_ui: slug %s references missing template %s",
+                "glasshopper: slug %s references missing template %s",
                 slug,
                 template_id,
             )

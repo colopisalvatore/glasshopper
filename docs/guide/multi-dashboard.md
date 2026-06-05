@@ -1,6 +1,6 @@
 # Multi-dashboard
 
-Each call to **Settings → Devices → Add Integration → HA React UI** creates one
+Each call to **Settings → Devices → Add Integration → Glasshopper** creates one
 *ConfigEntry*, which registers one sidebar panel. You can create as many as
 you want — each with its own slug, template, icon, and admin gate.
 

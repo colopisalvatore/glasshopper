@@ -6,7 +6,7 @@ import types
 from pathlib import Path
 
 repo = Path(__file__).parent
-pkg_dir = repo / "custom_components" / "ha_react_ui"
+pkg_dir = repo / "custom_components" / "glasshopper"
 
 # Create a fake package so relative imports resolve.
 pkg = types.ModuleType("hru")

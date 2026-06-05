@@ -17,7 +17,7 @@ body:
   - type: input
     id: hru-version
     attributes:
-      label: ha-react-ui version
+      label: glasshopper version
       placeholder: '0.2.0'
     validations:
       required: true
@@ -51,5 +51,5 @@ body:
     attributes:
       label: Relevant logs
       description: |
-        Enable `custom_components.ha_react_ui: debug` in `logger:` and paste the relevant lines.
+        Enable `custom_components.glasshopper: debug` in `logger:` and paste the relevant lines.
       render: shell

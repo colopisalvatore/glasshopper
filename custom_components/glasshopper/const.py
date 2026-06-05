@@ -1,11 +1,11 @@
-"""Constants for the HA React UI integration."""
+"""Constants for the Glasshopper integration."""
 
-DOMAIN = "ha_react_ui"
+DOMAIN = "glasshopper"
 
-URL_STATIC_BASE = "/ha_react_ui_files"
+URL_STATIC_BASE = "/glasshopper_files"
 URL_STANDALONE_BASE = "/custom-dashboard"
 
-USER_TEMPLATES_DIRNAME = "ha_react_ui_templates"
+USER_TEMPLATES_DIRNAME = "glasshopper_templates"
 
 TEMPLATE_MANIFEST = "template.json"
 FRONTEND_INDEX = "index.html"

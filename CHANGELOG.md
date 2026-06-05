@@ -6,8 +6,8 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ### Added
 - Initial scaffold.
-- HA custom integration `ha_react_ui` with multi-dashboard ConfigFlow.
+- HA custom integration `glasshopper` with multi-dashboard ConfigFlow.
 - React hooks: `useEntity`, `useService`, `useHistory`.
 - Same-origin bridge to `window.parent.hassConnection` for zero-auth panel mode.
 - Standalone dev mode with long-lived token.
-- `npm run sync` build pipeline copying the bundle into `custom_components/ha_react_ui/frontend/`.
+- `npm run sync` build pipeline copying the bundle into `custom_components/glasshopper/frontend/`.

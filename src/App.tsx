@@ -14,7 +14,7 @@ export default function App() {
   return (
     <main className="app">
       <header className="app__header">
-        <h1>HA React UI — scaffold</h1>
+        <h1>Glasshopper — scaffold</h1>
         <span className={`status status--${status}`}>{status}</span>
       </header>
 
