@@ -92,7 +92,7 @@ Each ConfigEntry registers one panel. Add as many as you want from the HA UI —
 | `useTheme` (HA theme tokens)              | ✅    |
 | CLI scaffold (`create-glasshopper`)           | ✅    |
 | Docs site (VitePress, `docs/`)            | ✅    |
-| Landing page (Astro, `site/`)             | ✅    |
+| Landing page (separate `glasshopper-web`) | ✅    |
 | Template library + registry schema        | ✅    |
 | HACS custom repository                    | ✅    |
 | HACS default repository submission        | ⏳    |
