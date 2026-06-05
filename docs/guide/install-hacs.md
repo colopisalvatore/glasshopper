@@ -16,22 +16,24 @@ HACS will index the repo. Search for **Glasshopper** and click **Download** on t
 
 1. Restart Home Assistant. (**Developer Tools → YAML → Restart**.)
 2. **Settings → Devices → Add Integration → "Glasshopper"**.
-3. Pick a template (you need at least one installed — see below).
+3. The bundled **Minimal** template is already there. Pick it, set a sidebar
+   title and a URL slug, submit. Your dashboard appears in the sidebar.
 
-## Install your first template
+No service calls, no YAML: a fresh install always has the Minimal template
+ready, because the integration ships it and seeds it on startup.
 
-Without a template, the integration has nothing to render. The simplest way:
+## Installing more templates
 
-```yaml
-# Developer Tools → Services
-service: glasshopper.install_template
-data:
-  url: https://github.com/colopisalvatore/glasshopper/releases/download/v0.1.0/minimal.zip
-```
+A premium or community template ships as a `.zip` with a download URL. You do
+**not** need YAML:
 
-Or build your own — see [Build a custom template](/templates/build).
+1. **Settings → Devices → Add Integration → "Glasshopper"**.
+2. Paste the URL into **"Install another template from a URL"** and submit.
+3. It downloads, then appears in the **Template** dropdown. Pick it, finish the
+   form.
 
-After installing a template, run **Services → `glasshopper.reload_templates`** so the integration picks it up.
+Prefer YAML? The `glasshopper.install_template` service still works (see
+[Build a custom template](/templates/build)).
 
 ## Updating
 

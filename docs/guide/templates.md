@@ -38,9 +38,9 @@ Three options:
 2. **Manual drop** — extract a zip into `<config>/glasshopper_templates/<id>/`,
    then call `glasshopper.reload_templates`.
 
-3. **Build locally** — `npm run sync` builds into
-   `custom_components/glasshopper/frontend/` for a single-bundled deployment.
-   Use this for personal dashboards that don't need to be redistributable.
+3. **Build locally** — `npm run sync` builds your app as the bundled `minimal`
+   template under `custom_components/glasshopper/bundled/minimal/`. The
+   integration seeds it on startup. Use this for personal dashboards.
 
 ## Removing
 

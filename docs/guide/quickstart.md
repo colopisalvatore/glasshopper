@@ -40,10 +40,11 @@ You should see the scaffold UI with a `connected` status pill, a `sun.sun` card,
 
 ```bash
 npm run sync
-# Builds dist/ and copies it into custom_components/glasshopper/frontend/
+# Builds your app as the bundled "minimal" template (relative asset paths) under
+# custom_components/glasshopper/bundled/minimal/
 ```
 
-Copy the `custom_components/glasshopper/` folder into your HA `config/custom_components/`. Restart HA.
+Copy the `custom_components/glasshopper/` folder into your HA `config/custom_components/`. Restart HA. The integration seeds the template automatically, so it is ready in the next step.
 
 ## 5. Register the panel
 

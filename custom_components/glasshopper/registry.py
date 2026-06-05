@@ -9,7 +9,12 @@ import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from .const import FRONTEND_INDEX, TEMPLATE_MANIFEST, USER_TEMPLATES_DIRNAME
+from .const import (
+    BUNDLED_TEMPLATES_DIRNAME,
+    FRONTEND_INDEX,
+    TEMPLATE_MANIFEST,
+    USER_TEMPLATES_DIRNAME,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -57,6 +62,29 @@ class TemplateRegistry:
 
     def ensure_root(self) -> None:
         self.root.mkdir(parents=True, exist_ok=True)
+
+    def seed_bundled(self) -> None:
+        """Copy templates shipped inside the package into the user dir.
+
+        Runs on setup so a fresh install always has at least one template and
+        the config flow never dead-ends with "no templates". Never overwrites a
+        template the user already has (their copy wins).
+        """
+        bundled = Path(__file__).parent / BUNDLED_TEMPLATES_DIRNAME
+        if not bundled.is_dir():
+            return
+        self.ensure_root()
+        for child in sorted(bundled.iterdir()):
+            if not child.is_dir() or not (child / FRONTEND_INDEX).is_file():
+                continue
+            dest = self.root / child.name
+            if dest.exists():
+                continue
+            try:
+                shutil.copytree(child, dest)
+                _LOGGER.info("glasshopper: seeded bundled template %s", child.name)
+            except OSError as exc:
+                _LOGGER.error("glasshopper: failed seeding template %s: %s", child.name, exc)
 
     def scan(self) -> dict[str, Template]:
         """Re-scan filesystem and rebuild the in-memory registry."""

@@ -42,12 +42,12 @@ glasshopper/
 │       ├── __init__.py           # registers static path + iframe panel per entry
 │       ├── config_flow.py        # multi-dashboard ConfigFlow + OptionsFlow
 │       ├── manifest.json
-│       └── frontend/             # built React bundle (populated by `npm run sync`)
+│       └── bundled/minimal/      # built template, seeded into config on setup
 ├── src/                          # your React app — edit freely
 │   ├── App.tsx
 │   ├── hooks/                    # useEntity, useService, useHistory
 │   └── lib/haConnection.ts       # bridge to window.parent.hassConnection
-├── scripts/sync-panel.mjs        # build + copy dist/ into custom_components/
+├── scripts/sync-panel.mjs        # build app as the bundled minimal template
 ├── vite.config.ts
 └── hacs.json
 ```

@@ -4,23 +4,23 @@ You have two distribution paths: bundle your dashboard **into the integration** 
 
 ## Path A — Bundled with the integration
 
-For a one-off personal dashboard, build into the integration's `frontend/` folder.
+For a one-off personal dashboard, build it as the bundled **minimal** template.
 
 ```bash
 npm run sync
 ```
 
-This runs `tsc -b && vite build` with `VITE_BASE=/glasshopper_files/`, then copies `dist/` into `custom_components/glasshopper/frontend/`.
+This runs `tsc -b && vite build` with a relative base (`VITE_BASE=./`), then copies `dist/` into `custom_components/glasshopper/bundled/minimal/` and writes its `template.json`.
 
-Copy the whole `custom_components/glasshopper/` folder into HA's config dir and restart HA. Or commit it to a private HACS repo.
+Copy the whole `custom_components/glasshopper/` folder into HA's config dir and restart HA. The integration seeds the template into `<config>/glasshopper_templates/minimal/` on startup, so it shows up in the Add Integration dialog. Or commit it to a private HACS repo.
 
 ## Path B — Publish as a template
 
 For a dashboard you want others to install, build a template zip.
 
 ```bash
-npm run build              # builds into dist/
-cp dist/template.json dist/   # author your template.json (see below)
+VITE_BASE=./ npm run build    # relative base, builds into dist/
+# author dist/template.json (see below)
 cd dist
 zip -r my-template.zip .
 ```

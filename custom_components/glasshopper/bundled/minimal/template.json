@@ -1,0 +1,7 @@
+{
+  "id": "minimal",
+  "name": "Minimal",
+  "version": "0.1.0",
+  "author": "glasshopper",
+  "description": "Bare scaffold with the five hooks wired. A starting point."
+}

@@ -48,6 +48,8 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 
     if DATA_REGISTRY not in domain_data:
         registry = TemplateRegistry(Path(hass.config.path()))
+        # Seed bundled templates first so a fresh install always has one.
+        await hass.async_add_executor_job(registry.seed_bundled)
         await hass.async_add_executor_job(registry.scan)
         domain_data[DATA_REGISTRY] = registry
         domain_data[DATA_REGISTERED_STATICS] = set()

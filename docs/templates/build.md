@@ -42,10 +42,13 @@ reference in the integration UI.
 
 ## 4. Build
 
+Templates must build with a **relative base** (`./`) so their assets resolve
+under `/glasshopper_files/<id>/` wherever the panel mounts them:
+
 ```bash
-npm run build
+VITE_BASE=./ npm run build
 ls dist/
-# index.html
+# index.html   (references ./assets/...)
 # assets/...
 # template.json
 ```

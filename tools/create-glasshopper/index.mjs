@@ -15,11 +15,12 @@ import { createInterface } from 'node:readline/promises';
 const REPO = 'colopisalvatore/glasshopper';
 const DEFAULT_BRANCH = 'main';
 
-// Templates ship as subpaths of the upstream repo. The "minimal" template is
-// the repo root itself (the scaffold IS a working minimal template).
+// The "minimal" template is the repo root itself (the scaffold IS a working
+// minimal template). Premium templates are bought and installed straight into
+// Home Assistant (paste the download URL in the Add Integration dialog), so
+// they are intentionally not scaffolded by this CLI.
 const TEMPLATES = {
   minimal: { subdir: '', label: 'Minimal — full scaffold + Python integration + 5 hooks' },
-  jarvis: { subdir: 'templates/jarvis', label: 'Jarvis — iOS-Home-style premium dashboard (paid)' },
 };
 
 function parseArgs(args) {
@@ -167,9 +168,11 @@ Done. Next steps:
   npm run dev
 
 Build for HA panel:
-  npm run sync                    # builds and copies dist/ into custom_components/
+  npm run sync                    # builds your app as the bundled "minimal" template
 
-Then copy custom_components/glasshopper/ to your HA config dir (or install via HACS).
+Then copy custom_components/glasshopper/ to your HA config dir (or install via HACS)
+and restart. The integration seeds the template automatically — add it from
+Settings -> Devices -> Add Integration -> Glasshopper.
 
 Docs: https://github.com/${REPO}#quick-start
 `);

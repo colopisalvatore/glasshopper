@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import re
 from pathlib import Path
 from typing import Any
@@ -10,6 +11,7 @@ import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlow
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.selector import (
     SelectOptionDict,
     SelectSelector,
@@ -32,7 +34,13 @@ from .const import (
 )
 from .registry import TemplateRegistry
 
+_LOGGER = logging.getLogger(__name__)
+
 SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{1,30}$")
+
+# Transient form field: paste a zip URL to install a new template inline, so a
+# non-developer never needs the glasshopper.install_template YAML service call.
+CONF_INSTALL_URL = "install_url"
 
 
 def _get_or_init_registry(hass: HomeAssistant) -> TemplateRegistry:
@@ -46,6 +54,7 @@ def _get_or_init_registry(hass: HomeAssistant) -> TemplateRegistry:
     registry: TemplateRegistry | None = domain_data.get(DATA_REGISTRY)
     if registry is None:
         registry = TemplateRegistry(Path(hass.config.path()))
+        registry.seed_bundled()
         registry.scan()
         domain_data[DATA_REGISTRY] = registry
         domain_data.setdefault(DATA_REGISTERED_STATICS, set())
@@ -96,23 +105,29 @@ class HaReactUiConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
         options = _template_options(self.hass)
 
+        # No templates at all (e.g. bundled seed failed): install one first.
         if not options:
-            return self.async_abort(reason="no_templates")
+            return await self.async_step_install()
 
         if user_input is not None:
-            slug = user_input[CONF_SLUG].strip().lower()
-            user_input[CONF_SLUG] = slug
-
-            if not SLUG_RE.match(slug):
-                errors[CONF_SLUG] = "invalid_slug"
+            install_url = (user_input.get(CONF_INSTALL_URL) or "").strip()
+            if install_url:
+                # Inline install: add the template, then re-show the form with
+                # it available in the dropdown. No entry is created this pass.
+                if await self._install(install_url, errors):
+                    options = _template_options(self.hass)
             else:
-                await self.async_set_unique_id(slug)
-                self._abort_if_unique_id_configured()
-
-                return self.async_create_entry(
-                    title=user_input[CONF_TITLE],
-                    data=user_input,
-                )
+                slug = user_input[CONF_SLUG].strip().lower()
+                user_input[CONF_SLUG] = slug
+                if not SLUG_RE.match(slug):
+                    errors[CONF_SLUG] = "invalid_slug"
+                else:
+                    await self.async_set_unique_id(slug)
+                    self._abort_if_unique_id_configured()
+                    data = {
+                        k: v for k, v in user_input.items() if k != CONF_INSTALL_URL
+                    }
+                    return self.async_create_entry(title=data[CONF_TITLE], data=data)
 
         defaults = user_input or {}
         schema = vol.Schema(
@@ -135,6 +150,7 @@ class HaReactUiConfigFlow(ConfigFlow, domain=DOMAIN):
                 vol.Optional(
                     CONF_PUBLIC, default=defaults.get(CONF_PUBLIC, False)
                 ): bool,
+                vol.Optional(CONF_INSTALL_URL): str,
             }
         )
 
@@ -143,6 +159,36 @@ class HaReactUiConfigFlow(ConfigFlow, domain=DOMAIN):
             data_schema=schema,
             errors=errors,
         )
+
+    async def async_step_install(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Install a template from a URL when none are available yet."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            url = (user_input.get(CONF_INSTALL_URL) or "").strip()
+            if await self._install(url, errors):
+                return await self.async_step_user()
+
+        schema = vol.Schema({vol.Required(CONF_INSTALL_URL): str})
+        return self.async_show_form(step_id="install", data_schema=schema, errors=errors)
+
+    async def _install(self, url: str, errors: dict[str, str]) -> bool:
+        """Download + install a template zip; record an error on failure."""
+        from .services import _install_from_url
+
+        _get_or_init_registry(self.hass)  # ensure registry exists in hass.data
+        try:
+            await _install_from_url(self.hass, url, None)
+            return True
+        except HomeAssistantError as exc:
+            _LOGGER.warning("glasshopper: inline template install failed: %s", exc)
+            errors[CONF_INSTALL_URL] = "install_failed"
+            return False
+        except Exception as exc:  # noqa: BLE001 - surface any download/zip error
+            _LOGGER.exception("glasshopper: unexpected install error: %s", exc)
+            errors[CONF_INSTALL_URL] = "install_failed"
+            return False
 
     @staticmethod
     @callback

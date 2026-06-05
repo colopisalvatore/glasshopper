@@ -7,6 +7,11 @@ URL_STANDALONE_BASE = "/custom-dashboard"
 
 USER_TEMPLATES_DIRNAME = "glasshopper_templates"
 
+# Templates shipped inside the integration package and seeded into the user
+# templates dir on setup, so a fresh install always has at least one template.
+BUNDLED_TEMPLATES_DIRNAME = "bundled"
+DEFAULT_TEMPLATE_ID = "minimal"
+
 TEMPLATE_MANIFEST = "template.json"
 FRONTEND_INDEX = "index.html"
 
