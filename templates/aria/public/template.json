@@ -1,0 +1,7 @@
+{
+  "id": "aria",
+  "name": "Aria",
+  "version": "0.1.0",
+  "author": "glasshopper",
+  "description": "A calm single-room glance for Home Assistant. Warm neutral and light-first with a dark variant, it pairs a greeting and clock with live climate, a hand-drawn 24h temperature curve, soft light and switch tiles, and a morning/evening scene row over one amber clay accent."
+}

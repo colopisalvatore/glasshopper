@@ -13,6 +13,42 @@
       "preview": null,
       "source": "https://github.com/colopisalvatore/glasshopper",
       "download": null
+    },
+    {
+      "id": "aria",
+      "name": "Aria",
+      "version": "0.1.0",
+      "author": "glasshopper",
+      "license": "Apache-2.0",
+      "tier": "free",
+      "description": "Single-room glance dashboard: greeting, climate, light and switch toggles, a 24h temperature curve, and scenes. Warm, calm, light-first.",
+      "preview": null,
+      "source": "https://github.com/colopisalvatore/glasshopper/tree/main/templates/aria",
+      "download": null
+    },
+    {
+      "id": "grid",
+      "name": "Grid",
+      "version": "0.1.0",
+      "author": "glasshopper",
+      "license": "Apache-2.0",
+      "tier": "free",
+      "description": "Compact Material 3 tile grid for many devices at a glance, grouped by area, tap to toggle. Light and dark.",
+      "preview": null,
+      "source": "https://github.com/colopisalvatore/glasshopper/tree/main/templates/grid",
+      "download": null
+    },
+    {
+      "id": "pulse",
+      "name": "Pulse",
+      "version": "0.1.0",
+      "author": "glasshopper",
+      "license": "Apache-2.0",
+      "tier": "free",
+      "description": "Sensor and monitoring panel: live readouts with tabular numerals, animated sparklines, and a radial gauge. Quiet, data-forward, dark.",
+      "preview": null,
+      "source": "https://github.com/colopisalvatore/glasshopper/tree/main/templates/pulse",
+      "download": null
     }
   ]
 }

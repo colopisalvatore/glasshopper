@@ -1,0 +1,670 @@
+/* ================================================================== */
+/*  Aria — warm neutral, light-first single-room glance dashboard.     */
+/*  OKLCH only. One accent: amber clay (~62deg hue). Tinted neutrals.   */
+/* ================================================================== */
+
+:root {
+  /* Hue anchor for the whole palette — warm. */
+  --hue: 62;
+
+  /* Surfaces, tinted toward the warm hue rather than pure grey. */
+  --bg: oklch(0.965 0.012 var(--hue));
+  --sheet: oklch(0.992 0.008 var(--hue));
+  --panel: oklch(0.975 0.012 var(--hue));
+  --panel-raised: oklch(0.998 0.006 var(--hue));
+  --hairline: oklch(0.9 0.014 var(--hue));
+  --hairline-strong: oklch(0.86 0.016 var(--hue));
+
+  /* Ink. */
+  --ink: oklch(0.28 0.022 var(--hue));
+  --ink-soft: oklch(0.46 0.018 var(--hue));
+  --ink-faint: oklch(0.62 0.016 var(--hue));
+
+  /* Accent — amber clay. Used once, with intent. */
+  --accent: oklch(0.7 0.13 62);
+  --accent-deep: oklch(0.58 0.13 55);
+  --accent-tint: oklch(0.93 0.05 70);
+  --accent-glow: oklch(0.7 0.13 62 / 0.28);
+
+  /* Cool secondary, used only for humidity drop / chart breath. */
+  --cool: oklch(0.62 0.07 230);
+
+  --on-accent: oklch(0.99 0.01 70);
+
+  --shadow-soft: 0 1px 2px oklch(0.5 0.02 var(--hue) / 0.06),
+    0 8px 24px oklch(0.5 0.03 var(--hue) / 0.08);
+  --shadow-press: 0 1px 2px oklch(0.5 0.02 var(--hue) / 0.1);
+
+  --radius-sheet: 28px;
+  --radius-card: 20px;
+  --radius-tile: 16px;
+  --radius-pill: 999px;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: oklch(0.21 0.012 var(--hue));
+    --sheet: oklch(0.25 0.014 var(--hue));
+    --panel: oklch(0.28 0.016 var(--hue));
+    --panel-raised: oklch(0.31 0.018 var(--hue));
+    --hairline: oklch(0.36 0.018 var(--hue));
+    --hairline-strong: oklch(0.42 0.02 var(--hue));
+
+    --ink: oklch(0.94 0.014 var(--hue));
+    --ink-soft: oklch(0.76 0.016 var(--hue));
+    --ink-faint: oklch(0.6 0.016 var(--hue));
+
+    --accent: oklch(0.76 0.13 68);
+    --accent-deep: oklch(0.7 0.13 60);
+    --accent-tint: oklch(0.36 0.06 60);
+    --accent-glow: oklch(0.76 0.13 68 / 0.35);
+
+    --cool: oklch(0.72 0.08 230);
+
+    --on-accent: oklch(0.22 0.02 60);
+
+    --shadow-soft: 0 1px 2px oklch(0 0 0 / 0.3), 0 10px 30px oklch(0 0 0 / 0.35);
+    --shadow-press: 0 1px 2px oklch(0 0 0 / 0.4);
+
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Shell.                                                              */
+/* ------------------------------------------------------------------ */
+
+.aria {
+  min-height: 100%;
+  /* A faint warm wash anchored top-left, the only ambient gradient. */
+  background:
+    radial-gradient(
+      120% 80% at 12% -10%,
+      var(--accent-tint),
+      transparent 55%
+    ),
+    var(--bg);
+  padding: clamp(14px, 4vw, 40px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.aria__sheet {
+  width: 100%;
+  max-width: 560px;
+  background: var(--sheet);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sheet);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(20px, 5vw, 34px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(22px, 4vw, 30px);
+}
+
+.section-heading {
+  margin: 0 0 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Greeting.                                                           */
+/* ------------------------------------------------------------------ */
+
+.greeting {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.greeting__eyebrow {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.greeting__title {
+  margin: 0;
+  font-size: clamp(1.7rem, 6vw, 2.3rem);
+  font-weight: 650;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.greeting__clock {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--panel);
+  border: 1px solid var(--hairline);
+}
+
+.greeting__time {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Climate.                                                            */
+/* ------------------------------------------------------------------ */
+
+.climate {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: clamp(16px, 5vw, 36px);
+  padding: clamp(18px, 4vw, 24px);
+  background: linear-gradient(
+    160deg,
+    var(--panel-raised),
+    var(--panel)
+  );
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-card);
+}
+
+.climate__primary {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 3vw, 18px);
+}
+
+.thermo {
+  width: 26px;
+  height: 66px;
+  flex-shrink: 0;
+}
+.thermo__track {
+  fill: var(--hairline-strong);
+}
+.thermo__fill {
+  fill: var(--accent);
+}
+.thermo__bulb {
+  fill: var(--accent);
+}
+.thermo__bulb-core {
+  fill: var(--accent-deep);
+}
+
+.climate__value {
+  margin: 0;
+  font-size: clamp(2.6rem, 11vw, 3.4rem);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.climate__value--muted {
+  color: var(--ink-faint);
+}
+.climate__unit {
+  font-size: 0.42em;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-left: 2px;
+  vertical-align: top;
+  position: relative;
+  top: 0.25em;
+}
+.climate__label {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.climate__meta {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 132px;
+}
+.climate__meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--hairline);
+}
+.climate__meta-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.climate__meta dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+.climate__meta dt svg {
+  color: var(--ink-faint);
+}
+.climate__meta dd {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.climate__mode {
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  background: var(--panel);
+  color: var(--ink-soft);
+  border: 1px solid var(--hairline);
+}
+.climate__mode--heat {
+  background: var(--accent-tint);
+  color: var(--accent-deep);
+  border-color: transparent;
+}
+
+/* ------------------------------------------------------------------ */
+/*  History.                                                            */
+/* ------------------------------------------------------------------ */
+
+.history__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.history__head .section-heading {
+  margin-bottom: 0;
+}
+.history__stat {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.history__now {
+  font-size: 1.05rem;
+  font-weight: 650;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.history__range {
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.history__plot {
+  margin-top: 12px;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.history__msg {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ink-faint);
+  padding: 36px 0;
+}
+.history__msg--loading {
+  position: relative;
+}
+.history__msg--loading::after {
+  content: '';
+  display: inline-block;
+  width: 1ch;
+  animation: ellipsis 1.4s steps(4, end) infinite;
+}
+@keyframes ellipsis {
+  0% {
+    content: '';
+  }
+  25% {
+    content: '.';
+  }
+  50% {
+    content: '..';
+  }
+  75% {
+    content: '...';
+  }
+}
+
+.tempchart {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+.tempchart__line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.tempchart__grad-top {
+  stop-color: var(--accent);
+  stop-opacity: 0.22;
+}
+.tempchart__grad-bot {
+  stop-color: var(--accent);
+  stop-opacity: 0;
+}
+.tempchart__dot {
+  fill: var(--accent-deep);
+}
+.tempchart__dot-halo {
+  fill: var(--accent-glow);
+}
+.tempchart__axis text {
+  fill: var(--ink-faint);
+  font-size: 9px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Controls / tiles.                                                  */
+/* ------------------------------------------------------------------ */
+
+.controls__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.tile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 64px;
+  padding: 12px 16px;
+  text-align: left;
+  background: var(--panel-raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-tile);
+  cursor: pointer;
+  color: var(--ink);
+  font: inherit;
+  transition:
+    transform 0.18s var(--ease),
+    border-color 0.18s var(--ease),
+    background 0.18s var(--ease),
+    box-shadow 0.18s var(--ease);
+}
+.tile:hover {
+  border-color: var(--hairline-strong);
+}
+.tile:active {
+  transform: scale(0.985);
+  box-shadow: var(--shadow-press);
+}
+.tile--on {
+  background: var(--accent-tint);
+  border-color: transparent;
+}
+.tile--off-grid {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.tile__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--panel);
+  border: 1px solid var(--hairline);
+  color: var(--ink-soft);
+  flex-shrink: 0;
+  transition: color 0.18s var(--ease), background 0.18s var(--ease);
+}
+.tile--on .tile__icon {
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--on-accent);
+}
+
+.tile__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.tile__name {
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tile__state {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.tile--on .tile__state {
+  color: var(--accent-deep);
+  font-weight: 500;
+}
+
+.tile__pip {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: var(--hairline-strong);
+  flex-shrink: 0;
+  transition: background 0.18s var(--ease), box-shadow 0.18s var(--ease);
+}
+.tile__pip--on {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+}
+
+/* Icon glyph primitives. */
+.glyph-stroke {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.glyph-fill {
+  fill: currentColor;
+  stroke: none;
+}
+.glyph-rays,
+.glyph-steam {
+  opacity: 0.85;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Scenes.                                                             */
+/* ------------------------------------------------------------------ */
+
+.scenes__row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.scene {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 18px 10px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--panel-raised);
+  border: 1px solid var(--hairline);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition:
+    transform 0.18s var(--ease),
+    border-color 0.18s var(--ease),
+    box-shadow 0.18s var(--ease);
+}
+.scene:hover {
+  border-color: var(--hairline-strong);
+}
+.scene:active {
+  transform: scale(0.97);
+}
+.scene:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.scene__glyph {
+  display: grid;
+  place-items: center;
+  color: var(--accent-deep);
+}
+.scene--active {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  background: var(--accent-tint);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Footer.                                                             */
+/* ------------------------------------------------------------------ */
+
+.aria__foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+  padding-top: 4px;
+}
+.aria__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Focus — visible for keyboard users on every interactive surface.   */
+/* ------------------------------------------------------------------ */
+
+.tile:focus-visible,
+.scene:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Responsive.                                                         */
+/* ------------------------------------------------------------------ */
+
+@media (min-width: 600px) {
+  .controls__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Wall tablet: widen the sheet and lay controls beside history. */
+@media (min-width: 900px) {
+  .aria__sheet {
+    max-width: 760px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'greeting greeting'
+      'climate  climate'
+      'history  controls'
+      'scenes   scenes'
+      'foot     foot';
+    align-items: start;
+  }
+  .greeting {
+    grid-area: greeting;
+  }
+  .climate {
+    grid-area: climate;
+  }
+  .history {
+    grid-area: history;
+  }
+  .controls {
+    grid-area: controls;
+  }
+  .scenes {
+    grid-area: scenes;
+  }
+  .aria__foot {
+    grid-area: foot;
+  }
+  .controls__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Reduced motion.                                                     */
+/* ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

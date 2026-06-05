@@ -1,0 +1,777 @@
+/* =================================================================== */
+/* Pulse — sensor monitoring dashboard                                  */
+/* Data-focused dark. Tinted near-black. One cool accent (cyan/teal).  */
+/* All colors OKLCH. Neutrals tinted toward the accent hue (~210).     */
+/* =================================================================== */
+
+:root {
+  /* Accent hue family — cyan/teal. */
+  --hue: 208;
+
+  /* Surfaces: near-black, tinted cool. Never pure black. */
+  --bg: oklch(17% 0.018 var(--hue));
+  --bg-2: oklch(20% 0.02 var(--hue));
+  --surface: oklch(23% 0.022 var(--hue));
+  --surface-2: oklch(26.5% 0.024 var(--hue));
+  --surface-3: oklch(30% 0.026 var(--hue));
+
+  /* Hairlines + borders. */
+  --line: oklch(34% 0.02 var(--hue) / 0.55);
+  --line-soft: oklch(40% 0.02 var(--hue) / 0.32);
+
+  /* Text. */
+  --text: oklch(95% 0.01 var(--hue));
+  --text-2: oklch(78% 0.015 var(--hue));
+  --text-3: oklch(63% 0.018 var(--hue));
+  --text-4: oklch(52% 0.018 var(--hue));
+
+  /* The single accent and two restrained supporting tints. */
+  --accent: oklch(80% 0.13 195);
+  --accent-dim: oklch(62% 0.1 198);
+  --warm: oklch(80% 0.11 78);
+  --mute: oklch(72% 0.05 230);
+
+  --danger: oklch(70% 0.13 28);
+
+  --radius: 16px;
+  --radius-sm: 11px;
+  --gap: clamp(12px, 1.6vw, 20px);
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  color-scheme: dark;
+}
+
+/* ---- Reset ------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(120% 80% at 12% -5%, oklch(24% 0.03 var(--hue)) 0%, transparent 55%),
+    radial-gradient(100% 70% at 100% 0%, oklch(22% 0.028 250) 0%, transparent 50%),
+    var(--bg);
+  color: var(--text);
+  font-family:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Inter,
+    'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 560;
+  letter-spacing: -0.01em;
+}
+
+/* Tabular numerals — the spine of a data dashboard. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1, 'cv01' 1;
+  letter-spacing: -0.01em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* =================================================================== */
+/* App shell                                                            */
+/* =================================================================== */
+
+.app {
+  min-height: 100%;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(14px, 2.4vw, 30px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.probes {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ---- Topbar ------------------------------------------------------ */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 4px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  color: var(--accent);
+  background: oklch(26% 0.04 var(--hue));
+  border: 1px solid var(--line);
+  box-shadow: inset 0 0 0 1px oklch(60% 0.08 195 / 0.08);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.brand-name {
+  font-size: 20px;
+  font-weight: 620;
+  letter-spacing: -0.02em;
+}
+
+.brand-sub {
+  font-size: 12px;
+  color: var(--text-3);
+  letter-spacing: 0.02em;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.window-chip {
+  font-size: 12px;
+  color: var(--text-3);
+  padding: 7px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--line-soft);
+  background: oklch(24% 0.02 var(--hue) / 0.5);
+}
+
+.clock {
+  font-size: 18px;
+  color: var(--text-2);
+  font-weight: 520;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* =================================================================== */
+/* Hero                                                                 */
+/* =================================================================== */
+
+.hero {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(18px, 3vw, 40px);
+  align-items: center;
+  padding: clamp(18px, 2.6vw, 30px);
+  border-radius: calc(var(--radius) + 4px);
+  background:
+    linear-gradient(180deg, oklch(25% 0.025 var(--hue)) 0%, oklch(22% 0.022 var(--hue)) 100%);
+  border: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::after {
+  /* faint top edge highlight, not glass */
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, oklch(70% 0.08 195 / 0.35), transparent);
+}
+
+.hero-gauge {
+  width: clamp(150px, 18vw, 188px);
+}
+
+.hero-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.hero-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hero-title {
+  font-size: clamp(20px, 2.6vw, 28px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.hero-trend,
+.trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--text-3);
+  padding: 5px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--line-soft);
+  white-space: nowrap;
+}
+
+.hero-trend[data-dir='up'],
+.trend[data-dir='up'] {
+  color: var(--accent);
+}
+.hero-trend[data-dir='down'],
+.trend[data-dir='down'] {
+  color: var(--mute);
+}
+
+.hero-chart {
+  width: 100%;
+}
+
+/* =================================================================== */
+/* Sparkline                                                            */
+/* =================================================================== */
+
+.spark {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.spark--empty {
+  height: 56px;
+}
+
+.spark-baseline {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.spark-line {
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 6px oklch(75% 0.12 195 / 0.25));
+  animation: spark-draw 1100ms var(--ease) forwards;
+}
+
+@keyframes spark-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.spark-area {
+  animation: spark-fade 900ms var(--ease) 250ms both;
+}
+
+@keyframes spark-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.spark-head {
+  animation: spark-pop 400ms var(--ease) 900ms both;
+}
+
+.spark-head-halo {
+  stroke-width: 1.4;
+  opacity: 0.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spark-ping 2.4s ease-out 1100ms infinite;
+}
+
+@keyframes spark-pop {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes spark-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  70%,
+  100% {
+    transform: scale(3.4);
+    opacity: 0;
+  }
+}
+
+/* =================================================================== */
+/* Radial gauge                                                         */
+/* =================================================================== */
+
+.gauge {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gauge-track {
+  stroke: oklch(34% 0.02 var(--hue));
+}
+
+.gauge-value {
+  animation: gauge-sweep 1200ms var(--ease) forwards;
+  filter: drop-shadow(0 0 5px oklch(75% 0.12 195 / 0.3));
+}
+
+@keyframes gauge-sweep {
+  from {
+    stroke-dashoffset: var(--full, 9999);
+  }
+}
+
+.gauge-knob {
+  animation: spark-pop 360ms var(--ease) 1100ms both;
+}
+
+.gauge-num {
+  fill: var(--text);
+  font-size: 34px;
+  font-weight: 640;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.gauge-unit {
+  fill: var(--text-3);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.gauge-cap {
+  fill: var(--accent);
+  font-size: 12px;
+  font-weight: 560;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* =================================================================== */
+/* Ops strip                                                            */
+/* =================================================================== */
+
+.ops {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 18px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.ops-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+.ops-pulse {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex: none;
+}
+
+.ops-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: inherit;
+  animation: ops-ping 2.2s ease-out infinite;
+}
+
+@keyframes ops-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  80%,
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+.ops-state[data-status='degraded'] .ops-pulse {
+  background: var(--warm);
+}
+.ops-state[data-status='degraded'] {
+  color: var(--text);
+}
+.ops-state[data-status='idle'] .ops-pulse {
+  background: var(--text-4);
+}
+.ops-state[data-status='idle'] .ops-pulse::after {
+  animation: none;
+}
+
+.ops-count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+.ops-count-num {
+  font-size: 19px;
+  font-weight: 640;
+  color: var(--text);
+}
+
+.ops-count-sep {
+  color: var(--text-4);
+}
+
+.ops-count-den {
+  color: var(--text-3);
+}
+
+.ops-count-label {
+  margin-left: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-4);
+}
+
+/* =================================================================== */
+/* Sensor grid + cards                                                  */
+/* =================================================================== */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--gap);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  position: relative;
+  transition: border-color 200ms var(--ease), transform 200ms var(--ease);
+}
+
+.card::before {
+  /* accent rail on the left edge, doubles as the legend for accent */
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 16px;
+  bottom: 16px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--rail, var(--accent));
+  opacity: 0.85;
+}
+
+.card[data-accent='warm'] {
+  --rail: var(--warm);
+}
+.card[data-accent='mute'] {
+  --rail: var(--mute);
+}
+
+.card:not([data-available]) {
+  --rail: var(--text-4);
+}
+.card:not([data-available])::before {
+  opacity: 0.4;
+}
+
+.card:hover {
+  border-color: var(--line);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-left: 8px;
+}
+
+.card-title {
+  font-size: 13.5px;
+  font-weight: 560;
+  color: var(--text-2);
+  letter-spacing: 0.01em;
+}
+
+.trend-word {
+  font-size: 11.5px;
+}
+
+.trend--off {
+  color: var(--text-4);
+}
+
+.dot-off {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-4);
+}
+
+.card-readout {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding-left: 8px;
+}
+
+.readout {
+  font-size: clamp(30px, 5vw, 38px);
+  font-weight: 640;
+  line-height: 1;
+  color: var(--text);
+}
+
+.readout:not([data-available]) {
+  color: var(--text-4);
+}
+
+.readout-unit {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+.card-chart {
+  padding-left: 8px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+}
+
+.chart-skeleton {
+  width: 100%;
+  height: 56px;
+  border-radius: 8px;
+  background: linear-gradient(
+    100deg,
+    oklch(26% 0.02 var(--hue)) 30%,
+    oklch(30% 0.025 var(--hue)) 50%,
+    oklch(26% 0.02 var(--hue)) 70%
+  );
+  background-size: 220% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.chart-skeleton--lg {
+  height: 84px;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 140% 0;
+  }
+  to {
+    background-position: -40% 0;
+  }
+}
+
+.chart-error {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-4);
+}
+
+/* ---- Stats (min / avg / peak) ------------------------------------ */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin: 0;
+  padding: 2px 0 0;
+  background: var(--line-soft);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--line-soft);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px 11px;
+  background: oklch(22% 0.02 var(--hue));
+}
+
+.stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-4);
+}
+
+.stat[data-kind='peak'] .stat-label {
+  color: var(--accent-dim);
+}
+
+.stat-value {
+  font-size: 14.5px;
+  font-weight: 580;
+  color: var(--text-2);
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.stat[data-kind='peak'] .stat-value {
+  color: var(--text);
+}
+
+.stat-unit {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-4);
+}
+
+/* =================================================================== */
+/* Footer                                                               */
+/* =================================================================== */
+
+.footer {
+  margin-top: 2px;
+  padding-top: 4px;
+}
+
+.footer-text {
+  font-size: 12px;
+  color: var(--text-4);
+}
+
+/* =================================================================== */
+/* Responsive                                                           */
+/* =================================================================== */
+
+@media (max-width: 720px) {
+  .hero {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .hero-gauge {
+    width: clamp(160px, 46vw, 200px);
+  }
+
+  .hero-body {
+    width: 100%;
+  }
+
+  .hero-heading {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar-right .window-chip {
+    display: none;
+  }
+}
+
+@media (min-width: 721px) and (max-width: 1000px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Touch targets: ensure interactive chips clear 44px on coarse pointers. */
+@media (pointer: coarse) {
+  .window-chip {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+/* =================================================================== */
+/* Reduced motion                                                       */
+/* =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .spark-line {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .gauge-value {
+    animation: none !important;
+  }
+
+  .spark-head-halo,
+  .ops-pulse::after {
+    display: none;
+  }
+}

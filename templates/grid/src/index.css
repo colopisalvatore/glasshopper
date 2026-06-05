@@ -1,0 +1,447 @@
+/* =========================================================================
+   Grid — Material Design 3 tile grid for Home Assistant
+   OKLCH only. Neutrals are tinted toward the accent hue so light and dark
+   read as tonal surfaces, not flat gray. One dynamic accent throughout.
+   ========================================================================= */
+
+:root {
+  /* The single accent. Change this hue and the whole grid re-tones. */
+  --accent-h: 258;
+  --accent-c: 0.16;
+
+  --accent: oklch(0.62 var(--accent-c) var(--accent-h));
+  --accent-strong: oklch(0.55 var(--accent-c) var(--accent-h));
+  --on-accent: oklch(0.99 0.01 var(--accent-h));
+
+  /* Tonal surfaces — light scheme. Chroma is tiny so they stay neutral-warm. */
+  --bg: oklch(0.97 0.008 var(--accent-h));
+  --surface: oklch(0.99 0.006 var(--accent-h));
+  --surface-2: oklch(0.955 0.012 var(--accent-h));
+  --surface-active: oklch(0.93 0.05 var(--accent-h));
+  --surface-active-strong: oklch(0.9 0.07 var(--accent-h));
+
+  --line: oklch(0.9 0.012 var(--accent-h));
+  --line-soft: oklch(0.93 0.01 var(--accent-h));
+
+  --text: oklch(0.27 0.02 var(--accent-h));
+  --text-dim: oklch(0.52 0.02 var(--accent-h));
+  --text-faint: oklch(0.64 0.015 var(--accent-h));
+
+  --warn: oklch(0.7 0.13 65);
+  --on-tint: oklch(0.45 0.13 var(--accent-h));
+
+  --radius-tile: 22px;
+  --radius-chip: 14px;
+  --shadow-tile: 0 1px 2px oklch(0.4 0.02 var(--accent-h) / 0.08),
+    0 6px 18px oklch(0.4 0.02 var(--accent-h) / 0.06);
+  --shadow-active: 0 1px 2px oklch(0.4 0.05 var(--accent-h) / 0.18),
+    0 10px 28px oklch(0.5 0.1 var(--accent-h) / 0.22);
+
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --accent: oklch(0.74 0.15 var(--accent-h));
+    --accent-strong: oklch(0.8 0.14 var(--accent-h));
+    --on-accent: oklch(0.18 0.04 var(--accent-h));
+
+    --bg: oklch(0.17 0.018 var(--accent-h));
+    --surface: oklch(0.215 0.022 var(--accent-h));
+    --surface-2: oklch(0.25 0.026 var(--accent-h));
+    --surface-active: oklch(0.34 0.07 var(--accent-h));
+    --surface-active-strong: oklch(0.4 0.09 var(--accent-h));
+
+    --line: oklch(0.32 0.02 var(--accent-h));
+    --line-soft: oklch(0.27 0.018 var(--accent-h));
+
+    --text: oklch(0.94 0.012 var(--accent-h));
+    --text-dim: oklch(0.74 0.018 var(--accent-h));
+    --text-faint: oklch(0.6 0.018 var(--accent-h));
+
+    --warn: oklch(0.78 0.13 65);
+    --on-tint: oklch(0.85 0.13 var(--accent-h));
+
+    --shadow-tile: 0 1px 2px oklch(0 0 0 / 0.3), 0 8px 22px oklch(0 0 0 / 0.32);
+    --shadow-active: 0 1px 2px oklch(0 0 0 / 0.35), 0 12px 30px oklch(0.5 0.1 var(--accent-h) / 0.3);
+
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---- Shell -------------------------------------------------------------- */
+
+.grid-app {
+  min-height: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(16px, 3.5vw, 40px) clamp(16px, 3vw, 32px) 56px;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 3vw, 32px);
+}
+
+/* ---- Topbar ------------------------------------------------------------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.topbar__title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-mark {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3px;
+  width: 34px;
+  height: 34px;
+  padding: 4px;
+  border-radius: 11px;
+  background: var(--surface);
+  box-shadow: var(--shadow-tile);
+}
+.brand-mark span {
+  border-radius: 3px;
+  background: var(--surface-2);
+}
+.brand-mark span:nth-child(1) {
+  background: var(--accent);
+}
+.brand-mark span:nth-child(4) {
+  background: var(--accent-strong);
+}
+
+.topbar__heading h1 {
+  margin: 0;
+  font-size: clamp(20px, 2.6vw, 26px);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+.topbar__heading p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px 10px 16px;
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: var(--shadow-tile);
+}
+.summary__count {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--accent-strong);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.summary__label {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.summary__sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-faint);
+}
+
+/* ---- Board / groups ----------------------------------------------------- */
+
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(22px, 3.4vw, 36px);
+}
+
+.group__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.group__header h2 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-dim);
+}
+.group__rule {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.group__count {
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-faint);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.group__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: clamp(10px, 1.4vw, 16px);
+}
+
+/* ---- Tile --------------------------------------------------------------- */
+
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 132px;
+  padding: 16px 16px 15px;
+  border-radius: var(--radius-tile);
+  background: var(--surface);
+  text-align: left;
+  font: inherit;
+  color: var(--text);
+  box-shadow: var(--shadow-tile);
+  border: 1px solid transparent;
+  overflow: hidden;
+}
+
+.tile--button {
+  cursor: pointer;
+  transition:
+    transform 0.18s var(--ease),
+    background-color 0.22s var(--ease),
+    box-shadow 0.22s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.tile--button:hover {
+  transform: translateY(-2px);
+}
+.tile--button:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.tile:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 3px var(--bg),
+    0 0 0 5px var(--accent),
+    var(--shadow-tile);
+}
+
+.tile__topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.tile__iconwrap {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-chip);
+  background: var(--surface-2);
+  color: var(--text-dim);
+  transition:
+    background-color 0.22s var(--ease),
+    color 0.22s var(--ease);
+}
+.tile__icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* on/off pip — never color alone; the pip is paired with the state word */
+.tile__pip {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  background: transparent;
+  transition:
+    background-color 0.22s var(--ease),
+    border-color 0.22s var(--ease),
+    box-shadow 0.22s var(--ease);
+}
+.tile__pip--on {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px oklch(0.62 var(--accent-c) var(--accent-h) / 0.18);
+}
+
+.tile__name {
+  font-size: 14.5px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tile__state {
+  margin-top: 1px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.tile__meta {
+  margin-top: auto;
+  padding-top: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* ---- Tile states -------------------------------------------------------- */
+
+.tile--on {
+  background: var(--surface-active);
+  border-color: oklch(0.62 var(--accent-c) var(--accent-h) / 0.28);
+  box-shadow: var(--shadow-active);
+}
+.tile--on .tile__iconwrap {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.tile--on .tile__state {
+  color: var(--on-tint);
+}
+.tile--on.tile--button:hover {
+  background: var(--surface-active-strong);
+}
+
+.tile--off .tile__iconwrap {
+  color: var(--text-faint);
+}
+
+.tile--value .tile__iconwrap {
+  background: var(--surface-2);
+  color: var(--accent-strong);
+}
+
+.tile--unavailable {
+  background: var(--surface-2);
+  box-shadow: none;
+  border: 1px dashed var(--line);
+}
+.tile--unavailable .tile__name,
+.tile--unavailable .tile__iconwrap {
+  opacity: 0.55;
+}
+.tile--unavailable .tile__state {
+  color: var(--text-faint);
+  font-weight: 600;
+}
+.tile--unavailable .tile__state::before {
+  /* non-color cue for the unavailable state */
+  content: '';
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  margin-right: 6px;
+  vertical-align: -1px;
+  border-radius: 999px;
+  border: 1.5px dashed var(--text-faint);
+}
+
+/* ---- Footer ------------------------------------------------------------- */
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+/* ---- Responsive --------------------------------------------------------- */
+
+@media (max-width: 560px) {
+  .group__grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  .tile {
+    min-height: 124px;
+    padding: 14px;
+  }
+  .summary {
+    padding: 8px 14px;
+  }
+  .summary__count {
+    font-size: 24px;
+  }
+}
+
+@media (min-width: 1000px) {
+  .group__grid {
+    grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  }
+}
+
+/* ---- Motion ------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .tile--button:hover,
+  .tile--button:active {
+    transform: none;
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "id": "grid",
+  "name": "Grid",
+  "version": "0.1.0",
+  "author": "glasshopper",
+  "description": "A compact Material 3 tile grid for Home Assistant. Many devices at a glance on dynamic tonal surfaces, with rounded responsive auto-fit tiles, inline-SVG icons, live state, area group headers, and one dynamic accent. Tap to toggle. Light and dark."
+}

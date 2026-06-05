@@ -1,0 +1,7 @@
+{
+  "id": "pulse",
+  "name": "Pulse",
+  "version": "0.1.0",
+  "author": "glasshopper",
+  "description": "A quiet sensor monitoring ops panel for Home Assistant. Live readouts in tabular numerals, animated inline-SVG sparklines, a radial gauge, and min/avg/peak stats over a tinted near-black surface with one cool cyan accent."
+}
