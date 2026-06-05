@@ -51,7 +51,12 @@ export function Templates() {
               An iOS-Home-inspired dashboard. Multi-room control, live energy,
               ambient weather, tuned for a wall tablet at two metres.
             </p>
-            <a className="tpl-feature__link" href={`${config.docs}/templates/jarvis`}>
+            <a
+              className="tpl-feature__link"
+              href={config.premiumUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               View Jarvis
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

@@ -13,18 +13,6 @@
       "preview": null,
       "source": "https://github.com/colopisalvatore/glasshopper",
       "download": null
-    },
-    {
-      "id": "jarvis",
-      "name": "Jarvis",
-      "version": "0.1.0",
-      "author": "Salvatore Colopi",
-      "license": "Commercial",
-      "tier": "premium",
-      "description": "iOS-Home-inspired premium dashboard with hero tiles, energy view, weather, multi-room layout, and Lucide iconography.",
-      "preview": null,
-      "source": "https://jarvis.salvatorecolopi.com",
-      "download": null
     }
   ]
 }

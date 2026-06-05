@@ -78,7 +78,6 @@ export default defineConfig({
           items: [
             { text: 'Overview', link: '/templates/' },
             { text: 'Build your own', link: '/templates/build' },
-            { text: 'Jarvis (premium)', link: '/templates/jarvis' },
           ],
         },
       ],

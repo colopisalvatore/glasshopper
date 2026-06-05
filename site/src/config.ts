@@ -7,4 +7,6 @@ export const config = {
   docs: 'https://docs.glasshopper.dev',
   domain: 'glasshopper.dev',
   cli: 'npx create-glasshopper my-dashboard',
+  // Commercial side lives off-repo. The landing markets it and links out.
+  premiumUrl: 'https://jarvis.salvatorecolopi.com',
 };

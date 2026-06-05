@@ -5,12 +5,12 @@ serves as a Home Assistant panel.
 
 ## First-party templates
 
-| ID        | Tier    | What you get                                              |
-| --------- | ------- | --------------------------------------------------------- |
-| `minimal` | free    | Empty scaffold with the five hooks wired. Start here.     |
-| `jarvis`  | premium | iOS-Home-style premium dashboard. Multi-room, energy, weather. |
+| ID        | Tier | What you get                                          |
+| --------- | ---- | ----------------------------------------------------- |
+| `minimal` | free | Empty scaffold with the five hooks wired. Start here. |
 
-Premium templates ship as built bundles only — source stays closed.
+Templates can be free or commercial. Commercial templates are distributed by
+their authors as built bundles; they are not part of this repository.
 
 ## Install a template
 

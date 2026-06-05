@@ -73,10 +73,12 @@ the URL to your users — they install it via the service or the integration UI.
 
 ## First-party templates
 
-| ID        | Tier    | Source                              |
-| --------- | ------- | ----------------------------------- |
-| `minimal` | free    | Repo root (use `create-glasshopper`) |
-| `jarvis`  | premium | See `jarvis/README.md`               |
+| ID        | Tier | Source                               |
+| --------- | ---- | ------------------------------------ |
+| `minimal` | free | Repo root (use `create-glasshopper`) |
+
+Commercial templates are distributed by their authors and are not part of this
+repository. The registry only lists open templates.
 
 ## Contributing a template
 
