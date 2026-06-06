@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { HassEntity } from 'home-assistant-js-websocket';
 import { useEntity, useService, useHistory } from '@/hooks';
 import { TempChart } from '@/components/TempChart';
+import { AppShell } from '@/components/AppShell';
 
 /* ------------------------------------------------------------------ */
 /*  Aria — a single-room glance dashboard for Home Assistant.          */
@@ -478,32 +479,30 @@ const SCENES: SceneSpec[] = [
 
 export function App() {
   return (
-    <div className="aria">
-      <div className="aria__sheet">
-        <Greeting />
-        <ClimateStrip
-          tempId="sensor.living_room_temperature"
-          humidityId="sensor.living_room_humidity"
-          climateId="climate.living_room"
-        />
-        <HistoryCard entityId="sensor.living_room_temperature" />
+    <AppShell>
+      <Greeting />
+      <ClimateStrip
+        tempId="sensor.living_room_temperature"
+        humidityId="sensor.living_room_humidity"
+        climateId="climate.living_room"
+      />
+      <HistoryCard entityId="sensor.living_room_temperature" />
 
-        <section className="controls" aria-label="Lights and switches">
-          <h2 className="section-heading">Room</h2>
-          <div className="controls__grid">
-            {TOGGLES.map((t) => (
-              <ToggleTile key={t.entityId} spec={t} />
-            ))}
-          </div>
-        </section>
+      <section className="controls" aria-label="Lights and switches">
+        <h2 className="section-heading">Room</h2>
+        <div className="controls__grid gh-grid">
+          {TOGGLES.map((t) => (
+            <ToggleTile key={t.entityId} spec={t} />
+          ))}
+        </div>
+      </section>
 
-        <SceneRow scenes={SCENES} />
+      <SceneRow scenes={SCENES} />
 
-        <footer className="aria__foot">
-          <span className="aria__dot" aria-hidden="true" />
-          Aria
-        </footer>
-      </div>
-    </div>
+      <footer className="aria__foot">
+        <span className="aria__dot" aria-hidden="true" />
+        Aria
+      </footer>
+    </AppShell>
   );
 }

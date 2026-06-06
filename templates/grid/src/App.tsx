@@ -1,6 +1,7 @@
 import { useMemo, type JSX } from 'react';
 import type { HassEntity } from 'home-assistant-js-websocket';
 import { useEntity, useService } from '@/hooks';
+import { AppShell } from '@/components/AppShell';
 import { GridIcon, type IconName } from '@/components/GridIcons';
 
 /* -------------------------------------------------------------------------- */
@@ -311,25 +312,27 @@ function ActiveCount(): JSX.Element {
 /* -------------------------------------------------------------------------- */
 
 export function App(): JSX.Element {
-  return (
-    <div className="grid-app">
-      <header className="topbar">
-        <div className="topbar__title">
-          <span className="brand-mark" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-            <span />
-          </span>
-          <div className="topbar__heading">
-            <h1>Grid</h1>
-            <p>Every device, at a glance</p>
-          </div>
+  const topbar = (
+    <>
+      <div className="topbar__title">
+        <span className="brand-mark" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+          <span />
+        </span>
+        <div className="topbar__heading">
+          <h1>Grid</h1>
+          <p>Every device, at a glance</p>
         </div>
-        <ActiveCount />
-      </header>
+      </div>
+      <ActiveCount />
+    </>
+  );
 
-      <main className="board">
+  return (
+    <AppShell topbar={topbar}>
+      <div className="board">
         {GROUPS.map((group) => (
           <section key={group.id} className="group" aria-labelledby={`group-${group.id}`}>
             <div className="group__header">
@@ -337,20 +340,20 @@ export function App(): JSX.Element {
               <span className="group__rule" aria-hidden="true" />
               <span className="group__count">{group.tiles.length}</span>
             </div>
-            <div className="group__grid">
+            <div className="group__grid gh-grid gh-grid--dense">
               {group.tiles.map((tile) => (
                 <Tile key={tile.entityId} def={tile} />
               ))}
             </div>
           </section>
         ))}
-      </main>
+      </div>
 
       <footer className="footer">
         <span>Grid template</span>
         <span aria-hidden="true">·</span>
         <span>Tap a control tile to toggle</span>
       </footer>
-    </div>
+    </AppShell>
   );
 }

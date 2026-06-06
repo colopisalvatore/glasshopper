@@ -7,6 +7,7 @@ import {
 import { useEntity, useHistory } from '@/hooks';
 import { Sparkline, type Point } from '@/components/Sparkline';
 import { RadialGauge } from '@/components/RadialGauge';
+import { AppShell } from '@/components/AppShell';
 
 /**
  * Pulse — a quiet sensor + monitoring ops panel for Home Assistant.
@@ -463,8 +464,39 @@ export function App(): ReactNode {
   const hero = SENSORS[0];
   const rest = SENSORS.slice(1);
 
+  const topbar = (
+    <>
+      <div className="brand">
+        <span className="brand-mark" aria-hidden>
+          <svg viewBox="0 0 28 28" width="22" height="22" focusable="false">
+            <path
+              d="M2 14h5l2.5-8 4 18 3-13 2.5 6h6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
+        <div className="brand-text">
+          <span className="brand-name">Pulse</span>
+          <span className="brand-sub">Sensor monitor</span>
+        </div>
+      </div>
+      <div className="topbar-right">
+        <span className="window-chip" aria-label={`Window: last ${HOURS_BACK} hours`}>
+          {HOURS_BACK}h window
+        </span>
+        <time className="clock tnum" aria-label={`Time ${clock}`}>
+          {clock}
+        </time>
+      </div>
+    </>
+  );
+
   return (
-    <div className="app">
+    <AppShell topbar={topbar}>
       {/* Invisible probes keep the ops count live without re-rendering cards. */}
       <div className="probes" aria-hidden>
         {SENSORS.map((s) => (
@@ -472,53 +504,22 @@ export function App(): ReactNode {
         ))}
       </div>
 
-      <header className="topbar">
-        <div className="brand">
-          <span className="brand-mark" aria-hidden>
-            <svg viewBox="0 0 28 28" width="22" height="22" focusable="false">
-              <path
-                d="M2 14h5l2.5-8 4 18 3-13 2.5 6h6"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
-          <div className="brand-text">
-            <span className="brand-name">Pulse</span>
-            <span className="brand-sub">Sensor monitor</span>
-          </div>
-        </div>
-        <div className="topbar-right">
-          <span className="window-chip" aria-label={`Window: last ${HOURS_BACK} hours`}>
-            {HOURS_BACK}h window
-          </span>
-          <time className="clock tnum" aria-label={`Time ${clock}`}>
-            {clock}
-          </time>
-        </div>
-      </header>
+      <Hero config={hero} />
 
-      <main className="main">
-        <Hero config={hero} />
+      <OpsStrip total={SENSORS.length} online={online} />
 
-        <OpsStrip total={SENSORS.length} online={online} />
-
-        <section className="grid" aria-label="Sensors">
-          {rest.map((s) => (
-            <SensorCard key={s.id} config={s} />
-          ))}
-        </section>
-      </main>
+      <section className="grid gh-grid" aria-label="Sensors">
+        {rest.map((s) => (
+          <SensorCard key={s.id} config={s} />
+        ))}
+      </section>
 
       <footer className="footer">
         <span className="footer-text">
           Readings refresh live. Range shown over the last {HOURS_BACK} hours.
         </span>
       </footer>
-    </div>
+    </AppShell>
   );
 }
 

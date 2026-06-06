@@ -1,3 +1,8 @@
+/* Shared responsive standard — structural tokens + app shell.
+   Imported first so Aria's :root below overrides only the palette values. */
+@import './styles/tokens.css';
+@import './styles/shell.css';
+
 /* ================================================================== */
 /*  Aria — warm neutral, light-first single-room glance dashboard.     */
 /*  OKLCH only. One accent: amber clay (~62deg hue). Tinted neutrals.   */
@@ -6,6 +11,21 @@
 :root {
   /* Hue anchor for the whole palette — warm. */
   --hue: 62;
+
+  /* Stage width: old sheet capped at 560/760; fill a landscape tablet but
+     cap on desktop so the single-room glance stays calm and centred. */
+  --stage-maxw: 1100px;
+  /* Aria's tiles are wide list rows; keep them comfortable in the reflow. */
+  --tile-min: 280px;
+
+  /* Map the shared shell's palette hooks onto Aria's warm identity so the
+     ambient body wash + focus ring stay warm, not the default blue. */
+  --bg-tint: var(--sheet);
+  --accent-soft: var(--accent-tint);
+  --focus: var(--accent);
+  --font:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
 
   /* Surfaces, tinted toward the warm hue rather than pure grey. */
   --bg: oklch(0.965 0.012 var(--hue));
@@ -70,61 +90,23 @@
     --shadow-soft: 0 1px 2px oklch(0 0 0 / 0.3), 0 10px 30px oklch(0 0 0 / 0.35);
     --shadow-press: 0 1px 2px oklch(0 0 0 / 0.4);
 
+    /* Keep the shared shell's warm wash + focus in dark too. */
+    --bg-tint: var(--sheet);
+    --accent-soft: var(--accent-tint);
+    --focus: var(--accent);
+
     color-scheme: dark;
   }
 }
 
-* {
-  box-sizing: border-box;
-}
+/* Reset + html/body/#root + body styles: now owned by shell.css/tokens.css. */
+/* Layout shell (.aria / .aria__sheet) removed — AppShell + shell.css own it.
+   The warm ambient wash is provided by shell.css's body via --bg-tint /
+   --accent-soft, which Aria maps to its warm sheet/accent-tint above. */
 
-html,
-body,
-#root {
-  height: 100%;
-  margin: 0;
-}
-
-body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family:
-    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica,
-    Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Shell.                                                              */
-/* ------------------------------------------------------------------ */
-
-.aria {
-  min-height: 100%;
-  /* A faint warm wash anchored top-left, the only ambient gradient. */
-  background:
-    radial-gradient(
-      120% 80% at 12% -10%,
-      var(--accent-tint),
-      transparent 55%
-    ),
-    var(--bg);
-  padding: clamp(14px, 4vw, 40px);
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.aria__sheet {
-  width: 100%;
-  max-width: 560px;
-  background: var(--sheet);
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-sheet);
-  box-shadow: var(--shadow-soft);
-  padding: clamp(20px, 5vw, 34px);
-  display: flex;
-  flex-direction: column;
+/* Aria's sheet is now the stage itself; give the stage a calm centred column
+   so the single-room glance keeps its airy, contained feel. */
+.gh-app__stage {
   gap: clamp(22px, 4vw, 30px);
 }
 
@@ -414,9 +396,10 @@ body {
 /*  Controls / tiles.                                                  */
 /* ------------------------------------------------------------------ */
 
+/* Columns + breakpoints now handled by .gh-grid (added in App.tsx).
+   Keep a tighter gap and a roomy tile-min so the wide list rows reflow well. */
 .controls__grid {
-  display: grid;
-  grid-template-columns: 1fr;
+  --tile-min: 280px;
   gap: 10px;
 }
 
@@ -612,59 +595,9 @@ body {
 
 /* ------------------------------------------------------------------ */
 /*  Responsive.                                                         */
+/*  The old layout-shell media queries (.aria__sheet grid areas) and    */
+/*  the .controls__grid column breakpoints are removed: AppShell +       */
+/*  shell.css handle the viewport, and .gh-grid handles tile reflow.     */
 /* ------------------------------------------------------------------ */
 
-@media (min-width: 600px) {
-  .controls__grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-/* Wall tablet: widen the sheet and lay controls beside history. */
-@media (min-width: 900px) {
-  .aria__sheet {
-    max-width: 760px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas:
-      'greeting greeting'
-      'climate  climate'
-      'history  controls'
-      'scenes   scenes'
-      'foot     foot';
-    align-items: start;
-  }
-  .greeting {
-    grid-area: greeting;
-  }
-  .climate {
-    grid-area: climate;
-  }
-  .history {
-    grid-area: history;
-  }
-  .controls {
-    grid-area: controls;
-  }
-  .scenes {
-    grid-area: scenes;
-  }
-  .aria__foot {
-    grid-area: foot;
-  }
-  .controls__grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ------------------------------------------------------------------ */
-/*  Reduced motion.                                                     */
-/* ------------------------------------------------------------------ */
-
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-  }
-}
+/* Reduced-motion: now owned by shell.css. */

@@ -1,3 +1,8 @@
+/* Shared responsive standard: structural tokens + app shell.
+   Imported first so the template :root palette below overrides palette values. */
+@import './styles/tokens.css';
+@import './styles/shell.css';
+
 /* =========================================================================
    Grid — Material Design 3 tile grid for Home Assistant
    OKLCH only. Neutrals are tinted toward the accent hue so light and dark
@@ -39,6 +44,15 @@
 
   --ease: cubic-bezier(0.2, 0, 0, 1);
 
+  /* Shared shell hooks — map the Grid palette onto the contract variable names
+     used by shell.css (body background, focus) so the shell wears Grid colors. */
+  --stage-maxw: 1280px;
+  --bg-tint: var(--surface);
+  --accent-soft: var(--surface-active);
+  --ink: var(--text);
+  --focus: var(--accent);
+  --font: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
   color-scheme: light;
 }
 
@@ -71,36 +85,8 @@
   }
 }
 
-* {
-  box-sizing: border-box;
-}
-
-html,
-body,
-#root {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-/* ---- Shell -------------------------------------------------------------- */
-
-.grid-app {
-  min-height: 100%;
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: clamp(16px, 3.5vw, 40px) clamp(16px, 3vw, 32px) 56px;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(20px, 3vw, 32px);
-}
+/* Reset, html/body/#root sizing, body background, and page-shell layout
+   (.grid-app) removed — now owned by shared tokens.css + shell.css (.gh-app). */
 
 /* ---- Topbar ------------------------------------------------------------- */
 
@@ -224,11 +210,8 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-.group__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
-  gap: clamp(10px, 1.4vw, 16px);
-}
+/* Columns + gap come from the shared .gh-grid reflow primitive (gh-grid--dense
+   is applied in App.tsx). Local rules removed so the grid reflows responsively. */
 
 /* ---- Tile --------------------------------------------------------------- */
 
@@ -406,12 +389,10 @@ body {
 }
 
 /* ---- Responsive --------------------------------------------------------- */
+/* Grid column counts now come from the shared .gh-grid reflow primitive.
+   Keep only the small-screen tile/summary polish that is part of the Grid look. */
 
 @media (max-width: 560px) {
-  .group__grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 10px;
-  }
   .tile {
     min-height: 124px;
     padding: 14px;
@@ -424,22 +405,11 @@ body {
   }
 }
 
-@media (min-width: 1000px) {
-  .group__grid {
-    grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
-  }
-}
-
 /* ---- Motion ------------------------------------------------------------- */
+/* prefers-reduced-motion reset now owned by shared shell.css. Keep only the
+   Grid-specific hover/active transform suppression. */
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-  }
   .tile--button:hover,
   .tile--button:active {
     transform: none;
