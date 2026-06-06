@@ -8,7 +8,7 @@ npx create-glasshopper my-dashboard
 
 ## Options
 
-- `--template <id>` — one of `minimal`, `jarvis`. Default: `minimal`.
+- `--template <id>` — one of `minimal`, `halcyon`. Default: `minimal`.
 - `--help` — show all flags.
 - `--version` — print CLI version.
 
@@ -17,7 +17,7 @@ npx create-glasshopper my-dashboard
 | ID        | What you get                                                 |
 | --------- | ------------------------------------------------------------ |
 | `minimal` | Empty React app with hooks wired, Tailwind off, ready to go. |
-| `jarvis`  | Premium iOS-Home-style dashboard (paid template).            |
+| `halcyon`  | Premium iOS-Home-style dashboard (paid template).            |
 
 ## What it does
 

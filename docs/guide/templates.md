@@ -11,7 +11,7 @@ ConfigEntry points at one installed template.
 │   ├── index.html
 │   ├── assets/
 │   └── template.json
-├── jarvis/
+├── halcyon/
 │   ├── index.html
 │   ├── assets/
 │   └── template.json

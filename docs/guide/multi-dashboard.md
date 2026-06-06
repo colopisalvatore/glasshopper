@@ -17,8 +17,8 @@ template, and each gets its own URL:
 
 | Entry          | Template       | Slug             | Admin only | Public |
 | -------------- | -------------- | ---------------- | ---------- | ------ |
-| Kitchen Tablet | `jarvis`       | `kitchen-tablet` | No         | Yes    |
-| Office         | `jarvis`       | `office`         | No         | No     |
+| Kitchen Tablet | `halcyon`       | `kitchen-tablet` | No         | Yes    |
+| Office         | `halcyon`       | `office`         | No         | No     |
 | Guest          | `minimal`      | `guest`          | No         | No     |
 
 ## Routing in the React app

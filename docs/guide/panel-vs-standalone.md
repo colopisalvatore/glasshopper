@@ -14,7 +14,7 @@ Loaded inside an iframe by HA's frontend. The dashboard reads
 entities, services, and registry calls go through that connection.
 
 This is what users see when they click the sidebar entry. The route URL is
-`/<your-slug>` — for example `/jarvis` or `/control`.
+`/<your-slug>` — for example `/halcyon` or `/control`.
 
 ## Standalone mode
 
