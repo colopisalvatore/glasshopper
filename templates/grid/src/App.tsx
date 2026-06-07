@@ -332,7 +332,7 @@ export function App(): JSX.Element {
 
   return (
     <AppShell topbar={topbar}>
-      <div className="board">
+      <div className="board gh-fill">
         {GROUPS.map((group) => (
           <section key={group.id} className="group" aria-labelledby={`group-${group.id}`}>
             <div className="group__header">

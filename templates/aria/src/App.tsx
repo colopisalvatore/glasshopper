@@ -479,7 +479,7 @@ const SCENES: SceneSpec[] = [
 
 export function App() {
   return (
-    <AppShell>
+    <AppShell stage="spread">
       <Greeting />
       <ClimateStrip
         tempId="sensor.living_room_temperature"

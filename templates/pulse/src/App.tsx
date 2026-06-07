@@ -496,7 +496,7 @@ export function App(): ReactNode {
   );
 
   return (
-    <AppShell topbar={topbar}>
+    <AppShell topbar={topbar} stage="spread">
       {/* Invisible probes keep the ops count live without re-rendering cards. */}
       <div className="probes" aria-hidden>
         {SENSORS.map((s) => (

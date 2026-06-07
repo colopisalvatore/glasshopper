@@ -135,6 +135,36 @@ button {
     overflow-y: auto;
     overscroll-behavior: contain;
   }
+
+  /* ---- Fill the height ----------------------------------------------------
+     A wall tablet has a FIXED height; a glanceable dashboard should fill it,
+     not top-pack with dead space below. Pick ONE strategy per template:
+
+     - .gh-fill on a region  → that region grows to absorb the slack.
+       On a grid it also stretches its rows so tiles grow with it.
+     - .gh-app__stage--spread → distribute regions across the full height
+       (first pinned top, last pinned bottom, gaps shared). Good for
+       hero → … → footer dashboards.
+     - .gh-app__stage--center → center the content block vertically.
+  */
+  .gh-fill {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .gh-grid.gh-fill {
+    align-content: stretch;
+    grid-auto-rows: minmax(0, 1fr);
+  }
+  .gh-app__stage--spread {
+    justify-content: space-between;
+  }
+  .gh-app__stage--center {
+    justify-content: center;
+  }
+  /* The rail fills its column height too when asked. */
+  .gh-app__rail--fill {
+    justify-content: space-between;
+  }
 }
 
 /* ---- Reflow grid: the one primitive every tile layout uses ----------------- */
