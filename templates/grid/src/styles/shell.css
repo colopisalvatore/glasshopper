@@ -126,14 +126,12 @@ button {
 
   .gh-app__stage {
     flex: 1 1 auto;
-    overflow-y: auto;                 /* only the stage scrolls */
-    overscroll-behavior: contain;
+    overflow: hidden;                 /* a wall panel never scrolls — content fits */
   }
 
   .gh-app__rail {
     width: clamp(280px, 24vw, 360px);
-    overflow-y: auto;
-    overscroll-behavior: contain;
+    overflow: hidden;
   }
 
   /* ---- Fill the height ----------------------------------------------------

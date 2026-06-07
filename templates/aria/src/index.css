@@ -322,7 +322,7 @@
 
 .history__plot {
   margin-top: 12px;
-  min-height: 120px;
+  min-height: 104px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -601,3 +601,11 @@
 /* ------------------------------------------------------------------ */
 
 /* Reduced-motion: now owned by shell.css. */
+
+/* Chart fills the leftover height so the dashboard fits the wall tablet exactly
+   (no vertical scroll). */
+.history.gh-fill { display: flex; flex-direction: column; }
+@media (min-width: 840px) and (min-height: 480px) {
+  .history.gh-fill .history__plot { flex: 1; min-height: 0; margin-top: 0; }
+  .history.gh-fill .tempchart { height: 100%; }
+}

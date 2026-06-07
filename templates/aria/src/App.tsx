@@ -328,7 +328,7 @@ function HistoryCard({ entityId }: { entityId: string }) {
   const { data, loading, error } = useHistory(entityId, 24);
 
   return (
-    <section className="history" aria-label="Temperature over the last 24 hours">
+    <section className="history gh-fill" aria-label="Temperature over the last 24 hours">
       <div className="history__head">
         <h2 className="section-heading">Last 24 hours</h2>
         {data.length > 1 && !error ? (
@@ -479,7 +479,7 @@ const SCENES: SceneSpec[] = [
 
 export function App() {
   return (
-    <AppShell stage="spread">
+    <AppShell>
       <Greeting />
       <ClimateStrip
         tempId="sensor.living_room_temperature"
