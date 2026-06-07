@@ -19,6 +19,7 @@ from homeassistant.components.frontend import (
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import config_validation as cv
 
 from . import services as services_module
 from . import views as views_module
@@ -40,6 +41,10 @@ from .const import (
 from .registry import TemplateRegistry
 
 _LOGGER = logging.getLogger(__name__)
+
+# This integration has no YAML configuration; it is set up from a config entry
+# (async_setup only registers services + the static view).
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:

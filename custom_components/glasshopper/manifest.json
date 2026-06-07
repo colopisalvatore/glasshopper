@@ -1,12 +1,12 @@
 {
   "domain": "glasshopper",
   "name": "Glasshopper",
-  "version": "0.2.0",
-  "documentation": "https://github.com/colopisalvatore/glasshopper",
-  "issue_tracker": "https://github.com/colopisalvatore/glasshopper/issues",
   "codeowners": ["@colopisalvatore"],
-  "iot_class": "local_polling",
   "config_flow": true,
+  "dependencies": ["frontend", "http"],
+  "documentation": "https://github.com/colopisalvatore/glasshopper",
   "integration_type": "service",
-  "dependencies": ["frontend", "http"]
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/colopisalvatore/glasshopper/issues",
+  "version": "0.2.0"
 }

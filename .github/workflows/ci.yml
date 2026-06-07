@@ -35,3 +35,6 @@ jobs:
       - uses: hacs/action@main
         with:
           category: integration
+          # 'brands' requires the integration to be listed in the
+          # home-assistant/brands repo (a separate PR, done at HACS submission).
+          ignore: brands
