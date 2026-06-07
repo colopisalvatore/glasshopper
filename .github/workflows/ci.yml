@@ -30,6 +30,11 @@ jobs:
   hacs:
     name: HACS validation
     runs-on: ubuntu-latest
+    # HACS reads the repo's files through the public GitHub API, which fails
+    # while this repo is PRIVATE (hacsjson / integration_manifest come back
+    # empty). It validates for real once the repo is public (the open-core
+    # launch step), so keep it non-blocking until then.
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: hacs/action@main
