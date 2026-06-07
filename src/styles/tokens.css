@@ -1,0 +1,145 @@
+/* ============================================================================
+   Glasshopper — design token CONTRACT (shared by every template).
+
+   Two layers:
+   1. STRUCTURAL tokens (spacing, radius, type scale, density, motion, z, the
+      window-size breakpoints) — IDENTICAL across all templates. Do NOT change
+      these per template; that is what keeps the format consistent.
+   2. PALETTE contract — variable NAMES are fixed; a template overrides only the
+      VALUES (hue/feel) in its own index.css :root, after importing this file.
+
+   Built for a landscape wall tablet read at ~2 metres, scaling up to desktop
+   and down to phones. OKLCH colors, light-first, dark via prefers-color-scheme.
+   ============================================================================ */
+
+:root {
+  /* ---- Window-size breakpoints (Material 3 size classes) ------------------
+     These values are referenced by shell.css @media rules. Documented here as
+     the single source of truth; CSS @media can't read custom props, so if you
+     ever change them, change them in shell.css too.
+       compact   < 600    phone portrait
+       medium    600–839  phone landscape / small tablet portrait
+       expanded  840–1199 tablet landscape  ← PRIMARY target
+       large     1200–1599 desktop
+       xlarge    >= 1600  large desktop / TV
+  */
+
+  /* ---- Fluid spacing scale ------------------------------------------------ */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+
+  /* Outer page padding + inter-region gap, fluid by viewport width. */
+  --gutter: clamp(14px, 2.4vw, 32px);
+  --pad: clamp(16px, 3vw, 40px);
+
+  /* Cap content width on very large screens so it doesn't sprawl on TVs.
+     0 / none on tablet+desktop where filling the viewport is the point. */
+  --stage-maxw: 1680px;
+
+  /* ---- Radius ------------------------------------------------------------- */
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+  --radius-xl: 34px;
+  --radius-pill: 999px;
+
+  /* ---- Type scale (fluid, legible at 2 m) --------------------------------- */
+  --text-xs: clamp(0.72rem, 0.68rem + 0.2vw, 0.8rem);
+  --text-sm: clamp(0.84rem, 0.8rem + 0.25vw, 0.94rem);
+  --text-md: clamp(0.95rem, 0.9rem + 0.35vw, 1.08rem);
+  --text-lg: clamp(1.15rem, 1.05rem + 0.6vw, 1.4rem);
+  --text-xl: clamp(1.5rem, 1.3rem + 1.1vw, 2.1rem);
+  --text-2xl: clamp(2rem, 1.6rem + 2vw, 3rem);
+  --text-3xl: clamp(2.6rem, 2rem + 3vw, 4rem);
+
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-num: 'SF Mono', 'Segoe UI Mono', ui-monospace, 'Roboto Mono', monospace;
+
+  /* ---- Density / touch (bigger at a distance) ----------------------------- */
+  --tap-min: 48px;      /* minimum interactive target */
+  --control-h: 56px;    /* standard control / tile header height */
+  --tile-min: 240px;    /* default min tile width for the reflow grid */
+
+  /* ---- Motion ------------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-1: 140ms;
+  --dur-2: 240ms;
+  --dur-3: 420ms;
+
+  /* ---- Z layers ----------------------------------------------------------- */
+  --z-base: 0;
+  --z-rail: 10;
+  --z-topbar: 20;
+  --z-overlay: 100;
+
+  /* ======================================================================== */
+  /* PALETTE CONTRACT — names are fixed; templates override the values.        */
+  /* Neutral, calm defaults so a fresh scaffold looks intentional out of box.  */
+  /* ======================================================================== */
+  --bg: oklch(97% 0.005 250);
+  --bg-tint: oklch(98.5% 0.008 250);
+  --surface: oklch(99% 0.004 250);
+  --surface-2: oklch(96% 0.006 250);
+  --surface-sunk: oklch(94% 0.008 250);
+  --hairline: oklch(89% 0.008 250);
+  --hairline-soft: oklch(92% 0.006 250);
+
+  --ink: oklch(28% 0.02 255);
+  --ink-2: oklch(45% 0.018 255);
+  --ink-3: oklch(60% 0.015 255);
+  --ink-faint: oklch(72% 0.012 255);
+
+  --accent: oklch(64% 0.15 250);
+  --accent-strong: oklch(56% 0.16 250);
+  --accent-soft: oklch(93% 0.05 250);
+  --accent-ink: oklch(40% 0.12 250);
+  --on-accent: oklch(99% 0.01 250);
+
+  --ok: oklch(64% 0.13 150);
+  --warn: oklch(72% 0.14 75);
+  --danger: oklch(60% 0.18 25);
+
+  --shadow-1: 0 1px 2px oklch(40% 0.03 255 / 0.06), 0 4px 12px oklch(40% 0.03 255 / 0.05);
+  --shadow-2: 0 2px 4px oklch(40% 0.03 255 / 0.07), 0 12px 28px oklch(40% 0.03 255 / 0.08);
+
+  --focus: oklch(58% 0.15 250);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: oklch(20% 0.012 255);
+    --bg-tint: oklch(22.5% 0.014 255);
+    --surface: oklch(25% 0.014 255);
+    --surface-2: oklch(28% 0.016 255);
+    --surface-sunk: oklch(22% 0.012 255);
+    --hairline: oklch(34% 0.014 255);
+    --hairline-soft: oklch(30% 0.012 255);
+
+    --ink: oklch(94% 0.01 255);
+    --ink-2: oklch(80% 0.012 255);
+    --ink-3: oklch(66% 0.012 255);
+    --ink-faint: oklch(54% 0.012 255);
+
+    --accent: oklch(72% 0.14 250);
+    --accent-strong: oklch(78% 0.145 250);
+    --accent-soft: oklch(32% 0.06 255);
+    --accent-ink: oklch(84% 0.11 250);
+    --on-accent: oklch(22% 0.02 255);
+
+    --shadow-1: 0 1px 2px oklch(12% 0.01 255 / 0.4), 0 6px 16px oklch(12% 0.01 255 / 0.34);
+    --shadow-2: 0 2px 6px oklch(12% 0.01 255 / 0.44), 0 16px 34px oklch(12% 0.01 255 / 0.46);
+
+    --focus: oklch(82% 0.12 250);
+
+    color-scheme: dark;
+  }
+}

@@ -1,0 +1,222 @@
+/* ============================================================================
+   Glasshopper — app SHELL (shared by every template).
+
+   The responsive standard. Import AFTER tokens.css (and after a template's own
+   :root palette override). Provides:
+     - a reset
+     - .gh-app          the layout root (regions: topbar, body→stage + rail)
+     - fill-the-viewport on landscape tablet/desktop, scroll-page on phone/portrait
+     - .gh-grid         the reflow primitive every tile layout uses
+     - small layout helpers (.gh-stack, .gh-row, .gh-card)
+
+   Behaviour by window size (Material 3 size classes):
+     compact / medium / tablet-portrait / phone-landscape-short
+        → single vertical column, the PAGE scrolls
+     >= 840px wide AND >= 480px tall  (tablet landscape ↑, desktop)
+        → fills 100dvh, regions laid out as a row, the STAGE scrolls internally
+   ============================================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(120% 80% at 12% -10%, var(--bg-tint) 0%, transparent 55%),
+    radial-gradient(110% 70% at 100% 0%, var(--accent-soft) 0%, transparent 42%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.45;
+  /* No rubber-band scroll on kiosk tablets. */
+  overscroll-behavior: none;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2.5px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ---- Layout root ----------------------------------------------------------- */
+
+.gh-app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter);
+  /* Safe-area aware page padding (notched / kiosk frames). */
+  padding:
+    calc(var(--pad) + env(safe-area-inset-top, 0px))
+    calc(var(--pad) + env(safe-area-inset-right, 0px))
+    calc(var(--pad) + env(safe-area-inset-bottom, 0px))
+    calc(var(--pad) + env(safe-area-inset-left, 0px));
+}
+
+.gh-app__topbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gutter);
+}
+
+.gh-app__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter);
+}
+
+.gh-app__stage {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter);
+}
+
+.gh-app__rail {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter);
+}
+
+/* ---- Fill-the-viewport mode: landscape tablet ↑ and desktop --------------- */
+@media (min-width: 840px) and (min-height: 480px) {
+  .gh-app {
+    height: 100dvh;
+    overflow: hidden;                 /* page itself never scrolls */
+    max-width: var(--stage-maxw);
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  .gh-app__body {
+    flex-direction: row;              /* stage beside rail */
+    align-items: stretch;
+  }
+
+  .gh-app__stage {
+    flex: 1 1 auto;
+    overflow: hidden;                 /* a wall panel never scrolls — content fits */
+  }
+
+  .gh-app__rail {
+    width: clamp(280px, 24vw, 360px);
+    overflow: hidden;
+  }
+
+  /* ---- Fill the height ----------------------------------------------------
+     A wall tablet has a FIXED height; a glanceable dashboard should fill it,
+     not top-pack with dead space below. Pick ONE strategy per template:
+
+     - .gh-fill on a region  → that region grows to absorb the slack.
+       On a grid it also stretches its rows so tiles grow with it.
+     - .gh-app__stage--spread → distribute regions across the full height
+       (first pinned top, last pinned bottom, gaps shared). Good for
+       hero → … → footer dashboards.
+     - .gh-app__stage--center → center the content block vertically.
+  */
+  .gh-fill {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .gh-grid.gh-fill {
+    align-content: stretch;
+    grid-auto-rows: minmax(0, 1fr);
+  }
+  .gh-app__stage--spread {
+    justify-content: space-between;
+  }
+  .gh-app__stage--center {
+    justify-content: center;
+  }
+  /* The rail fills its column height too when asked. */
+  .gh-app__rail--fill {
+    justify-content: space-between;
+  }
+}
+
+/* ---- Reflow grid: the one primitive every tile layout uses ----------------- */
+.gh-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--tile-min), 100%), 1fr));
+  gap: var(--gutter);
+}
+
+/* Denser variant for many small tiles. */
+.gh-grid--dense {
+  --tile-min: 180px;
+  grid-auto-flow: dense;
+}
+
+/* Wider cards. */
+.gh-grid--wide {
+  --tile-min: 340px;
+}
+
+/* Span helpers (use inside .gh-grid). */
+.gh-col-2 { grid-column: span 2; }
+.gh-col-3 { grid-column: span 3; }
+.gh-col-full { grid-column: 1 / -1; }
+
+/* ---- Small helpers --------------------------------------------------------- */
+.gh-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter);
+}
+
+.gh-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.gh-card {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  padding: var(--sp-5);
+}
+
+/* ---- Motion ---------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

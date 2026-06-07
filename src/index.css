@@ -1,0 +1,118 @@
+/* Shared responsive standard first. */
+@import './styles/tokens.css';
+@import './styles/shell.css';
+
+/* Minimal scaffold identity: a calm dark starter. Override only palette values;
+   the structural tokens come from tokens.css. */
+:root {
+  --bg: oklch(14% 0.012 265);
+  --bg-tint: oklch(17% 0.014 265);
+  --surface: oklch(20% 0.016 265);
+  --surface-2: oklch(24% 0.018 265);
+  --hairline: oklch(34% 0.016 265);
+  --hairline-soft: oklch(30% 0.014 265);
+
+  --ink: oklch(96% 0.008 265);
+  --ink-2: oklch(80% 0.012 265);
+  --ink-3: oklch(66% 0.014 265);
+  --ink-faint: oklch(54% 0.014 265);
+
+  --accent: oklch(72% 0.13 250);
+  --accent-soft: oklch(30% 0.06 260);
+  --on-accent: oklch(16% 0.02 265);
+
+  --ok: oklch(72% 0.15 150);
+  --danger: oklch(68% 0.18 25);
+
+  color-scheme: dark;
+}
+
+/* ---- Topbar -------------------------------------------------------------- */
+.brand {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.status {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--hairline);
+  color: var(--ink-3);
+}
+.status--connected { color: var(--ok); border-color: color-mix(in oklch, var(--ok) 40%, transparent); }
+.status--connecting { color: var(--accent); }
+.status--error,
+.status--disconnected { color: var(--danger); border-color: color-mix(in oklch, var(--danger) 40%, transparent); }
+
+/* ---- Cards (replace with your own UI) ------------------------------------ */
+.section-heading {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 var(--sp-3);
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  padding: var(--sp-5);
+  min-height: 0;
+}
+.card--on {
+  border-color: color-mix(in oklch, var(--accent) 45%, var(--hairline));
+  background: color-mix(in oklch, var(--accent-soft) 40%, var(--surface));
+}
+.card__title {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+  margin: 0;
+}
+.card__state {
+  font-size: var(--text-lg);
+  font-weight: 500;
+  color: var(--ink);
+}
+.card__meta {
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+}
+.card__btn {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--hairline);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.card__btn:hover { background: var(--accent-soft); }
+
+/* ---- Footer hint --------------------------------------------------------- */
+.hint {
+  font-size: var(--text-sm);
+  color: var(--ink-faint);
+}
+.hint code {
+  font-family: var(--font-num);
+  color: var(--ink-2);
+  background: var(--surface-2);
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 0.92em;
+}
+.hint__theme { color: var(--ink-faint); }
+.err { color: var(--danger); font-size: var(--text-sm); }

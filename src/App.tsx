@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
 import { connect, getConnectionStatus, getLastError } from '@/lib/haConnection';
 import { useEntity, useService, useHistory, useArea, useTheme } from '@/hooks';
+import { AppShell } from '@/components/AppShell';
 
-export default function App() {
+/**
+ * Minimal — the starter dashboard. It already fills a landscape wall tablet via
+ * the shared <AppShell> + .gh-grid, and demonstrates all five hooks. Replace the
+ * cards below with your own UI.
+ */
+export function App() {
   const [status, setStatus] = useState(getConnectionStatus());
 
   useEffect(() => {
@@ -11,45 +17,51 @@ export default function App() {
     return () => window.clearInterval(id);
   }, []);
 
+  const topbar = (
+    <>
+      <span className="brand">Glasshopper</span>
+      <span className={`status status--${status}`}>{status}</span>
+    </>
+  );
+
   return (
-    <main className="app">
-      <header className="app__header">
-        <h1>Glasshopper — scaffold</h1>
-        <span className={`status status--${status}`}>{status}</span>
-      </header>
+    <AppShell topbar={topbar} stage="spread">
+      {status === 'error' && <p className="err">{getLastError()}</p>}
 
-      {status === 'error' && (
-        <p style={{ color: '#f87171', fontSize: 12 }}>{getLastError()}</p>
-      )}
-
-      <section className="app__grid">
+      <section className="grid gh-grid" aria-label="Examples">
         <SunCard />
         <FirstLightCard />
         <HistoryCard />
       </section>
 
       <AreaSection />
-      <ThemeDebug />
 
-      <footer className="app__footer">
-        Replace this scaffold with your own UI. Hooks:{' '}
-        <code>useEntity</code> <code>useService</code> <code>useHistory</code>{' '}
-        <code>useArea</code> <code>useTheme</code>.
+      <footer className="hint">
+        Replace this scaffold with your own UI. Hooks: <code>useEntity</code>{' '}
+        <code>useService</code> <code>useHistory</code> <code>useArea</code>{' '}
+        <code>useTheme</code>.
+        <ThemeNote />
       </footer>
-    </main>
+    </AppShell>
   );
 }
 
+export default App;
+
 function SunCard() {
   const sun = useEntity('sun.sun');
-  if (!sun) return <Card title="sun.sun">no data</Card>;
   return (
-    <Card title="sun.sun">
-      <div className="card__state">{sun.state}</div>
-      <div className="card__meta">
-        elev: {String(sun.attributes.elevation ?? '?')}
-      </div>
-    </Card>
+    <article className="card">
+      <h2 className="card__title">sun.sun</h2>
+      {sun ? (
+        <>
+          <div className="card__state">{sun.state}</div>
+          <div className="card__meta">elev: {String(sun.attributes.elevation ?? '?')}</div>
+        </>
+      ) : (
+        <div className="card__meta">no data</div>
+      )}
+    </article>
   );
 }
 
@@ -57,89 +69,77 @@ function FirstLightCard() {
   const light = useEntity('light.living_room');
   const turnOn = useService('light', 'turn_on');
   const turnOff = useService('light', 'turn_off');
-  if (!light) return <Card title="light.living_room">entity not found</Card>;
-
-  const isOn = light.state === 'on';
+  const isOn = light?.state === 'on';
   return (
-    <Card title="light.living_room">
-      <div className="card__state">{light.state}</div>
-      <button
-        type="button"
-        onClick={() =>
-          void (isOn
-            ? turnOff({ entity_id: light.entity_id })
-            : turnOn({ entity_id: light.entity_id }))
-        }
-      >
-        {isOn ? 'Turn off' : 'Turn on'}
-      </button>
-    </Card>
+    <article className={`card${isOn ? ' card--on' : ''}`}>
+      <h2 className="card__title">light.living_room</h2>
+      {light ? (
+        <>
+          <div className="card__state">{light.state}</div>
+          <button
+            type="button"
+            className="card__btn"
+            onClick={() =>
+              void (isOn
+                ? turnOff({ entity_id: light.entity_id })
+                : turnOn({ entity_id: light.entity_id }))
+            }
+          >
+            {isOn ? 'Turn off' : 'Turn on'}
+          </button>
+        </>
+      ) : (
+        <div className="card__meta">entity not found</div>
+      )}
+    </article>
   );
 }
 
 function HistoryCard() {
   const { data, loading, error } = useHistory('sensor.outdoor_temperature', 24);
   return (
-    <Card title="sensor.outdoor_temperature — 24h">
-      {loading && <div className="card__meta">loading…</div>}
-      {error && <div className="card__meta">err: {error}</div>}
-      {!loading && !error && (
+    <article className="card">
+      <h2 className="card__title">sensor.outdoor_temperature — 24h</h2>
+      {loading ? (
+        <div className="card__meta">loading…</div>
+      ) : error ? (
+        <div className="card__meta">err: {error}</div>
+      ) : (
         <div className="card__meta">
           {data.length} points · min{' '}
           {data.length ? Math.min(...data.map((p) => p.v)).toFixed(1) : '—'} · max{' '}
           {data.length ? Math.max(...data.map((p) => p.v)).toFixed(1) : '—'}
         </div>
       )}
-    </Card>
+    </article>
   );
 }
 
 function AreaSection() {
   const { area, entities, devices, loading, error } = useArea('Living Room');
-  if (loading) return <p className="app__footer">area: loading…</p>;
-  if (error) return <p className="app__footer">area err: {error}</p>;
-  if (!area) return <p className="app__footer">area &quot;Living Room&quot; not found</p>;
+  if (loading) return <p className="hint">area: loading…</p>;
+  if (error) return <p className="hint">area err: {error}</p>;
+  if (!area) return <p className="hint">area “Living Room” not found</p>;
   return (
-    <section>
-      <h2 style={{ fontSize: 14, margin: '0 0 8px' }}>
+    <section aria-label={`Area ${area.name}`}>
+      <h2 className="section-heading">
         Area: {area.name} ({devices.length} devices · {entities.length} entities)
       </h2>
-      <div className="app__grid">
+      <div className="grid gh-grid">
         {entities.slice(0, 6).map((e) => (
-          <Card key={e.entity_id} title={e.entity_id}>
+          <article className="card" key={e.entity_id}>
+            <h2 className="card__title">{e.entity_id}</h2>
             <div className="card__state">{e.state}</div>
-          </Card>
+          </article>
         ))}
       </div>
     </section>
   );
 }
 
-function ThemeDebug() {
+function ThemeNote() {
   const theme = useTheme();
-  const keys = Object.keys(theme).slice(0, 4);
-  if (keys.length === 0) return null;
-  return (
-    <details className="app__footer">
-      <summary>HA theme tokens ({Object.keys(theme).length})</summary>
-      <pre style={{ fontSize: 11, margin: '8px 0 0' }}>
-        {keys.map((k) => `--${k}: ${theme[k]}`).join('\n')}
-      </pre>
-    </details>
-  );
-}
-
-function Card({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <article className="card">
-      <h2 className="card__title">{title}</h2>
-      {children}
-    </article>
-  );
+  const n = Object.keys(theme).length;
+  if (n === 0) return null;
+  return <span className="hint__theme"> · useTheme sees {n} HA tokens</span>;
 }
