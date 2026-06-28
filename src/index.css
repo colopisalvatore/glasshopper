@@ -41,6 +41,49 @@
 .dot--connected { background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
 .dot--error, .dot--disconnected { background: var(--danger); }
 
+/* ---- Welcome canvas (Minimal starter first run) -------------------------- */
+.welcome {
+  max-width: 460px;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3, 12px);
+}
+.welcome__mark { font-size: 56px; line-height: 1; filter: drop-shadow(0 2px 10px var(--accent-soft)); }
+.welcome__title {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: var(--text-2xl, 28px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.welcome__status {
+  display: inline-flex; align-items: center; gap: var(--sp-2, 8px);
+  margin: 0; font-size: var(--text-sm, 14px); color: var(--ink-3);
+}
+.welcome__lead { margin: var(--sp-4, 16px) 0 0; font-size: var(--text-lg); color: var(--ink); font-weight: 600; }
+.welcome__edit { margin: 0; font-size: var(--text-sm, 14px); color: var(--ink-3); }
+.welcome__hooks {
+  list-style: none; padding: 0; margin: var(--sp-2, 8px) 0 0;
+  display: flex; flex-wrap: wrap; gap: var(--sp-2, 8px); justify-content: center;
+}
+.welcome__hooks code,
+.welcome__edit code {
+  font-size: var(--text-xs); padding: 3px 8px; border-radius: var(--radius-sm, 7px);
+  background: var(--surface); border: 1px solid var(--hairline); color: var(--ink-2);
+}
+.welcome__cta {
+  margin-top: var(--sp-5, 20px);
+  display: inline-block;
+  padding: 10px 18px; border-radius: var(--radius-lg);
+  background: var(--accent); color: var(--on-accent);
+  font-weight: 600; font-size: var(--text-sm, 14px); text-decoration: none;
+  transition: opacity var(--dur-1, 0.15s) var(--ease-out, ease);
+}
+.welcome__cta:hover { opacity: 0.9; }
+
 /* ---- Device tiles -------------------------------------------------------- */
 .tiles { --tile-min: 184px; }
 .tile {
