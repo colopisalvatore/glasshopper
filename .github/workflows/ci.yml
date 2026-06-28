@@ -11,8 +11,8 @@ jobs:
     name: Frontend (typecheck + build)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: "20"
           cache: "npm"
@@ -24,22 +24,19 @@ jobs:
     name: HA integration validation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: home-assistant/actions/hassfest@master
 
   hacs:
     name: HACS validation
     runs-on: ubuntu-latest
-    # HACS reads the repo's files through the public GitHub API, which fails
-    # while this repo is PRIVATE (hacsjson / integration_manifest come back
-    # empty). It validates for real once the repo is public (the open-core
-    # launch step), so keep it non-blocking until then.
-    continue-on-error: true
+    # Repo is public (since 2026-06-28), so HACS validates for real and this
+    # job is now blocking. 'brands' stays ignored until the home-assistant/brands
+    # PR is merged (separate step, needed for HACS *default* repo submission;
+    # custom-repo install works without it).
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: hacs/action@main
         with:
           category: integration
-          # 'brands' requires the integration to be listed in the
-          # home-assistant/brands repo (a separate PR, done at HACS submission).
           ignore: brands
