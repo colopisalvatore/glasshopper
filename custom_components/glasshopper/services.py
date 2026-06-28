@@ -141,17 +141,21 @@ def _resolve_template_id(staging_root: Path, override: str | None) -> str:
     return _slugify_id(staging_root.name)
 
 
-async def _install_from_url(
-    hass: HomeAssistant, url: str, template_id: str | None
+async def _install_from_bytes(
+    hass: HomeAssistant, zip_bytes: bytes, template_id: str | None
 ) -> str:
-    data = await _download(hass, url)
+    """Extract a template zip (already in memory) into the registry root.
+
+    Shared by URL install (`_install_from_url`) and the HTTP upload endpoint.
+    Returns the resolved template id.
+    """
     registry: TemplateRegistry = hass.data[DOMAIN][DATA_REGISTRY]
     registry.ensure_root()
 
     def _do_extract() -> str:
         with tempfile.TemporaryDirectory(prefix="glasshopper_") as tmp:
             tmp_path = Path(tmp)
-            _safe_extract(data, tmp_path)
+            _safe_extract(zip_bytes, tmp_path)
             normalized = _normalize_extracted(tmp_path)
             tid = _resolve_template_id(normalized, template_id)
             dest = registry.root / tid
@@ -161,7 +165,15 @@ async def _install_from_url(
             return tid
 
     tid = await hass.async_add_executor_job(_do_extract)
-    registry.scan()
+    await hass.async_add_executor_job(registry.scan)
+    return tid
+
+
+async def _install_from_url(
+    hass: HomeAssistant, url: str, template_id: str | None
+) -> str:
+    data = await _download(hass, url)
+    tid = await _install_from_bytes(hass, data, template_id)
     _LOGGER.info("glasshopper: installed template %s from %s", tid, url)
     return tid
 

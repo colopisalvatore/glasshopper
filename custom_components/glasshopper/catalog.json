@@ -1,0 +1,74 @@
+[
+  {
+    "id": "aria",
+    "name": "Aria",
+    "description": "Single-room glance dashboard: greeting, climate, light and switch toggles, a 24h temperature curve, and scenes. Warm, calm, light-first.",
+    "preview": null,
+    "kind": "free",
+    "url": "https://github.com/colopisalvatore/glasshopper/releases/download/templates-latest/aria.zip"
+  },
+  {
+    "id": "grid",
+    "name": "Grid",
+    "description": "Compact Material 3 tile grid for many devices at a glance, grouped by area, tap to toggle. Light and dark.",
+    "preview": null,
+    "kind": "free",
+    "url": "https://github.com/colopisalvatore/glasshopper/releases/download/templates-latest/grid.zip"
+  },
+  {
+    "id": "pulse",
+    "name": "Pulse",
+    "description": "Sensor and monitoring panel: live readouts with tabular numerals, animated sparklines, and a radial gauge. Quiet, data-forward, dark.",
+    "preview": null,
+    "kind": "free",
+    "url": "https://github.com/colopisalvatore/glasshopper/releases/download/templates-latest/pulse.zip"
+  },
+  {
+    "id": "halcyon",
+    "name": "Halcyon",
+    "description": "Flagship premium dashboard. Buy once on the store, then install via URL or upload.",
+    "preview": null,
+    "kind": "premium",
+    "storeUrl": "https://glasshopper.dev/templates"
+  },
+  {
+    "id": "helios",
+    "name": "Helios",
+    "description": "Premium dashboard. Buy once on the store, then install via URL or upload.",
+    "preview": null,
+    "kind": "premium",
+    "storeUrl": "https://glasshopper.dev/templates"
+  },
+  {
+    "id": "sentinel",
+    "name": "Sentinel",
+    "description": "Premium dashboard. Buy once on the store, then install via URL or upload.",
+    "preview": null,
+    "kind": "premium",
+    "storeUrl": "https://glasshopper.dev/templates"
+  },
+  {
+    "id": "aurora",
+    "name": "Aurora",
+    "description": "Premium dashboard. Buy once on the store, then install via URL or upload.",
+    "preview": null,
+    "kind": "premium",
+    "storeUrl": "https://glasshopper.dev/templates"
+  },
+  {
+    "id": "verdant",
+    "name": "Verdant",
+    "description": "Premium dashboard. Buy once on the store, then install via URL or upload.",
+    "preview": null,
+    "kind": "premium",
+    "storeUrl": "https://glasshopper.dev/templates"
+  },
+  {
+    "id": "nocturne",
+    "name": "Nocturne",
+    "description": "Premium dashboard. Buy once on the store, then install via URL or upload.",
+    "preview": null,
+    "kind": "premium",
+    "storeUrl": "https://glasshopper.dev/templates"
+  }
+]

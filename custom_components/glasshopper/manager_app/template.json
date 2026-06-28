@@ -1,0 +1,7 @@
+{
+  "id": "minimal",
+  "name": "Minimal",
+  "version": "0.1.0",
+  "author": "glasshopper",
+  "description": "The bundled starter scaffold: the five hooks wired into a clean dark dashboard on the shared responsive standard. The starting point you replace with your own UI."
+}

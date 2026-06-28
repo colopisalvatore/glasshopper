@@ -1,10 +1,10 @@
-"""Glasshopper integration.
+"""Glasshopper integration — hub model.
 
-Multi-template platform: discovers user-installed templates from
-<config>/glasshopper_templates/<id>/, registers a static path per template
-under /glasshopper_files/<id>/, and creates one iframe sidebar panel per
-ConfigEntry. Each entry also gets a standalone full-page route at
-/custom-dashboard/<slug> served by the StandaloneDashboardView.
+A single "hub" config entry owns the admin **Manager** panel and a
+storage-backed list of dashboards. Each dashboard is an iframe sidebar panel
+plus a standalone `/custom-dashboard/<slug>` route. Templates live in
+`<config>/glasshopper_templates/<id>/`. The Manager (a bundled React app in
+`manager_app/`) drives all create/edit/remove via the WebSocket API.
 """
 
 from __future__ import annotations
@@ -12,18 +12,17 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from homeassistant.components.frontend import (
-    async_register_built_in_panel,
-    async_remove_panel,
-)
-from homeassistant.components.http import StaticPathConfig
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv
 
+from . import catalog as catalog_module
 from . import services as services_module
+from . import upload as upload_module
 from . import views as views_module
+from . import websocket as websocket_module
 from .const import (
+    CONF_HUB,
     CONF_ICON,
     CONF_PUBLIC,
     CONF_REQUIRE_ADMIN,
@@ -33,122 +32,109 @@ from .const import (
     DATA_ENTRIES_BY_SLUG,
     DATA_REGISTERED_STATICS,
     DATA_REGISTRY,
-    DEFAULT_ICON,
+    DATA_STORE,
     DOMAIN,
-    FRONTEND_INDEX,
-    URL_STATIC_BASE,
+)
+from .migration import async_migrate_legacy_entries
+from .panels import (
+    async_register_dashboard_panel,
+    async_unregister_dashboard_panel,
+    register_manager,
+    unregister_manager,
 )
 from .registry import TemplateRegistry
+from .store import GlasshopperStore
 
 _LOGGER = logging.getLogger(__name__)
 
-# This integration has no YAML configuration; it is set up from a config entry
-# (async_setup only registers services + the static view).
+# No YAML config; set up from the single hub config entry.
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
-    """One-time setup: build registry, register services + standalone view."""
+    """Build registry + store, migrate legacy entries, register shared bits."""
     domain_data = hass.data.setdefault(DOMAIN, {})
 
     if DATA_REGISTRY not in domain_data:
         registry = TemplateRegistry(Path(hass.config.path()))
-        # Seed bundled templates first so a fresh install always has one.
         await hass.async_add_executor_job(registry.seed_bundled)
         await hass.async_add_executor_job(registry.scan)
         domain_data[DATA_REGISTRY] = registry
         domain_data[DATA_REGISTERED_STATICS] = set()
         domain_data[DATA_ENTRIES_BY_SLUG] = {}
 
+    if DATA_STORE not in domain_data:
+        store = GlasshopperStore(hass)
+        await store.async_load()
+        domain_data[DATA_STORE] = store
+        await async_migrate_legacy_entries(hass, store)
+
+    await catalog_module.async_preload(hass)
     services_module.register(hass)
     views_module.register(hass)
+
+    # After migration the hub may not exist yet — create it. On a fresh install
+    # the user's "Add integration" flow already created it, so this is a no-op.
+    if not hass.config_entries.async_entries(DOMAIN):
+        hass.async_create_task(
+            hass.config_entries.flow.async_init(
+                DOMAIN, context={"source": SOURCE_IMPORT}, data={CONF_HUB: True}
+            )
+        )
     return True
 
 
-async def _ensure_static_for_template(hass: HomeAssistant, template_id: str) -> bool:
-    """Register the per-template static path on demand (idempotent)."""
-    domain_data = hass.data[DOMAIN]
-    registry: TemplateRegistry = domain_data[DATA_REGISTRY]
-    statics: set = domain_data[DATA_REGISTERED_STATICS]
-
-    if template_id in statics:
-        return True
-
-    tpl = registry.get(template_id)
-    if tpl is None:
-        _LOGGER.error("glasshopper: cannot register static for missing template %s", template_id)
-        return False
-
-    url = f"{URL_STATIC_BASE}/{template_id}"
-    await hass.http.async_register_static_paths(
-        [StaticPathConfig(url, str(tpl.path), cache_headers=False)]
-    )
-    statics.add(template_id)
-    _LOGGER.info("glasshopper: registered static %s -> %s", url, tpl.path)
-    return True
+def _legacy_dashboard_from_entry(entry: ConfigEntry) -> dict | None:
+    data = {**entry.data, **entry.options}
+    if not data.get(CONF_SLUG) or not data.get(CONF_TEMPLATE_ID):
+        return None
+    return {
+        "id": entry.entry_id,
+        CONF_SLUG: data[CONF_SLUG],
+        CONF_TITLE: data.get(CONF_TITLE),
+        CONF_TEMPLATE_ID: data[CONF_TEMPLATE_ID],
+        CONF_ICON: data.get(CONF_ICON),
+        CONF_REQUIRE_ADMIN: data.get(CONF_REQUIRE_ADMIN),
+        CONF_PUBLIC: data.get(CONF_PUBLIC),
+    }
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Register an iframe panel + standalone slug for this dashboard entry."""
-    data = {**entry.data, **entry.options}
-
-    slug: str = data[CONF_SLUG]
-    title: str = data[CONF_TITLE]
-    icon: str = data.get(CONF_ICON) or DEFAULT_ICON
-    require_admin: bool = bool(data.get(CONF_REQUIRE_ADMIN, False))
-    template_id: str = data[CONF_TEMPLATE_ID]
-    public: bool = bool(data.get(CONF_PUBLIC, False))
-
+    """Set up the hub entry (manager + WS + upload + all dashboards)."""
     domain_data = hass.data.setdefault(DOMAIN, {})
-    registry: TemplateRegistry = domain_data[DATA_REGISTRY]
 
-    if registry.get(template_id) is None:
-        _LOGGER.error(
-            "glasshopper: entry %s references template %s which is not installed",
-            slug,
-            template_id,
-        )
-        return False
+    # A lingering legacy per-dashboard entry (migration normally removes these):
+    # register just its single panel for backward-compat.
+    if not entry.data.get(CONF_HUB):
+        legacy = _legacy_dashboard_from_entry(entry)
+        if legacy:
+            await async_register_dashboard_panel(hass, legacy)
+        return True
 
-    if not await _ensure_static_for_template(hass, template_id):
-        return False
+    await register_manager(hass)
+    websocket_module.register(hass)
+    upload_module.register(hass)
 
-    async_register_built_in_panel(
-        hass,
-        component_name="iframe",
-        sidebar_title=title,
-        sidebar_icon=icon,
-        frontend_url_path=slug,
-        config={"url": f"{URL_STATIC_BASE}/{template_id}/{FRONTEND_INDEX}"},
-        require_admin=require_admin,
-    )
-
-    domain_data[DATA_ENTRIES_BY_SLUG][slug] = {
-        "entry_id": entry.entry_id,
-        "template_id": template_id,
-        "public": public,
-    }
-
-    entry.async_on_unload(entry.add_update_listener(_async_update_listener))
+    store: GlasshopperStore = domain_data[DATA_STORE]
+    for dash in store.list():
+        await async_register_dashboard_panel(hass, dash)
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Remove the iframe panel and the slug mapping for this entry."""
-    slug = entry.data[CONF_SLUG]
+    """Tear down panels for this entry."""
     domain_data = hass.data.get(DOMAIN, {})
-    try:
-        async_remove_panel(hass, slug)
-    except Exception:  # noqa: BLE001
-        _LOGGER.exception("glasshopper: failed to remove panel %s", slug)
-        return False
 
-    entries_by_slug: dict = domain_data.get(DATA_ENTRIES_BY_SLUG, {})
-    entries_by_slug.pop(slug, None)
+    if not entry.data.get(CONF_HUB):
+        data = {**entry.data, **entry.options}
+        slug = data.get(CONF_SLUG)
+        if slug:
+            await async_unregister_dashboard_panel(hass, slug)
+        return True
+
+    await unregister_manager(hass)
+    store: GlasshopperStore | None = domain_data.get(DATA_STORE)
+    if store:
+        for dash in store.list():
+            await async_unregister_dashboard_panel(hass, dash[CONF_SLUG])
     return True
-
-
-async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Re-register the panel when options change."""
-    await async_unload_entry(hass, entry)
-    await async_setup_entry(hass, entry)

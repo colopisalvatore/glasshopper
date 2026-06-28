@@ -2,50 +2,12 @@
   "config": {
     "step": {
       "user": {
-        "title": "Aggiungi dashboard React",
-        "description": "Registra un nuovo pannello dashboard React da un template installato.",
-        "data": {
-          "template_id": "Template",
-          "title": "Titolo nella barra laterale",
-          "slug": "Slug URL (usato nell'URL del pannello e in /custom-dashboard/SLUG)",
-          "icon": "Icona MDI (es. mdi:view-dashboard)",
-          "require_admin": "Solo utenti amministratori",
-          "public": "URL pubblico autonomo (nessun accesso a Home Assistant richiesto)",
-          "install_url": "Installa un altro template da un URL (facoltativo). Incolla un link .zip e invia per aggiungerlo all'elenco."
-        }
-      },
-      "install": {
-        "title": "Installa un template",
-        "description": "Incolla l'URL di download di un .zip del template (ad esempio il link ricevuto dopo l'acquisto di un template premium). Verrà scaricato e aggiunto all'elenco.",
-        "data": {
-          "install_url": "URL del .zip del template"
-        }
-      }
-    },
-    "error": {
-      "invalid_slug": "Lo slug deve avere 2–31 caratteri: lettere minuscole, cifre, trattini o trattini bassi, e iniziare con una lettera o una cifra.",
-      "install_failed": "Impossibile installare il template. Verifica che l'URL punti a un .zip di template valido e riprova."
-    },
-    "abort": {
-      "already_configured": "Esiste già una dashboard con questo slug.",
-      "no_templates": "Nessun template installato. Installane uno tramite il servizio glasshopper.install_template oppure copia una cartella in [config]/glasshopper_templates/ e richiama glasshopper.reload_templates."
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "Modifica dashboard React",
-        "data": {
-          "template_id": "Template",
-          "title": "Titolo nella barra laterale",
-          "icon": "Icona MDI",
-          "require_admin": "Solo utenti amministratori",
-          "public": "URL pubblico autonomo"
-        }
+        "title": "Configura Glasshopper",
+        "description": "Aggiunge Glasshopper Manager alla barra laterale, dove crei le dashboard e installi i template. Continua per finire."
       }
     },
     "abort": {
-      "no_templates": "Nessun template installato."
+      "already_configured": "Glasshopper è già configurato."
     }
   },
   "services": {

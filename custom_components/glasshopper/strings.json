@@ -2,50 +2,12 @@
   "config": {
     "step": {
       "user": {
-        "title": "Add React Dashboard",
-        "description": "Register a new React dashboard panel from an installed template.",
-        "data": {
-          "template_id": "Template",
-          "title": "Sidebar title",
-          "slug": "URL slug (used in panel URL and /custom-dashboard/SLUG)",
-          "icon": "MDI icon (e.g. mdi:view-dashboard)",
-          "require_admin": "Admin users only",
-          "public": "Public standalone URL (no Home Assistant login required)",
-          "install_url": "Install another template from a URL (optional). Paste a .zip link and submit to add it to the list."
-        }
-      },
-      "install": {
-        "title": "Install a template",
-        "description": "Paste the download URL of a template .zip (for example the link you received after buying a premium template). It will be downloaded and added to the list.",
-        "data": {
-          "install_url": "Template .zip URL"
-        }
-      }
-    },
-    "error": {
-      "invalid_slug": "Slug must be 2–31 chars, lowercase letters, digits, hyphens or underscores, starting with a letter or digit.",
-      "install_failed": "Could not install that template. Check the URL points to a valid template .zip and try again."
-    },
-    "abort": {
-      "already_configured": "A dashboard with this slug already exists.",
-      "no_templates": "No templates installed. Install one via the glasshopper.install_template service or drop a folder in [config]/glasshopper_templates/ and call glasshopper.reload_templates."
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "Edit React Dashboard",
-        "data": {
-          "template_id": "Template",
-          "title": "Sidebar title",
-          "icon": "MDI icon",
-          "require_admin": "Admin users only",
-          "public": "Public standalone URL"
-        }
+        "title": "Set up Glasshopper",
+        "description": "This adds the Glasshopper Manager to your sidebar, where you create dashboards and install templates. Continue to finish."
       }
     },
     "abort": {
-      "no_templates": "No templates installed."
+      "already_configured": "Glasshopper is already set up."
     }
   },
   "services": {
