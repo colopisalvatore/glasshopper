@@ -1,19 +1,19 @@
-# Glasshopper docs (VitePress, cleanUrls) served at glasshopper.dev/docs.
+# Glasshopper docs (VitePress, cleanUrls) served at the root of docs.glasshopper.dev.
 # VitePress writes pages as *.html but links to them without the extension,
 # so static hosts must rewrite extensionless URLs to the .html file.
 
 Options -MultiViews
 RewriteEngine On
-RewriteBase /docs/
+RewriteBase /
 
 # Serve real files and directories as-is.
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# /docs/guide/quickstart -> .../guide/quickstart.html when that file exists.
+# /guide/quickstart -> /guide/quickstart.html when that file exists.
 RewriteCond %{REQUEST_FILENAME}.html -f
 RewriteRule ^(.+?)/?$ $1.html [L]
 
 # Everything else -> VitePress 404 page.
-ErrorDocument 404 /docs/404.html
+ErrorDocument 404 /404.html
