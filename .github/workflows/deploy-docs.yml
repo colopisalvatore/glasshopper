@@ -1,0 +1,47 @@
+name: Deploy docs (FTP to cPanel)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/deploy-docs.yml'
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
+
+      - name: Build VitePress
+        working-directory: docs
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy .vitepress/dist via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps            # change to "ftp" if the host has no FTPS
+          port: 21
+          # local-dir is relative to the repo root, not the build step.
+          local-dir: ./docs/.vitepress/dist/
+          # Served as a subfolder of the main site: glasshopper.dev/docs.
+          # Keep the trailing slash.
+          server-dir: ${{ vars.DOCS_FTP_SERVER_DIR || 'public_html/glasshopper/docs/' }}
+          # Don't wipe unmanaged files; sync changes only.
+          dangerous-clean-slate: false
