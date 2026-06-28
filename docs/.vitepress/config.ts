@@ -3,8 +3,8 @@ import { defineConfig } from 'vitepress';
 export default defineConfig({
   title: 'Glasshopper',
   description: 'Glasshopper — React dashboards for Home Assistant.',
-  // Served from a subfolder of the main site: glasshopper.dev/docs/.
-  base: '/docs/',
+  // Served at the root of its own subdomain: docs.glasshopper.dev.
+  base: '/',
   cleanUrls: true,
   lastUpdated: true,
   appearance: 'dark',
