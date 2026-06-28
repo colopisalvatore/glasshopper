@@ -309,3 +309,28 @@ export async function fetchDeviceRegistry(): Promise<DeviceRegistryEntry[]> {
 export async function fetchEntityRegistry(): Promise<EntityRegistryEntry[]> {
   return sendMessage<EntityRegistryEntry[]>('config/entity_registry/list');
 }
+
+/** Send a custom WebSocket command (e.g. `glasshopper/dashboards/list`). */
+export async function sendCommand<T>(
+  type: string,
+  params?: Record<string, unknown>,
+): Promise<T> {
+  const conn = await whenConnected();
+  return conn.sendMessagePromise<T>({ type, ...(params ?? {}) });
+}
+
+/** Access token for authenticated HTTP calls (e.g. the upload endpoint). */
+export async function getAccessToken(): Promise<string | null> {
+  if (typeof window !== 'undefined' && window.parent !== window) {
+    try {
+      const bridge = (window.parent as ParentHassWindow).hassConnection;
+      if (bridge) {
+        const { auth } = await bridge;
+        return (auth as { accessToken?: string }).accessToken ?? null;
+      }
+    } catch {
+      /* fall through to token mode */
+    }
+  }
+  return readToken()?.token ?? null;
+}

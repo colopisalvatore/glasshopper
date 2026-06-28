@@ -8,7 +8,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:manager": "tsc -b && vite build --config vite.config.manager.ts",
     "sync": "node scripts/sync-panel.mjs",
+    "sync:manager": "node scripts/sync-manager.mjs",
+    "sync:all": "node scripts/sync-panel.mjs && node scripts/sync-manager.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext .ts,.tsx"

@@ -3,10 +3,10 @@
   "name": "Glasshopper",
   "codeowners": ["@colopisalvatore"],
   "config_flow": true,
-  "dependencies": ["frontend", "http"],
+  "dependencies": ["frontend", "http", "websocket_api"],
   "documentation": "https://github.com/colopisalvatore/glasshopper",
   "integration_type": "service",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/colopisalvatore/glasshopper/issues",
-  "version": "0.2.1"
+  "version": "0.3.0"
 }

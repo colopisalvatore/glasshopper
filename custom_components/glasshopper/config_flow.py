@@ -1,234 +1,36 @@
-"""Config flow for Glasshopper."""
+"""Single-instance hub config flow.
+
+Glasshopper now has exactly one config entry (the "hub"); dashboards are managed
+from the Manager panel, not from per-dashboard config entries.
+"""
 
 from __future__ import annotations
 
-import logging
-import re
-from pathlib import Path
 from typing import Any
 
 import voluptuous as vol
-from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlow
-from homeassistant.core import HomeAssistant, callback
-from homeassistant.data_entry_flow import FlowResult
-from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers.selector import (
-    SelectOptionDict,
-    SelectSelector,
-    SelectSelectorConfig,
-    SelectSelectorMode,
-)
+from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 
-from .const import (
-    CONF_ICON,
-    CONF_PUBLIC,
-    CONF_REQUIRE_ADMIN,
-    CONF_SLUG,
-    CONF_TEMPLATE_ID,
-    CONF_TITLE,
-    DATA_ENTRIES_BY_SLUG,
-    DATA_REGISTERED_STATICS,
-    DATA_REGISTRY,
-    DEFAULT_ICON,
-    DOMAIN,
-)
-from .registry import TemplateRegistry
-
-_LOGGER = logging.getLogger(__name__)
-
-SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{1,30}$")
-
-# Transient form field: paste a zip URL to install a new template inline, so a
-# non-developer never needs the glasshopper.install_template YAML service call.
-CONF_INSTALL_URL = "install_url"
+from .const import CONF_HUB, DOMAIN, MANAGER_TITLE
 
 
-def _get_or_init_registry(hass: HomeAssistant) -> TemplateRegistry:
-    """Return the registry, initializing it if async_setup hasn't run yet.
+class GlasshopperConfigFlow(ConfigFlow, domain=DOMAIN):
+    """One entry per HA instance; it owns the Manager panel + dashboard store."""
 
-    Custom integrations with no yaml entry and no entries don't run
-    async_setup until first entry creation — but config_flow starts before
-    that. Build the registry on demand so the flow can list templates.
-    """
-    domain_data = hass.data.setdefault(DOMAIN, {})
-    registry: TemplateRegistry | None = domain_data.get(DATA_REGISTRY)
-    if registry is None:
-        registry = TemplateRegistry(Path(hass.config.path()))
-        registry.seed_bundled()
-        registry.scan()
-        domain_data[DATA_REGISTRY] = registry
-        domain_data.setdefault(DATA_REGISTERED_STATICS, set())
-        domain_data.setdefault(DATA_ENTRIES_BY_SLUG, {})
-
-        # Also lazy-register services + view, otherwise they're unavailable
-        # before first entry exists.
-        from . import services as services_module
-        from . import views as views_module
-
-        services_module.register(hass)
-        views_module.register(hass)
-    return registry
-
-
-def _template_options(hass: HomeAssistant) -> list[SelectOptionDict]:
-    registry = _get_or_init_registry(hass)
-    # Re-scan on each invocation so newly-dropped folders show up without
-    # needing an explicit reload_templates call.
-    registry.scan()
-    return [
-        SelectOptionDict(
-            value=t.id,
-            label=f"{t.name} ({t.id}) — v{t.version}" if t.version else f"{t.name} ({t.id})",
-        )
-        for t in sorted(registry.templates.values(), key=lambda x: x.name.lower())
-    ]
-
-
-def _template_selector(hass: HomeAssistant) -> SelectSelector:
-    return SelectSelector(
-        SelectSelectorConfig(
-            options=_template_options(hass),
-            mode=SelectSelectorMode.DROPDOWN,
-            multiple=False,
-        )
-    )
-
-
-class HaReactUiConfigFlow(ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Glasshopper dashboards."""
-
-    VERSION = 2
+    VERSION = 1
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
-        errors: dict[str, str] = {}
-        options = _template_options(self.hass)
+    ) -> ConfigFlowResult:
+        await self.async_set_unique_id(DOMAIN)
+        self._abort_if_unique_id_configured()
+        if user_input is None:
+            return self.async_show_form(step_id="user", data_schema=vol.Schema({}))
+        return self.async_create_entry(title=MANAGER_TITLE, data={CONF_HUB: True})
 
-        # No templates at all (e.g. bundled seed failed): install one first.
-        if not options:
-            return await self.async_step_install()
-
-        if user_input is not None:
-            install_url = (user_input.get(CONF_INSTALL_URL) or "").strip()
-            if install_url:
-                # Inline install: add the template, then re-show the form with
-                # it available in the dropdown. No entry is created this pass.
-                if await self._install(install_url, errors):
-                    options = _template_options(self.hass)
-            else:
-                slug = user_input[CONF_SLUG].strip().lower()
-                user_input[CONF_SLUG] = slug
-                if not SLUG_RE.match(slug):
-                    errors[CONF_SLUG] = "invalid_slug"
-                else:
-                    await self.async_set_unique_id(slug)
-                    self._abort_if_unique_id_configured()
-                    data = {
-                        k: v for k, v in user_input.items() if k != CONF_INSTALL_URL
-                    }
-                    return self.async_create_entry(title=data[CONF_TITLE], data=data)
-
-        defaults = user_input or {}
-        schema = vol.Schema(
-            {
-                vol.Required(
-                    CONF_TEMPLATE_ID, default=defaults.get(CONF_TEMPLATE_ID, options[0]["value"])
-                ): _template_selector(self.hass),
-                vol.Required(
-                    CONF_TITLE, default=defaults.get(CONF_TITLE, "React Dashboard")
-                ): str,
-                vol.Required(
-                    CONF_SLUG, default=defaults.get(CONF_SLUG, "react-dashboard")
-                ): str,
-                vol.Optional(
-                    CONF_ICON, default=defaults.get(CONF_ICON, DEFAULT_ICON)
-                ): str,
-                vol.Optional(
-                    CONF_REQUIRE_ADMIN, default=defaults.get(CONF_REQUIRE_ADMIN, False)
-                ): bool,
-                vol.Optional(
-                    CONF_PUBLIC, default=defaults.get(CONF_PUBLIC, False)
-                ): bool,
-                vol.Optional(CONF_INSTALL_URL): str,
-            }
-        )
-
-        return self.async_show_form(
-            step_id="user",
-            data_schema=schema,
-            errors=errors,
-        )
-
-    async def async_step_install(
-        self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
-        """Install a template from a URL when none are available yet."""
-        errors: dict[str, str] = {}
-        if user_input is not None:
-            url = (user_input.get(CONF_INSTALL_URL) or "").strip()
-            if await self._install(url, errors):
-                return await self.async_step_user()
-
-        schema = vol.Schema({vol.Required(CONF_INSTALL_URL): str})
-        return self.async_show_form(step_id="install", data_schema=schema, errors=errors)
-
-    async def _install(self, url: str, errors: dict[str, str]) -> bool:
-        """Download + install a template zip; record an error on failure."""
-        from .services import _install_from_url
-
-        _get_or_init_registry(self.hass)  # ensure registry exists in hass.data
-        try:
-            await _install_from_url(self.hass, url, None)
-            return True
-        except HomeAssistantError as exc:
-            _LOGGER.warning("glasshopper: inline template install failed: %s", exc)
-            errors[CONF_INSTALL_URL] = "install_failed"
-            return False
-        except Exception as exc:  # noqa: BLE001 - surface any download/zip error
-            _LOGGER.exception("glasshopper: unexpected install error: %s", exc)
-            errors[CONF_INSTALL_URL] = "install_failed"
-            return False
-
-    @staticmethod
-    @callback
-    def async_get_options_flow(entry: ConfigEntry) -> OptionsFlow:
-        return HaReactUiOptionsFlow(entry)
-
-
-class HaReactUiOptionsFlow(OptionsFlow):
-    """Edit dashboard metadata after creation (slug is immutable)."""
-
-    def __init__(self, entry: ConfigEntry) -> None:
-        self.entry = entry
-
-    async def async_step_init(
-        self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
-        options = _template_options(self.hass)
-        if not options:
-            return self.async_abort(reason="no_templates")
-
-        if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
-
-        merged = {**self.entry.data, **self.entry.options}
-        schema = vol.Schema(
-            {
-                vol.Required(
-                    CONF_TEMPLATE_ID,
-                    default=merged.get(CONF_TEMPLATE_ID, options[0]["value"]),
-                ): _template_selector(self.hass),
-                vol.Required(CONF_TITLE, default=merged[CONF_TITLE]): str,
-                vol.Optional(
-                    CONF_ICON, default=merged.get(CONF_ICON, DEFAULT_ICON)
-                ): str,
-                vol.Optional(
-                    CONF_REQUIRE_ADMIN, default=merged.get(CONF_REQUIRE_ADMIN, False)
-                ): bool,
-                vol.Optional(
-                    CONF_PUBLIC, default=merged.get(CONF_PUBLIC, False)
-                ): bool,
-            }
-        )
-        return self.async_show_form(step_id="init", data_schema=schema)
+    async def async_step_import(
+        self, import_data: dict[str, Any]
+    ) -> ConfigFlowResult:
+        await self.async_set_unique_id(DOMAIN)
+        self._abort_if_unique_id_configured()
+        return self.async_create_entry(title=MANAGER_TITLE, data={CONF_HUB: True})

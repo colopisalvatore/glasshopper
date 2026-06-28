@@ -1,5 +1,7 @@
 node_modules
 dist
+dist-manager
+templates_dist
 dist-ssr
 .env.local
 .env.*.local

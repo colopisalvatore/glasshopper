@@ -2,50 +2,12 @@
   "config": {
     "step": {
       "user": {
-        "title": "Ajouter un tableau de bord React",
-        "description": "Enregistrer un nouveau panneau de tableau de bord React à partir d'un modèle installé.",
-        "data": {
-          "template_id": "Modèle",
-          "title": "Titre de la barre latérale",
-          "slug": "Slug d'URL (utilisé dans l'URL du panneau et /custom-dashboard/SLUG)",
-          "icon": "Icône MDI (par ex. mdi:view-dashboard)",
-          "require_admin": "Administrateurs uniquement",
-          "public": "URL publique autonome (aucune connexion à Home Assistant requise)",
-          "install_url": "Installer un autre modèle depuis une URL (facultatif). Collez un lien .zip et validez pour l'ajouter à la liste."
-        }
-      },
-      "install": {
-        "title": "Installer un modèle",
-        "description": "Collez l'URL de téléchargement d'un .zip de modèle (par exemple le lien que vous avez reçu après l'achat d'un modèle premium). Il sera téléchargé et ajouté à la liste.",
-        "data": {
-          "install_url": "URL du .zip du modèle"
-        }
-      }
-    },
-    "error": {
-      "invalid_slug": "Le slug doit comporter 2–31 caractères : lettres minuscules, chiffres, traits d'union ou tirets bas, en commençant par une lettre ou un chiffre.",
-      "install_failed": "Impossible d'installer ce modèle. Vérifiez que l'URL pointe vers un .zip de modèle valide et réessayez."
-    },
-    "abort": {
-      "already_configured": "Un tableau de bord avec ce slug existe déjà.",
-      "no_templates": "Aucun modèle installé. Installez-en un via le service glasshopper.install_template ou déposez un dossier dans [config]/glasshopper_templates/ et appelez glasshopper.reload_templates."
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "Modifier le tableau de bord React",
-        "data": {
-          "template_id": "Modèle",
-          "title": "Titre de la barre latérale",
-          "icon": "Icône MDI",
-          "require_admin": "Administrateurs uniquement",
-          "public": "URL publique autonome"
-        }
+        "title": "Configurer Glasshopper",
+        "description": "Ajoute le Manager Glasshopper à votre barre latérale, où vous créez des tableaux de bord et installez des modèles. Continuez pour terminer."
       }
     },
     "abort": {
-      "no_templates": "Aucun modèle installé."
+      "already_configured": "Glasshopper est déjà configuré."
     }
   },
   "services": {
