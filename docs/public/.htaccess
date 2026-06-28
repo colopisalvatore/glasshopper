@@ -6,6 +6,13 @@ Options -MultiViews
 RewriteEngine On
 RewriteBase /
 
+# Canonical host = docs.glasshopper.dev. The same files also sit under the main
+# site (public_html/glasshopper/docs/), so if reached via glasshopper.dev/docs/*
+# (any host other than the subdomain), 301 to the subdomain instead of serving
+# a copy whose asset paths (base '/') only resolve at the subdomain root.
+RewriteCond %{HTTP_HOST} !^docs\.glasshopper\.dev$ [NC]
+RewriteRule ^(.*)$ https://docs.glasshopper.dev/$1 [R=301,L]
+
 # Serve real files and directories as-is.
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
