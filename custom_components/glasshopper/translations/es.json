@@ -1,0 +1,81 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Añadir panel React",
+        "description": "Registra un nuevo panel React a partir de una plantilla instalada.",
+        "data": {
+          "template_id": "Plantilla",
+          "title": "Título en la barra lateral",
+          "slug": "slug de la URL (se usa en la URL del panel y en /custom-dashboard/SLUG)",
+          "icon": "Icono MDI (p. ej. mdi:view-dashboard)",
+          "require_admin": "Solo administradores",
+          "public": "URL pública independiente (no requiere iniciar sesión en Home Assistant)",
+          "install_url": "Instala otra plantilla desde una URL (opcional). Pega un enlace .zip y envía para añadirla a la lista."
+        }
+      },
+      "install": {
+        "title": "Instalar una plantilla",
+        "description": "Pega la URL de descarga de un .zip de plantilla (por ejemplo, el enlace que recibiste tras comprar una plantilla premium). Se descargará y se añadirá a la lista.",
+        "data": {
+          "install_url": "URL del .zip de la plantilla"
+        }
+      }
+    },
+    "error": {
+      "invalid_slug": "El slug debe tener entre 2 y 31 caracteres: letras minúsculas, dígitos, guiones o guiones bajos, y empezar por una letra o un dígito.",
+      "install_failed": "No se pudo instalar esa plantilla. Comprueba que la URL apunta a un .zip de plantilla válido e inténtalo de nuevo."
+    },
+    "abort": {
+      "already_configured": "Ya existe un panel con este slug.",
+      "no_templates": "No hay plantillas instaladas. Instala una mediante el servicio glasshopper.install_template o coloca una carpeta en [config]/glasshopper_templates/ y ejecuta glasshopper.reload_templates."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Editar panel React",
+        "data": {
+          "template_id": "Plantilla",
+          "title": "Título en la barra lateral",
+          "icon": "Icono MDI",
+          "require_admin": "Solo administradores",
+          "public": "URL pública independiente"
+        }
+      }
+    },
+    "abort": {
+      "no_templates": "No hay plantillas instaladas."
+    }
+  },
+  "services": {
+    "install_template": {
+      "name": "Instalar plantilla desde una URL",
+      "description": "Descarga e instala un zip de plantilla de panel React desde una URL.",
+      "fields": {
+        "url": {
+          "name": "URL",
+          "description": "URL HTTPS a un archivo .zip."
+        },
+        "template_id": {
+          "name": "ID de plantilla",
+          "description": "Valor opcional para sobrescribir el nombre de la carpeta."
+        }
+      }
+    },
+    "reload_templates": {
+      "name": "Recargar plantillas",
+      "description": "Vuelve a escanear el directorio de plantillas del usuario."
+    },
+    "remove_template": {
+      "name": "Eliminar plantilla",
+      "description": "Elimina un directorio de plantilla.",
+      "fields": {
+        "template_id": {
+          "name": "ID de plantilla",
+          "description": "Nombre de la carpeta que se eliminará."
+        }
+      }
+    }
+  }
+}

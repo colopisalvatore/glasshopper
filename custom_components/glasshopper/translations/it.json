@@ -1,0 +1,81 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Aggiungi dashboard React",
+        "description": "Registra un nuovo pannello dashboard React da un template installato.",
+        "data": {
+          "template_id": "Template",
+          "title": "Titolo nella barra laterale",
+          "slug": "Slug URL (usato nell'URL del pannello e in /custom-dashboard/SLUG)",
+          "icon": "Icona MDI (es. mdi:view-dashboard)",
+          "require_admin": "Solo utenti amministratori",
+          "public": "URL pubblico autonomo (nessun accesso a Home Assistant richiesto)",
+          "install_url": "Installa un altro template da un URL (facoltativo). Incolla un link .zip e invia per aggiungerlo all'elenco."
+        }
+      },
+      "install": {
+        "title": "Installa un template",
+        "description": "Incolla l'URL di download di un .zip del template (ad esempio il link ricevuto dopo l'acquisto di un template premium). Verrà scaricato e aggiunto all'elenco.",
+        "data": {
+          "install_url": "URL del .zip del template"
+        }
+      }
+    },
+    "error": {
+      "invalid_slug": "Lo slug deve avere 2–31 caratteri: lettere minuscole, cifre, trattini o trattini bassi, e iniziare con una lettera o una cifra.",
+      "install_failed": "Impossibile installare il template. Verifica che l'URL punti a un .zip di template valido e riprova."
+    },
+    "abort": {
+      "already_configured": "Esiste già una dashboard con questo slug.",
+      "no_templates": "Nessun template installato. Installane uno tramite il servizio glasshopper.install_template oppure copia una cartella in [config]/glasshopper_templates/ e richiama glasshopper.reload_templates."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Modifica dashboard React",
+        "data": {
+          "template_id": "Template",
+          "title": "Titolo nella barra laterale",
+          "icon": "Icona MDI",
+          "require_admin": "Solo utenti amministratori",
+          "public": "URL pubblico autonomo"
+        }
+      }
+    },
+    "abort": {
+      "no_templates": "Nessun template installato."
+    }
+  },
+  "services": {
+    "install_template": {
+      "name": "Installa template da URL",
+      "description": "Scarica e installa lo zip di un template dashboard React da un URL.",
+      "fields": {
+        "url": {
+          "name": "URL",
+          "description": "URL HTTPS di un file .zip."
+        },
+        "template_id": {
+          "name": "ID template",
+          "description": "Sovrascrittura facoltativa del nome della cartella."
+        }
+      }
+    },
+    "reload_templates": {
+      "name": "Ricarica template",
+      "description": "Riesegue la scansione della cartella dei template utente."
+    },
+    "remove_template": {
+      "name": "Rimuovi template",
+      "description": "Elimina una cartella di template.",
+      "fields": {
+        "template_id": {
+          "name": "ID template",
+          "description": "Nome della cartella da eliminare."
+        }
+      }
+    }
+  }
+}

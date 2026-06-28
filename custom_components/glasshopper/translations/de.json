@@ -1,0 +1,81 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "React-Dashboard hinzufügen",
+        "description": "Registriere ein neues React-Dashboard-Panel aus einer installierten Vorlage.",
+        "data": {
+          "template_id": "Vorlage",
+          "title": "Titel in der Seitenleiste",
+          "slug": "URL-Slug (wird in der Panel-URL und in /custom-dashboard/SLUG verwendet)",
+          "icon": "MDI-Symbol (z. B. mdi:view-dashboard)",
+          "require_admin": "Nur für Administratoren",
+          "public": "Öffentliche eigenständige URL (keine Home Assistant-Anmeldung erforderlich)",
+          "install_url": "Eine weitere Vorlage über eine URL installieren (optional). Füge einen .zip-Link ein und sende ihn ab, um sie zur Liste hinzuzufügen."
+        }
+      },
+      "install": {
+        "title": "Vorlage installieren",
+        "description": "Füge die Download-URL einer Vorlagen-.zip ein (zum Beispiel den Link, den du nach dem Kauf einer Premium-Vorlage erhalten hast). Sie wird heruntergeladen und zur Liste hinzugefügt.",
+        "data": {
+          "install_url": "URL der Vorlagen-.zip"
+        }
+      }
+    },
+    "error": {
+      "invalid_slug": "Der Slug muss 2–31 Zeichen lang sein, nur Kleinbuchstaben, Ziffern, Bindestriche oder Unterstriche enthalten und mit einem Buchstaben oder einer Ziffer beginnen.",
+      "install_failed": "Diese Vorlage konnte nicht installiert werden. Prüfe, ob die URL auf eine gültige Vorlagen-.zip verweist, und versuche es erneut."
+    },
+    "abort": {
+      "already_configured": "Ein Dashboard mit diesem Slug existiert bereits.",
+      "no_templates": "Keine Vorlagen installiert. Installiere eine über den Dienst glasshopper.install_template oder lege einen Ordner in [config]/glasshopper_templates/ ab und rufe glasshopper.reload_templates auf."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "React-Dashboard bearbeiten",
+        "data": {
+          "template_id": "Vorlage",
+          "title": "Titel in der Seitenleiste",
+          "icon": "MDI-Symbol",
+          "require_admin": "Nur für Administratoren",
+          "public": "Öffentliche eigenständige URL"
+        }
+      }
+    },
+    "abort": {
+      "no_templates": "Keine Vorlagen installiert."
+    }
+  },
+  "services": {
+    "install_template": {
+      "name": "Vorlage über URL installieren",
+      "description": "Lade eine React-Dashboard-Vorlagen-ZIP über eine URL herunter und installiere sie.",
+      "fields": {
+        "url": {
+          "name": "URL",
+          "description": "HTTPS-URL zu einer .zip-Datei."
+        },
+        "template_id": {
+          "name": "Vorlagen-ID",
+          "description": "Optionale Überschreibung für den Ordnernamen."
+        }
+      }
+    },
+    "reload_templates": {
+      "name": "Vorlagen neu laden",
+      "description": "Das Verzeichnis der Benutzervorlagen erneut durchsuchen."
+    },
+    "remove_template": {
+      "name": "Vorlage entfernen",
+      "description": "Ein Vorlagenverzeichnis löschen.",
+      "fields": {
+        "template_id": {
+          "name": "Vorlagen-ID",
+          "description": "Zu löschender Ordnername."
+        }
+      }
+    }
+  }
+}
