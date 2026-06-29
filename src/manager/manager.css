@@ -18,14 +18,33 @@
   color-scheme: dark;
 }
 
-/* The shared shell is built for fixed wall-panel dashboards that never scroll
-   (≥840px it pins the app to 100dvh with overflow:hidden). The Manager is an
-   admin UI with growing lists — let it scroll vertically instead. */
+/* The shared shell pins the whole document to the viewport (html/body/#root
+   height:100%, and ≥840px .gh-app is 100dvh overflow:hidden) — built for fixed
+   wall-panel dashboards. The Manager is an admin UI with growing lists, so let
+   the document grow and scroll. */
+html,
+body,
+#root {
+  height: auto;
+  min-height: 100%;
+}
+
 @media (min-width: 840px) and (min-height: 480px) {
-  .gh-app { height: auto; min-height: 100dvh; overflow: visible; }
+  .gh-app {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
   .gh-app__body { flex-direction: column; }
   .gh-app__stage { overflow: visible; }
-  .gh-app__topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); }
+  .gh-app__topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    margin: calc(-1 * var(--pad)) calc(-1 * var(--pad)) 0;
+    padding: var(--pad);
+  }
 }
 
 /* Topbar */
@@ -78,6 +97,8 @@
   background: var(--bg); color: var(--ink); font: inherit; font-size: var(--text-sm, 14px);
 }
 .mgr__check { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-2); font-size: var(--text-sm, 14px); }
+
+.mgr__uploading { margin: 0; color: var(--ink-2); font-size: var(--text-sm, 14px); }
 
 /* Toast */
 .mgr__toast {
