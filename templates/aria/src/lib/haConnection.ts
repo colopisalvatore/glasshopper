@@ -66,6 +66,34 @@ let unsubEntities: (() => void) | null = null;
 let reconnectTimer: number | null = null;
 let attempts = 0;
 
+// Resolves the moment `connection` becomes available, so registry/service/
+// history calls made before connect() finishes (e.g. a hook firing on mount)
+// wait for the bridge instead of throwing "not established". Rejects after a
+// timeout when there is genuinely no connection.
+let readyWaiters: Array<(c: Connection) => void> = [];
+
+function markConnected(conn: Connection): void {
+  connection = conn;
+  const waiters = readyWaiters;
+  readyWaiters = [];
+  waiters.forEach((resolve) => resolve(conn));
+}
+
+function whenConnected(timeoutMs = 10000): Promise<Connection> {
+  if (connection) return Promise.resolve(connection);
+  return new Promise<Connection>((resolve, reject) => {
+    const onReady = (conn: Connection): void => {
+      window.clearTimeout(timer);
+      resolve(conn);
+    };
+    const timer = window.setTimeout(() => {
+      readyWaiters = readyWaiters.filter((r) => r !== onReady);
+      reject(new Error('HA connection is not established'));
+    }, timeoutMs);
+    readyWaiters.push(onReady);
+  });
+}
+
 const listeners = new Set<EntitiesListener>();
 const statusListeners = new Set<(s: ConnectionStatus) => void>();
 
@@ -146,7 +174,7 @@ export async function connect(): Promise<void> {
   const parentConn = await tryParentBridge();
   if (parentConn) {
     panelMode = true;
-    connection = parentConn;
+    markConnected(parentConn);
     attempts = 0;
     attach(parentConn);
     setStatus('connected');
@@ -163,9 +191,9 @@ export async function connect(): Promise<void> {
 
   try {
     const auth = createLongLivedTokenAuth(creds.url, creds.token);
-    connection = await createConnection({ auth });
+    markConnected(await createConnection({ auth }));
     attempts = 0;
-    attach(connection);
+    attach(connection!);
     setStatus('connected');
   } catch (err) {
     lastError = err instanceof Error ? err.message : String(err);
@@ -227,14 +255,21 @@ export async function callHaService(
   service: string,
   data?: Record<string, unknown>,
 ): Promise<void> {
-  if (!connection) throw new Error('HA connection is not established');
-  await wsCallService(connection, domain, service, data);
+  const conn = await whenConnected();
+  await wsCallService(conn, domain, service, data);
 }
 
 export async function fetchHistory(
   entityId: string,
   hoursBack = 24,
 ): Promise<Array<{ t: number; v: number }>> {
+  // Wait for the bridge so panelMode is set correctly when a hook calls this on
+  // mount; if no connection ever comes, fall through (token mode may have creds).
+  try {
+    await whenConnected();
+  } catch {
+    /* no live connection */
+  }
   const start = new Date(Date.now() - hoursBack * 3600_000).toISOString();
   const end = new Date().toISOString();
   const path = `/api/history/period/${start}?filter_entity_id=${entityId}&end_time=${end}&minimal_response&no_attributes`;
@@ -259,8 +294,8 @@ export async function fetchHistory(
 }
 
 async function sendMessage<T>(type: string): Promise<T> {
-  if (!connection) throw new Error('HA connection is not established');
-  return connection.sendMessagePromise<T>({ type });
+  const conn = await whenConnected();
+  return conn.sendMessagePromise<T>({ type });
 }
 
 export async function fetchAreaRegistry(): Promise<AreaRegistryEntry[]> {
@@ -273,4 +308,29 @@ export async function fetchDeviceRegistry(): Promise<DeviceRegistryEntry[]> {
 
 export async function fetchEntityRegistry(): Promise<EntityRegistryEntry[]> {
   return sendMessage<EntityRegistryEntry[]>('config/entity_registry/list');
+}
+
+/** Send a custom WebSocket command (e.g. `glasshopper/dashboards/list`). */
+export async function sendCommand<T>(
+  type: string,
+  params?: Record<string, unknown>,
+): Promise<T> {
+  const conn = await whenConnected();
+  return conn.sendMessagePromise<T>({ type, ...(params ?? {}) });
+}
+
+/** Access token for authenticated HTTP calls (e.g. the upload endpoint). */
+export async function getAccessToken(): Promise<string | null> {
+  if (typeof window !== 'undefined' && window.parent !== window) {
+    try {
+      const bridge = (window.parent as ParentHassWindow).hassConnection;
+      if (bridge) {
+        const { auth } = await bridge;
+        return (auth as { accessToken?: string }).accessToken ?? null;
+      }
+    } catch {
+      /* fall through to token mode */
+    }
+  }
+  return readToken()?.token ?? null;
 }
