@@ -344,6 +344,11 @@ function TemplatesTab(props: {
 }) {
   const { templates, busy, onInstallUrl, onUpload, onRemove } = props;
   const [url, setUrl] = useState('');
+  const [uploadingName, setUploadingName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!busy) setUploadingName(null);
+  }, [busy]);
 
   return (
     <section className="mgr__section gh-stack">
@@ -375,11 +380,17 @@ function TemplatesTab(props: {
             disabled={busy}
             onChange={(e) => {
               const f = e.target.files?.[0];
-              if (f) onUpload(f);
+              if (f) {
+                setUploadingName(f.name);
+                onUpload(f);
+              }
               e.target.value = '';
             }}
           />
         </label>
+        {uploadingName && busy && (
+          <p className="mgr__uploading">⏳ Uploading <strong>{uploadingName}</strong>… please wait.</p>
+        )}
       </div>
 
       <div className="gh-grid gh-grid--wide">
