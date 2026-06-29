@@ -83,7 +83,6 @@ export function ManagerApp() {
 
   return (
     <AppShell
-      stage="spread"
       topbar={
         <>
           <div className="mgr__brand">
