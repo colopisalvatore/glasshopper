@@ -18,6 +18,16 @@
   color-scheme: dark;
 }
 
+/* The shared shell is built for fixed wall-panel dashboards that never scroll
+   (≥840px it pins the app to 100dvh with overflow:hidden). The Manager is an
+   admin UI with growing lists — let it scroll vertically instead. */
+@media (min-width: 840px) and (min-height: 480px) {
+  .gh-app { height: auto; min-height: 100dvh; overflow: visible; }
+  .gh-app__body { flex-direction: column; }
+  .gh-app__stage { overflow: visible; }
+  .gh-app__topbar { position: sticky; top: 0; z-index: 10; background: var(--bg); }
+}
+
 /* Topbar */
 .mgr__brand { display: inline-flex; align-items: baseline; gap: 8px; }
 .mgr__mark { font-size: 20px; }
