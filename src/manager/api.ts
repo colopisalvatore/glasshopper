@@ -48,10 +48,10 @@ export const createDashboard = (d: DashboardInput) =>
   sendCommand<{ dashboard: Dashboard }>('glasshopper/dashboards/create', d).then((r) => r.dashboard);
 
 export const updateDashboard = (id: string, patch: Partial<DashboardInput>) =>
-  sendCommand<{ dashboard: Dashboard }>('glasshopper/dashboards/update', { id, ...patch }).then((r) => r.dashboard);
+  sendCommand<{ dashboard: Dashboard }>('glasshopper/dashboards/update', { dashboard_id: id, ...patch }).then((r) => r.dashboard);
 
 export const deleteDashboard = (id: string) =>
-  sendCommand<{ ok: boolean }>('glasshopper/dashboards/delete', { id });
+  sendCommand<{ ok: boolean }>('glasshopper/dashboards/delete', { dashboard_id: id });
 
 export const listTemplates = () =>
   sendCommand<{ templates: Template[] }>('glasshopper/templates/list').then((r) => r.templates);
@@ -66,7 +66,7 @@ export const listCatalog = () =>
   sendCommand<{ catalog: CatalogEntry[] }>('glasshopper/catalog/list').then((r) => r.catalog);
 
 export const installCatalog = (id: string) =>
-  sendCommand<{ template: Template | null }>('glasshopper/catalog/install', { id }).then((r) => r.template);
+  sendCommand<{ template: Template | null }>('glasshopper/catalog/install', { catalog_id: id }).then((r) => r.template);
 
 export async function uploadZip(file: File, template_id?: string): Promise<Template | null> {
   const token = await getAccessToken();

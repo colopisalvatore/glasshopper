@@ -113,7 +113,7 @@ async def ws_dashboards_create(hass, connection, msg):
 @websocket_api.websocket_command(
     {
         vol.Required("type"): WS_DASHBOARDS_UPDATE,
-        vol.Required("id"): str,
+        vol.Required("dashboard_id"): str,
         vol.Optional("title"): str,
         vol.Optional("template_id"): str,
         vol.Optional("icon"): str,
@@ -125,7 +125,7 @@ async def ws_dashboards_create(hass, connection, msg):
 @websocket_api.async_response
 async def ws_dashboards_update(hass, connection, msg):
     store = _store(hass)
-    dash = store.get(msg["id"])
+    dash = store.get(msg["dashboard_id"])
     if dash is None:
         connection.send_error(msg["id"], "not_found", "Dashboard not found.")
         return
@@ -138,7 +138,7 @@ async def ws_dashboards_update(hass, connection, msg):
         connection.send_error(msg["id"], "unknown_template", "That template is not installed.")
         return
 
-    updated = store.update(msg["id"], patch)
+    updated = store.update(msg["dashboard_id"], patch)
     await store.async_save()
     # Re-register the panel so title/icon/template/admin changes take effect.
     await async_unregister_dashboard_panel(hass, updated[CONF_SLUG])
@@ -147,18 +147,18 @@ async def ws_dashboards_update(hass, connection, msg):
 
 
 @websocket_api.websocket_command(
-    {vol.Required("type"): WS_DASHBOARDS_DELETE, vol.Required("id"): str}
+    {vol.Required("type"): WS_DASHBOARDS_DELETE, vol.Required("dashboard_id"): str}
 )
 @websocket_api.require_admin
 @websocket_api.async_response
 async def ws_dashboards_delete(hass, connection, msg):
     store = _store(hass)
-    dash = store.get(msg["id"])
+    dash = store.get(msg["dashboard_id"])
     if dash is None:
         connection.send_error(msg["id"], "not_found", "Dashboard not found.")
         return
     await async_unregister_dashboard_panel(hass, dash[CONF_SLUG])
-    store.remove(msg["id"])
+    store.remove(msg["dashboard_id"])
     await store.async_save()
     connection.send_result(msg["id"], {"ok": True})
 
@@ -227,12 +227,12 @@ def ws_catalog_list(hass, connection, msg):
 
 
 @websocket_api.websocket_command(
-    {vol.Required("type"): WS_CATALOG_INSTALL, vol.Required("id"): str}
+    {vol.Required("type"): WS_CATALOG_INSTALL, vol.Required("catalog_id"): str}
 )
 @websocket_api.require_admin
 @websocket_api.async_response
 async def ws_catalog_install(hass, connection, msg):
-    entry = catalog_get(msg["id"])
+    entry = catalog_get(msg["catalog_id"])
     if entry is None:
         connection.send_error(msg["id"], "not_found", "Unknown catalog entry.")
         return
