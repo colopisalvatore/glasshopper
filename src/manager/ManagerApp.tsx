@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { AppShell } from '@/components/AppShell';
 import { getConnectionStatus, onStatus, type ConnectionStatus } from '@/lib/haConnection';
-import { BrandMark, Icon, type IconName } from './icons';
+import { Icon, type IconName } from './icons';
 import {
   type CatalogEntry,
   type Dashboard,
@@ -19,6 +19,10 @@ import {
   updateDashboard,
   uploadZip,
 } from './api';
+
+// Real brand mark, bundled from the integration's brand assets (Vite resolves
+// and hashes it; works under the panel's relative base).
+const GH_LOGO = new URL('../../custom_components/glasshopper/brand/icon@2x.png', import.meta.url).href;
 
 type Tab = 'dashboards' | 'catalog' | 'templates';
 type Toast = { kind: 'ok' | 'err'; text: string };
@@ -106,7 +110,7 @@ export function ManagerApp() {
       topbar={
         <>
           <div className="mgr-brand">
-            <BrandMark />
+            <span className="mgr-logo" style={{ backgroundImage: `url(${GH_LOGO})` }} aria-hidden />
             <span className="mgr-brand__name">Glasshopper</span>
             <span className="mgr-brand__tag">Manager</span>
           </div>
@@ -238,6 +242,7 @@ export function DashboardsTab(props: {
     <Panel id="dashboards">
       <div className="mgr-panel__head">
         <div className="mgr-panel__titles">
+          <span className="mgr-panel__eyebrow">Sidebar panels</span>
           <h2>Dashboards</h2>
           <p className="mgr-panel__desc">Each dashboard becomes a panel in the Home Assistant sidebar.</p>
         </div>
@@ -458,6 +463,7 @@ export function CatalogTab(props: { catalog: CatalogEntry[]; loaded: boolean; bu
     <Panel id="catalog">
       <div className="mgr-panel__head">
         <div className="mgr-panel__titles">
+          <span className="mgr-panel__eyebrow">Template store</span>
           <h2>Catalog</h2>
           <p className="mgr-panel__desc">Ready-made dashboard templates. Install a free one in a click, or browse the premium store.</p>
         </div>
@@ -476,7 +482,7 @@ export function CatalogTab(props: { catalog: CatalogEntry[]; loaded: boolean; bu
       ) : (
         <div className="gh-grid gh-grid--wide mgr-cards">
           {catalog.map((e) => (
-            <article key={e.id} className="mgr-card">
+            <article key={e.id} className={`mgr-card${e.kind === 'premium' ? ' mgr-card--premium' : ''}`}>
               <div className="mgr-card__preview">
                 {e.preview ? <img src={e.preview} alt="" /> : <Icon name="layers" size={30} />}
                 <span className={`mgr-tag mgr-tag--${e.kind} mgr-card__tag`}>{e.kind}</span>
@@ -530,6 +536,7 @@ export function TemplatesTab(props: {
     <Panel id="templates">
       <div className="mgr-panel__head">
         <div className="mgr-panel__titles">
+          <span className="mgr-panel__eyebrow">Installed library</span>
           <h2>Templates</h2>
           <p className="mgr-panel__desc">Installed templates power your dashboards. Add more from a URL or a .zip file.</p>
         </div>
