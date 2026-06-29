@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { AppShell } from '@/components/AppShell';
-import { useTheme } from '@/hooks';
+import { getConnectionStatus, onStatus, type ConnectionStatus } from '@/lib/haConnection';
+import { BrandMark, Icon, type IconName } from './icons';
 import {
   type CatalogEntry,
   type Dashboard,
@@ -22,6 +23,20 @@ import {
 type Tab = 'dashboards' | 'catalog' | 'templates';
 type Toast = { kind: 'ok' | 'err'; text: string };
 
+const TABS: { id: Tab; label: string; icon: IconName }[] = [
+  { id: 'dashboards', label: 'Dashboards', icon: 'dashboard' },
+  { id: 'catalog', label: 'Catalog', icon: 'store' },
+  { id: 'templates', label: 'Templates', icon: 'layers' },
+];
+
+const STATUS_LABEL: Record<ConnectionStatus, string> = {
+  idle: 'Connecting…',
+  connecting: 'Connecting…',
+  connected: 'Connected',
+  disconnected: 'Offline',
+  error: 'Connection error',
+};
+
 function slugify(s: string): string {
   return s
     .toLowerCase()
@@ -31,19 +46,16 @@ function slugify(s: string): string {
 }
 
 export function ManagerApp() {
-  const theme = useTheme();
   const [tab, setTab] = useState<Tab>('dashboards');
   const [dashboards, setDashboards] = useState<Dashboard[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [catalog, setCatalog] = useState<CatalogEntry[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const [toast, setToast] = useState<Toast | null>(null);
   const [busy, setBusy] = useState(false);
+  const [status, setStatus] = useState<ConnectionStatus>(() => getConnectionStatus());
 
-  useEffect(() => {
-    const c = theme['primary-color'];
-    const root = document.documentElement;
-    if (c) root.style.setProperty('--accent', c);
-  }, [theme]);
+  useEffect(() => onStatus(setStatus), []);
 
   const flash = useCallback((kind: Toast['kind'], text: string) => {
     setToast({ kind, text });
@@ -58,6 +70,8 @@ export function ManagerApp() {
       setCatalog(c);
     } catch (e) {
       flash('err', errText(e));
+    } finally {
+      setLoaded(true);
     }
   }, [flash]);
 
@@ -81,36 +95,53 @@ export function ManagerApp() {
     [refresh, flash],
   );
 
+  const counts: Record<Tab, number> = {
+    dashboards: dashboards.length,
+    catalog: catalog.length,
+    templates: templates.length,
+  };
+
   return (
     <AppShell
       topbar={
         <>
-          <div className="mgr__brand">
-            <span className="mgr__mark" aria-hidden>🦗</span>
-            <strong>Glasshopper</strong>
-            <span className="mgr__sub">Manager</span>
+          <div className="mgr-brand">
+            <BrandMark />
+            <span className="mgr-brand__name">Glasshopper</span>
+            <span className="mgr-brand__tag">Manager</span>
           </div>
-          <nav className="mgr__tabs">
-            {(['dashboards', 'catalog', 'templates'] as Tab[]).map((t) => (
+
+          <nav className="mgr-tabs" role="tablist" aria-label="Manager sections">
+            {TABS.map(({ id, label, icon }) => (
               <button
-                key={t}
+                key={id}
                 type="button"
-                className={`mgr__tab${tab === t ? ' mgr__tab--on' : ''}`}
-                onClick={() => setTab(t)}
+                role="tab"
+                id={`mgr-tab-${id}`}
+                aria-selected={tab === id}
+                aria-controls={`mgr-panel-${id}`}
+                className={`mgr-tab${tab === id ? ' mgr-tab--on' : ''}`}
+                onClick={() => setTab(id)}
               >
-                {t}
+                <Icon name={icon} size={17} />
+                {label}
+                {loaded && <span className="mgr-tab__count">{counts[id]}</span>}
               </button>
             ))}
           </nav>
+
+          <div className={`mgr-status mgr-status--${status}`}>
+            <span className="mgr-status__dot" />
+            {STATUS_LABEL[status]}
+          </div>
         </>
       }
     >
-      {toast && <div className={`mgr__toast mgr__toast--${toast.kind}`}>{toast.text}</div>}
-
       {tab === 'dashboards' && (
         <DashboardsTab
           dashboards={dashboards}
           templates={templates}
+          loaded={loaded}
           busy={busy}
           onCreate={(d) => run('Dashboard created', () => createDashboard(d))}
           onUpdate={(id, p) => run('Dashboard updated', () => updateDashboard(id, p))}
@@ -121,6 +152,7 @@ export function ManagerApp() {
       {tab === 'catalog' && (
         <CatalogTab
           catalog={catalog}
+          loaded={loaded}
           busy={busy}
           onInstall={(id) => run('Template installed', () => installCatalog(id))}
         />
@@ -129,11 +161,24 @@ export function ManagerApp() {
       {tab === 'templates' && (
         <TemplatesTab
           templates={templates}
+          loaded={loaded}
           busy={busy}
           onInstallUrl={(url) => run('Template installed', () => installUrl(url))}
           onUpload={(file) => run('Template uploaded', () => uploadZip(file))}
           onRemove={(id) => run('Template removed', () => removeTemplate(id))}
         />
+      )}
+
+      {toast && (
+        <div className={`mgr-toast mgr-toast--${toast.kind}`} role="status" aria-live="polite">
+          <span className="mgr-toast__icon">
+            <Icon name={toast.kind === 'ok' ? 'check' : 'alert'} size={15} />
+          </span>
+          <span className="mgr-toast__text">{toast.text}</span>
+          <button type="button" className="mgr-toast__close" aria-label="Dismiss" onClick={() => setToast(null)}>
+            <Icon name="x" size={16} />
+          </button>
+        </div>
       )}
     </AppShell>
   );
@@ -141,96 +186,179 @@ export function ManagerApp() {
 
 export default ManagerApp;
 
+function Panel({ id, children }: { id: Tab; children: ReactNode }) {
+  return (
+    <section
+      className="mgr-panel gh-stack"
+      role="tabpanel"
+      id={`mgr-panel-${id}`}
+      aria-labelledby={`mgr-tab-${id}`}
+      tabIndex={0}
+    >
+      {children}
+    </section>
+  );
+}
+
+function SkeletonList({ rows = 3 }: { rows?: number }) {
+  return (
+    <div className="mgr-surface" aria-hidden>
+      {Array.from({ length: rows }, (_, i) => (
+        <div className="mgr-skel-row" key={i}>
+          <span className="mgr-skel mgr-skel--icon" />
+          <div className="gh-stack" style={{ flex: 1, gap: 8 }}>
+            <span className="mgr-skel mgr-skel--line" style={{ width: '42%' }} />
+            <span className="mgr-skel mgr-skel--line" style={{ width: '26%' }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ── Dashboards ───────────────────────────────────────────────────────────────
 
-function DashboardsTab(props: {
+type FormMode = { mode: 'create' } | { mode: 'edit'; dash: Dashboard } | null;
+
+export function DashboardsTab(props: {
   dashboards: Dashboard[];
   templates: Template[];
+  loaded: boolean;
   busy: boolean;
   onCreate: (d: DashboardInput) => void;
   onUpdate: (id: string, patch: Partial<DashboardInput>) => void;
   onDelete: (id: string) => void;
 }) {
-  const { dashboards, templates, busy, onCreate, onUpdate, onDelete } = props;
-  const [adding, setAdding] = useState(false);
+  const { dashboards, templates, loaded, busy, onCreate, onUpdate, onDelete } = props;
+  const [form, setForm] = useState<FormMode>(null);
+  const editingId = form?.mode === 'edit' ? form.dash.id : null;
+  const noTemplates = templates.length === 0;
 
   return (
-    <section className="mgr__section gh-stack">
-      <div className="mgr__head">
-        <h2>Dashboards</h2>
-        <button type="button" className="mgr__btn mgr__btn--primary" disabled={busy} onClick={() => setAdding((v) => !v)}>
-          {adding ? 'Close' : '+ Add dashboard'}
+    <Panel id="dashboards">
+      <div className="mgr-panel__head">
+        <div className="mgr-panel__titles">
+          <h2>Dashboards</h2>
+          <p className="mgr-panel__desc">Each dashboard becomes a panel in the Home Assistant sidebar.</p>
+        </div>
+        <button
+          type="button"
+          className="mgr-btn mgr-btn--primary"
+          disabled={busy || noTemplates}
+          aria-expanded={form?.mode === 'create'}
+          onClick={() => setForm((f) => (f?.mode === 'create' ? null : { mode: 'create' }))}
+        >
+          <Icon name="plus" size={18} />
+          {form?.mode === 'create' ? 'Close' : 'Add dashboard'}
         </button>
       </div>
 
-      {adding && (
+      {form && (
         <DashboardForm
           templates={templates}
           busy={busy}
+          initial={form.mode === 'edit' ? form.dash : undefined}
+          editing={form.mode === 'edit'}
           onSubmit={(d) => {
-            onCreate(d);
-            setAdding(false);
+            if (form.mode === 'edit') {
+              onUpdate(form.dash.id, {
+                title: d.title,
+                template_id: d.template_id,
+                icon: d.icon,
+                require_admin: d.require_admin,
+                public: d.public,
+              });
+            } else {
+              onCreate(d);
+            }
+            setForm(null);
           }}
+          onCancel={() => setForm(null)}
         />
       )}
 
-      {dashboards.length === 0 && <p className="mgr__empty">No dashboards yet. Add one above.</p>}
-
-      <div className="gh-grid gh-grid--wide">
-        {dashboards.map((d) => (
-          <DashboardCard
-            key={d.id}
-            dash={d}
-            templates={templates}
-            busy={busy}
-            onUpdate={onUpdate}
-            onDelete={onDelete}
-          />
-        ))}
-      </div>
-    </section>
+      {!loaded ? (
+        <SkeletonList />
+      ) : dashboards.length === 0 ? (
+        <div className="mgr-empty">
+          <span className="mgr-empty__icon">
+            <Icon name="dashboard" size={26} />
+          </span>
+          <h3>No dashboards yet</h3>
+          <p>
+            {noTemplates
+              ? 'Install a template first, from the Catalog or Templates tab, then create your first dashboard.'
+              : 'Create your first dashboard to add a live panel to the sidebar.'}
+          </p>
+          {!noTemplates && (
+            <button type="button" className="mgr-btn mgr-btn--primary" disabled={busy} onClick={() => setForm({ mode: 'create' })}>
+              <Icon name="plus" size={18} />
+              Add dashboard
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="mgr-surface">
+          <div className="mgr-list">
+            {dashboards.map((d) => (
+              <DashboardRow
+                key={d.id}
+                dash={d}
+                busy={busy}
+                editing={editingId === d.id}
+                onEdit={() => setForm({ mode: 'edit', dash: d })}
+                onDelete={() => onDelete(d.id)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </Panel>
   );
 }
 
-function DashboardCard(props: {
+function DashboardRow(props: {
   dash: Dashboard;
-  templates: Template[];
   busy: boolean;
-  onUpdate: (id: string, patch: Partial<DashboardInput>) => void;
-  onDelete: (id: string) => void;
+  editing: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
 }) {
-  const { dash, templates, busy, onUpdate, onDelete } = props;
-  const [editing, setEditing] = useState(false);
-
-  if (editing) {
-    return (
-      <div className="gh-card">
-        <DashboardForm
-          templates={templates}
-          busy={busy}
-          initial={dash}
-          editing
-          onSubmit={(d) => {
-            onUpdate(dash.id, { title: d.title, template_id: d.template_id, icon: d.icon, require_admin: d.require_admin, public: d.public });
-            setEditing(false);
-          }}
-          onCancel={() => setEditing(false)}
-        />
-      </div>
-    );
-  }
-
+  const { dash, busy, editing, onEdit, onDelete } = props;
   return (
-    <div className="gh-card mgr__dash">
-      <div className="mgr__dash-main">
-        <strong>{dash.title}</strong>
-        <code>/{dash.slug}</code>
-        <span className="mgr__muted">{dash.template_id}{dash.public ? ' · public' : ''}{dash.require_admin ? ' · admin' : ''}</span>
+    <div className="mgr-item" aria-current={editing || undefined}>
+      <span className="mgr-item__icon">
+        <Icon name="dashboard" size={22} />
+      </span>
+      <div className="mgr-item__body">
+        <div className="mgr-item__title">
+          <strong>{dash.title}</strong>
+          <code className="mgr-slug">/{dash.slug}</code>
+        </div>
+        <div className="mgr-item__meta">
+          <span className="mgr-badge">{dash.template_id}</span>
+          {dash.public && (
+            <span className="mgr-badge mgr-badge--public">
+              <Icon name="globe" /> Public
+            </span>
+          )}
+          {dash.require_admin && (
+            <span className="mgr-badge mgr-badge--admin">
+              <Icon name="shield" /> Admin only
+            </span>
+          )}
+        </div>
       </div>
-      <div className="mgr__row">
-        <a className="mgr__btn" href={`/${dash.slug}`} target="_top">Open</a>
-        <button type="button" className="mgr__btn" disabled={busy} onClick={() => setEditing(true)}>Edit</button>
-        <button type="button" className="mgr__btn mgr__btn--danger" disabled={busy} onClick={() => onDelete(dash.id)}>Delete</button>
+      <div className="mgr-item__actions">
+        <a className="mgr-btn mgr-btn--ghost mgr-btn--sm" href={`/${dash.slug}`} target="_top">
+          <Icon name="open" size={16} /> Open
+        </a>
+        <button type="button" className="mgr-btn mgr-btn--sm" disabled={busy} onClick={onEdit}>
+          <Icon name="pencil" size={16} /> {editing ? 'Editing' : 'Edit'}
+        </button>
+        <button type="button" className="mgr-btn mgr-btn--danger mgr-btn--sm" disabled={busy} onClick={onDelete} aria-label={`Delete ${dash.title}`}>
+          <Icon name="trash" size={16} />
+        </button>
       </div>
     </div>
   );
@@ -257,14 +385,14 @@ function DashboardForm(props: {
 
   return (
     <form
-      className="gh-card mgr__form gh-stack"
+      className="mgr-form"
       onSubmit={(e) => {
         e.preventDefault();
         if (!canSubmit) return;
         onSubmit({ title: title.trim(), slug: slug.trim(), template_id: templateId, icon: icon.trim(), public: pub, require_admin: admin });
       }}
     >
-      <label className="mgr__field">
+      <label className="mgr-field">
         <span>Title</span>
         <input
           value={title}
@@ -273,30 +401,50 @@ function DashboardForm(props: {
             if (!slugManual && !editing) setSlug(slugify(e.target.value));
           }}
           placeholder="Living Room"
+          autoFocus
           required
         />
       </label>
-      <label className="mgr__field">
+      <label className="mgr-field">
         <span>URL slug</span>
         <input value={slug} onChange={(e) => setSlug(slugify(e.target.value))} placeholder="living-room" required disabled={editing} />
+        <span className="mgr-field__hint">
+          Opens at <b>/{slug || 'living-room'}</b>
+        </span>
       </label>
-      <label className="mgr__field">
+      <label className="mgr-field">
         <span>Template</span>
         <select value={templateId} onChange={(e) => setTemplateId(e.target.value)}>
           {templates.map((t) => (
-            <option key={t.id} value={t.id}>{t.name} ({t.id})</option>
+            <option key={t.id} value={t.id}>
+              {t.name} ({t.id})
+            </option>
           ))}
         </select>
       </label>
-      <label className="mgr__field">
-        <span>MDI icon</span>
+      <label className="mgr-field">
+        <span>Sidebar icon</span>
         <input value={icon} onChange={(e) => setIcon(e.target.value)} placeholder="mdi:sofa" />
+        <span className="mgr-field__hint">Any Material Design Icons name.</span>
       </label>
-      <label className="mgr__check"><input type="checkbox" checked={pub} onChange={(e) => setPub(e.target.checked)} /> Public standalone URL</label>
-      <label className="mgr__check"><input type="checkbox" checked={admin} onChange={(e) => setAdmin(e.target.checked)} /> Admin users only</label>
-      <div className="mgr__row">
-        <button type="submit" className="mgr__btn mgr__btn--primary" disabled={busy || !canSubmit}>{editing ? 'Save' : 'Create'}</button>
-        {onCancel && <button type="button" className="mgr__btn" onClick={onCancel}>Cancel</button>}
+      <label className="mgr-check mgr-form__full">
+        <input type="checkbox" checked={pub} onChange={(e) => setPub(e.target.checked)} />
+        Public standalone URL (reachable without signing in)
+      </label>
+      <label className="mgr-check mgr-form__full">
+        <input type="checkbox" checked={admin} onChange={(e) => setAdmin(e.target.checked)} />
+        Visible to admin users only
+      </label>
+      <div className="mgr-form__foot mgr-form__full">
+        <button type="submit" className="mgr-btn mgr-btn--primary" disabled={busy || !canSubmit}>
+          <Icon name="check" size={18} />
+          {editing ? 'Save changes' : 'Create dashboard'}
+        </button>
+        {onCancel && (
+          <button type="button" className="mgr-btn mgr-btn--ghost" onClick={onCancel}>
+            Cancel
+          </button>
+        )}
       </div>
     </form>
   );
@@ -304,45 +452,73 @@ function DashboardForm(props: {
 
 // ── Catalog ──────────────────────────────────────────────────────────────────
 
-function CatalogTab(props: { catalog: CatalogEntry[]; busy: boolean; onInstall: (id: string) => void }) {
-  const { catalog, busy, onInstall } = props;
+export function CatalogTab(props: { catalog: CatalogEntry[]; loaded: boolean; busy: boolean; onInstall: (id: string) => void }) {
+  const { catalog, loaded, busy, onInstall } = props;
   return (
-    <section className="mgr__section gh-stack">
-      <div className="mgr__head"><h2>Catalog</h2></div>
-      <div className="gh-grid gh-grid--wide">
-        {catalog.map((e) => (
-          <div key={e.id} className="gh-card mgr__cat">
-            <div className="mgr__dash-main">
-              <strong>{e.name}</strong>
-              <span className={`mgr__pill mgr__pill--${e.kind}`}>{e.kind}</span>
-              <span className="mgr__muted">{e.description}</span>
-            </div>
-            <div className="mgr__row">
-              {e.installed ? (
-                <span className="mgr__muted">Installed ✓</span>
-              ) : e.kind === 'free' ? (
-                <button type="button" className="mgr__btn mgr__btn--primary" disabled={busy} onClick={() => onInstall(e.id)}>Install</button>
-              ) : (
-                <a className="mgr__btn mgr__btn--primary" href={e.storeUrl} target="_blank" rel="noopener noreferrer">Get on store →</a>
-              )}
-            </div>
-          </div>
-        ))}
+    <Panel id="catalog">
+      <div className="mgr-panel__head">
+        <div className="mgr-panel__titles">
+          <h2>Catalog</h2>
+          <p className="mgr-panel__desc">Ready-made dashboard templates. Install a free one in a click, or browse the premium store.</p>
+        </div>
       </div>
-    </section>
+
+      {!loaded ? (
+        <SkeletonList />
+      ) : catalog.length === 0 ? (
+        <div className="mgr-empty">
+          <span className="mgr-empty__icon">
+            <Icon name="store" size={26} />
+          </span>
+          <h3>Catalog unavailable</h3>
+          <p>No templates to show right now. Check your connection, or install a template by URL from the Templates tab.</p>
+        </div>
+      ) : (
+        <div className="gh-grid gh-grid--wide mgr-cards">
+          {catalog.map((e) => (
+            <article key={e.id} className="mgr-card">
+              <div className="mgr-card__preview">
+                {e.preview ? <img src={e.preview} alt="" /> : <Icon name="layers" size={30} />}
+                <span className={`mgr-tag mgr-tag--${e.kind} mgr-card__tag`}>{e.kind}</span>
+              </div>
+              <div className="mgr-card__body">
+                <strong>{e.name}</strong>
+                <p>{e.description}</p>
+              </div>
+              <div className="mgr-card__foot">
+                {e.installed ? (
+                  <span className="mgr-installed">
+                    <Icon name="check" size={16} /> Installed
+                  </span>
+                ) : e.kind === 'free' ? (
+                  <button type="button" className="mgr-btn mgr-btn--primary mgr-btn--sm" disabled={busy} onClick={() => onInstall(e.id)}>
+                    <Icon name="plus" size={16} /> Install
+                  </button>
+                ) : (
+                  <a className="mgr-btn mgr-btn--sm" href={e.storeUrl} target="_blank" rel="noopener noreferrer">
+                    <Icon name="open" size={16} /> Get on store
+                  </a>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </Panel>
   );
 }
 
 // ── Templates ────────────────────────────────────────────────────────────────
 
-function TemplatesTab(props: {
+export function TemplatesTab(props: {
   templates: Template[];
+  loaded: boolean;
   busy: boolean;
   onInstallUrl: (url: string) => void;
   onUpload: (file: File) => void;
   onRemove: (id: string) => void;
 }) {
-  const { templates, busy, onInstallUrl, onUpload, onRemove } = props;
+  const { templates, loaded, busy, onInstallUrl, onUpload, onRemove } = props;
   const [url, setUrl] = useState('');
   const [uploadingName, setUploadingName] = useState<string | null>(null);
 
@@ -351,28 +527,33 @@ function TemplatesTab(props: {
   }, [busy]);
 
   return (
-    <section className="mgr__section gh-stack">
-      <div className="mgr__head"><h2>Templates</h2></div>
+    <Panel id="templates">
+      <div className="mgr-panel__head">
+        <div className="mgr-panel__titles">
+          <h2>Templates</h2>
+          <p className="mgr-panel__desc">Installed templates power your dashboards. Add more from a URL or a .zip file.</p>
+        </div>
+      </div>
 
-      <div className="gh-card mgr__install gh-stack">
-        <div className="mgr__field">
+      <div className="mgr-form mgr-install">
+        <div className="mgr-field">
           <span>Install from URL</span>
-          <div className="mgr__row">
+          <div className="mgr-row">
             <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://…/template.zip" />
             <button
               type="button"
-              className="mgr__btn mgr__btn--primary"
+              className="mgr-btn mgr-btn--primary"
               disabled={busy || !url.trim()}
               onClick={() => {
                 onInstallUrl(url.trim());
                 setUrl('');
               }}
             >
-              Install
+              <Icon name="link" size={18} /> Install
             </button>
           </div>
         </div>
-        <label className="mgr__field">
+        <label className="mgr-field">
           <span>Or upload a .zip</span>
           <input
             type="file"
@@ -389,28 +570,55 @@ function TemplatesTab(props: {
           />
         </label>
         {uploadingName && busy && (
-          <p className="mgr__uploading">⏳ Uploading <strong>{uploadingName}</strong>… please wait.</p>
+          <p className="mgr-uploading">
+            <Icon name="spinner" size={16} /> Uploading <b>{uploadingName}</b>…
+          </p>
         )}
       </div>
 
-      <div className="gh-grid gh-grid--wide">
-        {templates.map((t) => (
-          <div key={t.id} className="gh-card mgr__dash">
-            <div className="mgr__dash-main">
-              <strong>{t.name}</strong>
-              <code>{t.id}</code>
-              <span className="mgr__muted">{t.description || t.version}</span>
-            </div>
-            <div className="mgr__row">
-              {t.in_use ? (
-                <span className="mgr__muted">In use</span>
-              ) : (
-                <button type="button" className="mgr__btn mgr__btn--danger" disabled={busy} onClick={() => onRemove(t.id)}>Remove</button>
-              )}
-            </div>
+      {!loaded ? (
+        <SkeletonList />
+      ) : templates.length === 0 ? (
+        <div className="mgr-empty">
+          <span className="mgr-empty__icon">
+            <Icon name="layers" size={26} />
+          </span>
+          <h3>No templates installed</h3>
+          <p>Install one from the Catalog, paste a URL above, or upload a .zip you built with create-glasshopper.</p>
+        </div>
+      ) : (
+        <div className="mgr-surface">
+          <div className="mgr-list">
+            {templates.map((t) => (
+              <div key={t.id} className="mgr-item">
+                <span className="mgr-item__icon">
+                  <Icon name="layers" size={22} />
+                </span>
+                <div className="mgr-item__body">
+                  <div className="mgr-item__title">
+                    <strong>{t.name}</strong>
+                    <code className="mgr-slug">{t.id}</code>
+                  </div>
+                  <div className="mgr-item__meta">
+                    <span className="mgr-panel__desc" style={{ margin: 0 }}>
+                      {t.description || `Version ${t.version}`}
+                    </span>
+                  </div>
+                </div>
+                <div className="mgr-item__actions">
+                  {t.in_use ? (
+                    <span className="mgr-badge mgr-badge--public">In use</span>
+                  ) : (
+                    <button type="button" className="mgr-btn mgr-btn--danger mgr-btn--sm" disabled={busy} onClick={() => onRemove(t.id)}>
+                      <Icon name="trash" size={16} /> Remove
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </section>
+        </div>
+      )}
+    </Panel>
   );
 }
