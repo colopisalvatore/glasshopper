@@ -29,6 +29,7 @@ from .const import (
     CONF_SLUG,
     CONF_TEMPLATE_ID,
     CONF_TITLE,
+    DATA_CONFIG_STORE,
     DATA_ENTRIES_BY_SLUG,
     DATA_REGISTERED_STATICS,
     DATA_REGISTRY,
@@ -43,7 +44,7 @@ from .panels import (
     unregister_manager,
 )
 from .registry import TemplateRegistry
-from .store import GlasshopperStore
+from .store import EntityConfigStore, GlasshopperStore
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -68,6 +69,11 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
         await store.async_load()
         domain_data[DATA_STORE] = store
         await async_migrate_legacy_entries(hass, store)
+
+    if DATA_CONFIG_STORE not in domain_data:
+        config_store = EntityConfigStore(hass)
+        await config_store.async_load()
+        domain_data[DATA_CONFIG_STORE] = config_store
 
     await catalog_module.async_preload(hass)
     services_module.register(hass)

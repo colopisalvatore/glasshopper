@@ -49,6 +49,12 @@ CONF_HUB = "hub"
 STORE_KEY = "glasshopper.dashboards"
 STORE_VERSION = 1
 
+# Entity-config storage — per-dashboard slot→entity mapping, written by a
+# dashboard's in-app setup wizard. Keyed by dashboard slug.
+CONFIG_STORE_KEY = "glasshopper.entity_config"
+CONFIG_STORE_VERSION = 1
+DATA_CONFIG_STORE = "config_store"
+
 # Manager panel: a single admin sidebar panel (a bundled React app, not a
 # user template). Lives in the package's `manager_app/` dir — deliberately NOT
 # under `bundled/`, so seed_bundled never copies it into the templates dir.
@@ -74,3 +80,7 @@ WS_TEMPLATES_INSTALL_URL = "glasshopper/templates/install_url"
 WS_TEMPLATES_REMOVE = "glasshopper/templates/remove"
 WS_CATALOG_LIST = "glasshopper/catalog/list"
 WS_CATALOG_INSTALL = "glasshopper/catalog/install"
+# Entity config (dashboard ↔ integration). get is readable by any user so the
+# dashboard renders; set is admin-only (it changes the shared dashboard).
+WS_CONFIG_GET = "glasshopper/config/get"
+WS_CONFIG_SET = "glasshopper/config/set"

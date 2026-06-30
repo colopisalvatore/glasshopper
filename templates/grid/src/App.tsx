@@ -1,8 +1,12 @@
-import { useMemo, type JSX } from 'react';
+import { useEffect, useMemo, useState, useSyncExternalStore, type JSX } from 'react';
 import type { HassEntity } from 'home-assistant-js-websocket';
-import { useEntity, useService } from '@/hooks';
+import { useEntity, useService, useGhConfig } from '@/hooks';
 import { AppShell } from '@/components/AppShell';
 import { GridIcon, type IconName } from '@/components/GridIcons';
+import { SetupWizard } from '@/config/SetupWizard';
+import { getEntities, onEntities } from '@/lib/haConnection';
+import { humanize, resolveMulti, type GhConfig } from '@/lib/ghConfig';
+import { GRID_DEMO, GRID_DEMO_PROBE, GRID_MANIFEST } from './slots';
 
 /* -------------------------------------------------------------------------- */
 /*  Domain model                                                              */
@@ -25,36 +29,18 @@ interface GroupDef {
   readonly tiles: readonly TileDef[];
 }
 
-const GROUPS: readonly GroupDef[] = [
-  {
-    id: 'living',
-    title: 'Living area',
-    tiles: [
-      { entityId: 'light.living_room', label: 'Living room' },
-      { entityId: 'light.kitchen', label: 'Kitchen' },
-      { entityId: 'switch.tv', label: 'TV' },
-      { entityId: 'fan.bedroom', label: 'Bedroom fan' },
-    ],
-  },
-  {
-    id: 'comfort',
-    title: 'Climate',
-    tiles: [
-      { entityId: 'sensor.temperature', label: 'Temperature' },
-      { entityId: 'sensor.humidity', label: 'Humidity' },
-      { entityId: 'climate.thermostat', label: 'Thermostat' },
-    ],
-  },
-  {
-    id: 'security',
-    title: 'Doors & power',
-    tiles: [
-      { entityId: 'binary_sensor.front_door', label: 'Front door' },
-      { entityId: 'switch.porch', label: 'Porch light' },
-      { entityId: 'switch.coffee', label: 'Coffee maker' },
-    ],
-  },
-];
+/** Build the board groups from the slot manifest + the user's mapping (demo
+ *  ids until setup is done). Group order follows the manifest. */
+function groupsFromConfig(config: GhConfig): readonly GroupDef[] {
+  return GRID_MANIFEST.slots.map((slot) => ({
+    id: slot.key,
+    title: slot.label,
+    tiles: resolveMulti(config, slot.key, GRID_DEMO[slot.key] ?? []).map((id) => ({
+      entityId: id,
+      label: humanize(id),
+    })),
+  }));
+}
 
 /* -------------------------------------------------------------------------- */
 /*  State derivation                                                          */
@@ -287,12 +273,15 @@ function Tile({ def }: TileProps): JSX.Element {
 /*  Summary strip                                                             */
 /* -------------------------------------------------------------------------- */
 
-const ALL_IDS: readonly string[] = GROUPS.flatMap((g) => g.tiles.map((t) => t.entityId));
+/** Live snapshot of all entities — one subscription, so the count works with a
+ *  config-driven (variable-length) id list without breaking the rules of hooks. */
+function useAllEntities() {
+  return useSyncExternalStore((cb) => onEntities(() => cb()), getEntities, getEntities);
+}
 
-function ActiveCount(): JSX.Element {
-  // GROUPS is a module-level constant, so this list never changes length and
-  // hook order stays stable across renders.
-  const states = ALL_IDS.map((id) => useEntity(id)?.state);
+function ActiveCount({ ids }: { ids: readonly string[] }): JSX.Element {
+  const all = useAllEntities();
+  const states = ids.map((id) => all[id]?.state);
   const onCount = states.filter((s) => s === 'on').length;
   const reporting = states.filter((s) => s !== undefined && s !== 'unavailable' && s !== 'unknown').length;
 
@@ -307,11 +296,42 @@ function ActiveCount(): JSX.Element {
   );
 }
 
+/** True when a real HA is connected but none of the demo entities exist — an
+ *  end user who still needs to map their own. Keeps the marketing demo clean. */
+function useNeedsSetup(probe: string[]): boolean {
+  const [needs, setNeeds] = useState(false);
+  useEffect(() => {
+    const sync = () => {
+      const all = getEntities();
+      const loaded = Object.keys(all).length > 0;
+      const anyDemo = probe.some((id) => Boolean(all[id]));
+      setNeeds(loaded && !anyDemo);
+    };
+    sync();
+    return onEntities(sync);
+  }, [probe]);
+  return needs;
+}
+
 /* -------------------------------------------------------------------------- */
 /*  App                                                                       */
 /* -------------------------------------------------------------------------- */
 
 export function App(): JSX.Element {
+  const { config, seen, setConfig, markSeen } = useGhConfig(GRID_MANIFEST);
+  const needsSetup = useNeedsSetup(GRID_DEMO_PROBE);
+  const [wizardOpen, setWizardOpen] = useState(false);
+
+  useEffect(() => {
+    if (needsSetup && !seen) setWizardOpen(true);
+  }, [needsSetup, seen]);
+
+  const groups = useMemo(() => groupsFromConfig(config), [config]);
+  const visibleGroups = groups.filter((g) => g.tiles.length > 0);
+  const allIds = useMemo(() => visibleGroups.flatMap((g) => g.tiles.map((t) => t.entityId)), [visibleGroups]);
+
+  const showGear = needsSetup || Object.keys(config).length > 0;
+
   const topbar = (
     <>
       <div className="topbar__title">
@@ -326,14 +346,14 @@ export function App(): JSX.Element {
           <p>Every device, at a glance</p>
         </div>
       </div>
-      <ActiveCount />
+      <ActiveCount ids={allIds} />
     </>
   );
 
   return (
     <AppShell topbar={topbar}>
       <div className="board gh-fill">
-        {GROUPS.map((group) => (
+        {visibleGroups.map((group) => (
           <section key={group.id} className="group" aria-labelledby={`group-${group.id}`}>
             <div className="group__header">
               <h2 id={`group-${group.id}`}>{group.title}</h2>
@@ -341,8 +361,8 @@ export function App(): JSX.Element {
               <span className="group__count">{group.tiles.length}</span>
             </div>
             <div className="group__grid gh-grid gh-grid--dense">
-              {group.tiles.map((tile) => (
-                <Tile key={tile.entityId} def={tile} />
+              {group.tiles.map((tile, i) => (
+                <Tile key={`${tile.entityId}-${i}`} def={tile} />
               ))}
             </div>
           </section>
@@ -354,6 +374,32 @@ export function App(): JSX.Element {
         <span aria-hidden="true">·</span>
         <span>Tap a control tile to toggle</span>
       </footer>
+
+      {showGear && (
+        <button
+          type="button"
+          className="gh-config-btn"
+          onClick={() => setWizardOpen(true)}
+          aria-label="Configure entities"
+        >
+          <GridIcon name="switch" className="tile__icon" /> Entities
+        </button>
+      )}
+
+      {wizardOpen && (
+        <SetupWizard
+          manifest={GRID_MANIFEST}
+          config={config}
+          onSave={(next: GhConfig) => {
+            setConfig(next);
+            setWizardOpen(false);
+          }}
+          onSkip={() => {
+            markSeen();
+            setWizardOpen(false);
+          }}
+        />
+      )}
     </AppShell>
   );
 }

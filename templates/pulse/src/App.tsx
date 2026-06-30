@@ -4,10 +4,14 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { useEntity, useHistory } from '@/hooks';
+import { useEntity, useHistory, useGhConfig } from '@/hooks';
 import { Sparkline, type Point } from '@/components/Sparkline';
 import { RadialGauge } from '@/components/RadialGauge';
 import { AppShell } from '@/components/AppShell';
+import { SetupWizard } from '@/config/SetupWizard';
+import { getEntities, onEntities } from '@/lib/haConnection';
+import { resolveSingle, type GhConfig } from '@/lib/ghConfig';
+import { PULSE_DEMO, PULSE_DEMO_PROBE, PULSE_MANIFEST } from './slots';
 
 /**
  * Pulse — a quiet sensor + monitoring ops panel for Home Assistant.
@@ -40,9 +44,12 @@ type SensorConfig = {
 
 type Band = { upTo: number; name: string };
 
-const SENSORS: SensorConfig[] = [
+/** A sensor's fixed display config. The entity behind it is mapped per slot. */
+type SensorDef = Omit<SensorConfig, 'id'> & { slot: string };
+
+const SENSOR_DEFS: SensorDef[] = [
   {
-    id: 'sensor.temperature',
+    slot: 'temperature',
     label: 'Temperature',
     unit: '°C',
     decimals: 1,
@@ -59,7 +66,7 @@ const SENSORS: SensorConfig[] = [
     accent: 'accent',
   },
   {
-    id: 'sensor.humidity',
+    slot: 'humidity',
     label: 'Humidity',
     unit: '%',
     decimals: 0,
@@ -75,14 +82,14 @@ const SENSORS: SensorConfig[] = [
     accent: 'accent',
   },
   {
-    id: 'sensor.power',
+    slot: 'power',
     label: 'Power',
     unit: 'W',
     decimals: 0,
     accent: 'warm',
   },
   {
-    id: 'sensor.co2',
+    slot: 'co2',
     label: 'CO₂',
     unit: 'ppm',
     decimals: 0,
@@ -98,13 +105,33 @@ const SENSORS: SensorConfig[] = [
     accent: 'mute',
   },
   {
-    id: 'sensor.pressure',
+    slot: 'pressure',
     label: 'Pressure',
     unit: 'hPa',
     decimals: 0,
     accent: 'mute',
   },
 ];
+
+/** Resolved at render: a SensorDef plus the entity id mapped to its slot. */
+type Sensor = SensorDef & { id: string };
+
+/** True when a real HA is connected but none of the demo entities exist — an
+ *  end user who still needs to map their own. Keeps the marketing demo clean. */
+function useNeedsSetup(probe: string[]): boolean {
+  const [needs, setNeeds] = useState(false);
+  useEffect(() => {
+    const sync = () => {
+      const all = getEntities();
+      const loaded = Object.keys(all).length > 0;
+      const anyDemo = probe.some((id) => Boolean(all[id]));
+      setNeeds(loaded && !anyDemo);
+    };
+    sync();
+    return onEntities(sync);
+  }, [probe]);
+  return needs;
+}
 
 const HOURS_BACK = 24;
 
@@ -429,6 +456,14 @@ function OpsStrip({ total, online }: { total: number; online: number }): ReactNo
 /* ------------------------------------------------------------------ */
 
 export function App(): ReactNode {
+  const { config, seen, setConfig, markSeen } = useGhConfig(PULSE_MANIFEST);
+  const needsSetup = useNeedsSetup(PULSE_DEMO_PROBE);
+  const [wizardOpen, setWizardOpen] = useState(false);
+
+  useEffect(() => {
+    if (needsSetup && !seen) setWizardOpen(true);
+  }, [needsSetup, seen]);
+
   const [now, setNow] = useState(() => new Date());
   const [statusMap, setStatusMap] = useState<Record<string, boolean>>({});
 
@@ -461,8 +496,19 @@ export function App(): ReactNode {
     [now],
   );
 
-  const hero = SENSORS[0];
-  const rest = SENSORS.slice(1);
+  // Resolve each sensor's entity from the saved mapping (demo ids until setup,
+  // then the user's choices; unmapped optional sensors drop out).
+  const sensors: Sensor[] = useMemo(
+    () =>
+      SENSOR_DEFS.map((d) => ({
+        ...d,
+        id: resolveSingle(config, d.slot, seen ? '' : PULSE_DEMO[d.slot]),
+      })).filter((d) => d.id.length > 0),
+    [config, seen],
+  );
+  const hero = sensors[0];
+  const rest = sensors.slice(1);
+  const showGear = needsSetup || Object.keys(config).length > 0;
 
   const topbar = (
     <>
@@ -499,18 +545,18 @@ export function App(): ReactNode {
     <AppShell topbar={topbar} stage="spread">
       {/* Invisible probes keep the ops count live without re-rendering cards. */}
       <div className="probes" aria-hidden>
-        {SENSORS.map((s) => (
-          <OpsProbe key={s.id} config={s} onReport={report} />
+        {sensors.map((s) => (
+          <OpsProbe key={s.slot} config={s} onReport={report} />
         ))}
       </div>
 
-      <Hero config={hero} />
+      {hero ? <Hero config={hero} /> : null}
 
-      <OpsStrip total={SENSORS.length} online={online} />
+      <OpsStrip total={sensors.length} online={online} />
 
       <section className="grid gh-grid" aria-label="Sensors">
         {rest.map((s) => (
-          <SensorCard key={s.id} config={s} />
+          <SensorCard key={s.slot} config={s} />
         ))}
       </section>
 
@@ -519,6 +565,32 @@ export function App(): ReactNode {
           Readings refresh live. Range shown over the last {HOURS_BACK} hours.
         </span>
       </footer>
+
+      {showGear && (
+        <button
+          type="button"
+          className="gh-config-btn"
+          onClick={() => setWizardOpen(true)}
+          aria-label="Configure entities"
+        >
+          <span aria-hidden>⚙</span> Entities
+        </button>
+      )}
+
+      {wizardOpen && (
+        <SetupWizard
+          manifest={PULSE_MANIFEST}
+          config={config}
+          onSave={(next: GhConfig) => {
+            setConfig(next);
+            setWizardOpen(false);
+          }}
+          onSkip={() => {
+            markSeen();
+            setWizardOpen(false);
+          }}
+        />
+      )}
     </AppShell>
   );
 }

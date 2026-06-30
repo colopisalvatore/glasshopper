@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { HassEntity } from 'home-assistant-js-websocket';
-import { useEntity, useService, useHistory } from '@/hooks';
+import { useEntity, useService, useHistory, useGhConfig } from '@/hooks';
 import { TempChart } from '@/components/TempChart';
 import { AppShell } from '@/components/AppShell';
+import { SetupWizard } from '@/config/SetupWizard';
+import { getEntities, onEntities } from '@/lib/haConnection';
+import { resolveMulti, resolveSingle, humanize, type GhConfig } from '@/lib/ghConfig';
+import { ARIA_DEMO, ARIA_DEMO_PROBE, ARIA_MANIFEST } from './slots';
 
 /* ------------------------------------------------------------------ */
 /*  Aria — a single-room glance dashboard for Home Assistant.          */
@@ -462,47 +466,127 @@ function TargetIcon() {
   );
 }
 
+function GearIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" focusable="false" aria-hidden="true">
+      <circle cx="12" cy="12" r="3" className="glyph-stroke" />
+      <path
+        d="M12 2.5v2.2M12 19.3v2.2M21.5 12h-2.2M4.7 12H2.5M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6M18.7 18.7l-1.6-1.6M6.9 6.9 5.3 5.3"
+        className="glyph-stroke"
+      />
+    </svg>
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /*  App shell.                                                          */
 /* ------------------------------------------------------------------ */
 
-const TOGGLES: ToggleSpec[] = [
-  { entityId: 'light.living_room', label: 'Living room', icon: 'lamp' },
-  { entityId: 'light.kitchen', label: 'Kitchen', icon: 'kitchen' },
-  { entityId: 'switch.coffee', label: 'Coffee', icon: 'coffee' },
-];
-
-const SCENES: SceneSpec[] = [
-  { entityId: 'scene.morning', label: 'Morning', glyph: 'sun' },
-  { entityId: 'scene.evening', label: 'Evening', glyph: 'moon' },
-];
+/**
+ * True when a real Home Assistant is connected (entities present) but none of
+ * the demo entities exist — i.e. an end user who still needs to map their own.
+ * Mirrors the old demo-detection so the marketing demo (no HA) never triggers.
+ */
+function useNeedsSetup(probe: string[]): boolean {
+  const [needs, setNeeds] = useState(false);
+  useEffect(() => {
+    const sync = () => {
+      const all = getEntities();
+      const loaded = Object.keys(all).length > 0;
+      const anyDemo = probe.some((id) => Boolean(all[id]));
+      setNeeds(loaded && !anyDemo);
+    };
+    sync();
+    return onEntities(sync);
+  }, [probe]);
+  return needs;
+}
 
 export function App() {
+  const { config, seen, setConfig, markSeen } = useGhConfig(ARIA_MANIFEST);
+  const needsSetup = useNeedsSetup(ARIA_DEMO_PROBE);
+  const [wizardOpen, setWizardOpen] = useState(false);
+
+  // Auto-open setup once, when a real HA is connected and setup is unfinished.
+  useEffect(() => {
+    if (needsSetup && !seen) setWizardOpen(true);
+  }, [needsSetup, seen]);
+
+  // Resolve every slot: the user's mapping, else the demo placeholder.
+  const tempId = resolveSingle(config, 'temperature', ARIA_DEMO.temperature);
+  const humidityId = resolveSingle(config, 'humidity', ARIA_DEMO.humidity);
+  const climateId = resolveSingle(config, 'thermostat', ARIA_DEMO.thermostat);
+  const historyId = resolveSingle(config, 'history', tempId);
+  const lightIds = resolveMulti(config, 'lights', [...ARIA_DEMO.lights]);
+  const sceneIds = resolveMulti(config, 'scenes', [...ARIA_DEMO.scenes]);
+
+  const toggles: ToggleSpec[] = lightIds.map((id) => ({
+    entityId: id,
+    label: humanize(id),
+    icon: id.startsWith('switch.') ? 'coffee' : 'lamp',
+  }));
+  const scenes: SceneSpec[] = sceneIds.map((id, i) => ({
+    entityId: id,
+    label: humanize(id),
+    glyph: i % 2 === 1 ? 'moon' : 'sun',
+  }));
+
+  // Show the gear once there is a real HA to configure against, or after the
+  // user has saved a mapping — keeps it off the no-HA marketing demo.
+  const showGear = needsSetup || Object.keys(config).length > 0;
+
+  const onSave = (next: GhConfig) => {
+    setConfig(next);
+    setWizardOpen(false);
+  };
+  const onSkip = () => {
+    markSeen();
+    setWizardOpen(false);
+  };
+
   return (
     <AppShell>
       <Greeting />
-      <ClimateStrip
-        tempId="sensor.living_room_temperature"
-        humidityId="sensor.living_room_humidity"
-        climateId="climate.living_room"
-      />
-      <HistoryCard entityId="sensor.living_room_temperature" />
+      <ClimateStrip tempId={tempId} humidityId={humidityId} climateId={climateId} />
+      <HistoryCard entityId={historyId} />
 
-      <section className="controls" aria-label="Lights and switches">
-        <h2 className="section-heading">Room</h2>
-        <div className="controls__grid gh-grid">
-          {TOGGLES.map((t) => (
-            <ToggleTile key={t.entityId} spec={t} />
-          ))}
-        </div>
-      </section>
+      {toggles.length > 0 && (
+        <section className="controls" aria-label="Lights and switches">
+          <h2 className="section-heading">Room</h2>
+          <div className="controls__grid gh-grid">
+            {toggles.map((t, i) => (
+              <ToggleTile key={`${t.entityId}-${i}`} spec={t} />
+            ))}
+          </div>
+        </section>
+      )}
 
-      <SceneRow scenes={SCENES} />
+      {scenes.length > 0 && <SceneRow scenes={scenes} />}
 
       <footer className="aria__foot">
         <span className="aria__dot" aria-hidden="true" />
         Aria
       </footer>
+
+      {showGear && (
+        <button
+          type="button"
+          className="gh-config-btn"
+          onClick={() => setWizardOpen(true)}
+          aria-label="Configure entities"
+        >
+          <GearIcon /> Entities
+        </button>
+      )}
+
+      {wizardOpen && (
+        <SetupWizard
+          manifest={ARIA_MANIFEST}
+          config={config}
+          onSave={onSave}
+          onSkip={onSkip}
+        />
+      )}
     </AppShell>
   );
 }

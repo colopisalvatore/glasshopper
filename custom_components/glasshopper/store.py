@@ -13,7 +13,12 @@ from typing import Any
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
 
-from .const import STORE_KEY, STORE_VERSION
+from .const import (
+    CONFIG_STORE_KEY,
+    CONFIG_STORE_VERSION,
+    STORE_KEY,
+    STORE_VERSION,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -75,3 +80,34 @@ class GlasshopperStore:
             if d["id"] == dash_id:
                 return self._data["dashboards"].pop(i)
         return None
+
+
+EntityConfig = dict[str, Any]
+
+
+class EntityConfigStore:
+    """Per-dashboard slot→entity mappings, keyed by dashboard slug.
+
+    Written by a dashboard's in-app setup wizard so a downloaded (compiled)
+    template maps to the user's entities without a source edit. Each value is
+    ``{"map": {slot: entity_id | [entity_id, ...]}, "seen": bool}``.
+    """
+
+    def __init__(self, hass: HomeAssistant) -> None:
+        self._store: Store = Store(hass, CONFIG_STORE_VERSION, CONFIG_STORE_KEY)
+        self._data: dict[str, Any] = {"configs": {}}
+
+    async def async_load(self) -> None:
+        data = await self._store.async_load()
+        if data and isinstance(data.get("configs"), dict):
+            self._data = {"configs": dict(data["configs"])}
+
+    async def async_save(self) -> None:
+        await self._store.async_save(self._data)
+
+    def get(self, slug: str) -> EntityConfig | None:
+        cfg = self._data["configs"].get(slug)
+        return dict(cfg) if cfg else None
+
+    def set(self, slug: str, config: EntityConfig) -> None:
+        self._data["configs"][slug] = dict(config)
