@@ -23,6 +23,7 @@ from .const import (
     CONF_SLUG,
     CONF_TEMPLATE_ID,
     CONF_TITLE,
+    DATA_CONFIG_STORE,
     DATA_REGISTRY,
     DATA_STORE,
     DATA_WS_REGISTERED,
@@ -32,6 +33,8 @@ from .const import (
     SLUG_PATTERN,
     WS_CATALOG_INSTALL,
     WS_CATALOG_LIST,
+    WS_CONFIG_GET,
+    WS_CONFIG_SET,
     WS_DASHBOARDS_CREATE,
     WS_DASHBOARDS_DELETE,
     WS_DASHBOARDS_LIST,
@@ -46,13 +49,17 @@ from .panels import (
 )
 from .registry import TemplateRegistry
 from .services import _install_from_url
-from .store import GlasshopperStore
+from .store import EntityConfigStore, GlasshopperStore
 
 _SLUG_RE = re.compile(SLUG_PATTERN)
 
 
 def _store(hass: HomeAssistant) -> GlasshopperStore:
     return hass.data[DOMAIN][DATA_STORE]
+
+
+def _config_store(hass: HomeAssistant) -> EntityConfigStore:
+    return hass.data[DOMAIN][DATA_CONFIG_STORE]
 
 
 def _registry(hass: HomeAssistant) -> TemplateRegistry:
@@ -216,6 +223,39 @@ async def ws_templates_remove(hass, connection, msg):
     connection.send_result(msg["id"], {"ok": True})
 
 
+# ── Entity config (per-dashboard slot → entity mapping) ─────────────────────
+
+
+@websocket_api.websocket_command(
+    {vol.Required("type"): WS_CONFIG_GET, vol.Required("slug"): str}
+)
+@callback
+def ws_config_get(hass, connection, msg):
+    """Read a dashboard's entity mapping. Any authenticated user (the dashboard
+    must render for non-admins too)."""
+    connection.send_result(msg["id"], {"config": _config_store(hass).get(msg["slug"])})
+
+
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): WS_CONFIG_SET,
+        vol.Required("slug"): str,
+        vol.Required("map"): dict,
+        vol.Optional("seen"): bool,
+    }
+)
+@websocket_api.require_admin
+@websocket_api.async_response
+async def ws_config_set(hass, connection, msg):
+    """Persist a dashboard's entity mapping. Admin-only — it changes the
+    dashboard for everyone who opens it."""
+    store = _config_store(hass)
+    config = {"map": msg["map"], "seen": bool(msg.get("seen", True))}
+    store.set(msg["slug"], config)
+    await store.async_save()
+    connection.send_result(msg["id"], {"config": config})
+
+
 # ── Catalog ─────────────────────────────────────────────────────────────────
 
 
@@ -263,6 +303,8 @@ def register(hass: HomeAssistant) -> None:
         ws_templates_remove,
         ws_catalog_list,
         ws_catalog_install,
+        ws_config_get,
+        ws_config_set,
     ):
         websocket_api.async_register_command(hass, handler)
     domain_data[DATA_WS_REGISTERED] = True

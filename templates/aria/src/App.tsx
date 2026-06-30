@@ -3,7 +3,7 @@ import type { HassEntity } from 'home-assistant-js-websocket';
 import { useEntity, useService, useHistory, useGhConfig } from '@/hooks';
 import { TempChart } from '@/components/TempChart';
 import { AppShell } from '@/components/AppShell';
-import { SetupWizard } from '@/components/SetupWizard';
+import { SetupWizard } from '@/config/SetupWizard';
 import { getEntities, onEntities } from '@/lib/haConnection';
 import { resolveMulti, resolveSingle, humanize, type GhConfig } from '@/lib/ghConfig';
 import { ARIA_DEMO, ARIA_DEMO_PROBE, ARIA_MANIFEST } from './slots';

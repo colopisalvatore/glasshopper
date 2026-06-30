@@ -6,6 +6,7 @@ import {
   type SlotDef,
 } from '@/lib/ghConfig';
 import { EntityPicker } from './EntityPicker';
+import './config.css';
 
 /** Seed an editable draft from the saved config: single → string, multi → array. */
 function seedDraft(manifest: GhManifest, config: GhConfig): GhConfig {
