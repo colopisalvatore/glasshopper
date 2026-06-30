@@ -7,9 +7,10 @@
 // or `node scripts/package-templates.mjs`.
 
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, rmSync, statSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { genReadme } from "./gen-readme.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, "..");
@@ -42,6 +43,16 @@ for (const id of FREE) {
   if (!existsSync(dist) || !statSync(dist).isDirectory()) {
     console.error(`package-templates: ${id}/dist not found after build`);
     process.exit(1);
+  }
+
+  // Regenerate the README from the template's slot manifest, then ship it both
+  // at the template root (repo) and inside the zip (the buyer sees it first).
+  const md = await genReadme(dir);
+  if (md) {
+    writeFileSync(resolve(dir, "README.md"), md);
+    writeFileSync(resolve(dist, "README.md"), md);
+  } else if (existsSync(resolve(dir, "README.md"))) {
+    copyFileSync(resolve(dir, "README.md"), resolve(dist, "README.md"));
   }
 
   // Zip the CONTENTS of dist/ (index.html + assets) at the zip root.

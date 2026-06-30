@@ -1,5 +1,13 @@
 # FAQ
 
+## My dashboard's cards are empty — how do I show my data?
+
+A downloaded dashboard ships compiled and uses example entities until you map it
+to yours. Open it inside Home Assistant and use the **Connect your entities**
+wizard (it auto-opens on first run; reopen from the ⚙ **Entities** button) to
+point each card at your entities. Full steps:
+[Configure entities](./configure-entities).
+
 ## Why React and not just Lovelace cards?
 
 Lovelace cards are great for tile-based dashboards. If you want a UI that

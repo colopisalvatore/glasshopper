@@ -49,6 +49,7 @@ export default defineConfig({
           items: [
             { text: 'Panel vs standalone', link: '/guide/panel-vs-standalone' },
             { text: 'Multi-dashboard', link: '/guide/multi-dashboard' },
+            { text: 'Configure entities', link: '/guide/configure-entities' },
             { text: 'Templates', link: '/guide/templates' },
           ],
         },
