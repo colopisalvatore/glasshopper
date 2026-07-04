@@ -18,6 +18,12 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 20
+          cache: npm
+
+      # gen-readme.mjs imports esbuild (a vite dep) to strip types from slots.ts,
+      # so the root deps must be installed before packaging the templates.
+      - name: Install root deps
+        run: npm ci
 
       - name: Build + zip free templates
         run: node scripts/package-templates.mjs
