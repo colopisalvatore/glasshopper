@@ -46,6 +46,27 @@ When updating: HACS replaces the integration files; ConfigEntries stay
 intact; your installed templates in `<config>/glasshopper_templates/` are
 untouched.
 
+## How do I update an installed template to a newer build?
+
+::: warning Known limitation
+There is no one-click template update yet. Installed templates show as
+"Installed" with no update control, so a newer build (for example, one that adds
+the entity setup wizard) does **not** arrive automatically. A proper **Update**
+button is planned; for now, remove and reinstall.
+:::
+
+Workaround — delete the template and download it fresh:
+
+1. Open **Manager → Templates**. If a dashboard still uses the template,
+   **Remove** is blocked, so delete that dashboard first (note its slug).
+2. **Remove** the template.
+3. Open **Manager → Catalog** and **Install** it again — this pulls the latest
+   build from the catalog.
+4. Recreate the dashboard (reuse the same slug to keep its entity mapping, which
+   is stored per-dashboard in HA, not inside the template).
+5. Open the dashboard and hard-refresh (`Ctrl+Shift+R`) — the dashboard iframe
+   caches the old bundle.
+
 ## What's the API stability story?
 
 Pre-1.0 — minor versions may rename hooks or change service signatures. After
