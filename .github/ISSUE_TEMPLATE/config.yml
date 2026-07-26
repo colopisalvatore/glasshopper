@@ -1,1 +1,8 @@
 blank_issues_enabled: false
+contact_links:
+  - name: Questions & help
+    url: https://github.com/colopisalvatore/glasshopper/discussions
+    about: Ask how-to questions and share your dashboards in Discussions — not the issue tracker.
+  - name: Documentation
+    url: https://docs.glasshopper.dev/guide/install-hacs
+    about: Installation and setup guide (HACS custom repository).
