@@ -34,6 +34,15 @@ No YAML, no per-dashboard "Add integration", no service calls. (The
 `glasshopper.install_template` / `reload_templates` / `remove_template` services
 still work for power users and automations.)
 
+## Connect your entities
+
+Your new dashboard opens with example (demo) entities. The first time you open it
+against your Home Assistant, a **Connect your entities** wizard appears — map each
+card to your own entities, with no code and no YAML. Reopen it any time from the
+⚙️ **Entities** button on the dashboard.
+
+Full walkthrough: [Configure entities](./configure-entities).
+
 ## Updating
 
 Open HACS → Glasshopper → **Update**. Restart HA. Existing dashboards keep working — only the integration code changes.
