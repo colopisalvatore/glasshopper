@@ -25,5 +25,5 @@ features:
   - title: Local-first dev loop
     details: Vite HMR against your live HA instance over a long-lived token in dev. Same code in panel mode.
   - title: Template ecosystem
-    details: Install community or premium templates via a service call. Bring your own bundle.
+    details: Install free or premium templates via a service call. Bring your own bundle.
 ---
