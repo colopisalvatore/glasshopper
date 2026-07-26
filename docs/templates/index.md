@@ -25,13 +25,3 @@ data:
 ## Build your own
 
 See [Build your own template](./build).
-
-## Submit to the registry
-
-If your template is open-source and you want it listed in the public registry:
-
-1. Fork [`colopisalvatore/glasshopper`](https://github.com/colopisalvatore/glasshopper).
-2. Add an entry to `templates/registry.json` with a working `download` URL.
-3. Open a PR.
-
-Community templates may live in your own repo — the registry just points at them.
