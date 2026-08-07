@@ -4,6 +4,15 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ## [Unreleased]
 
+### Added (0.4.4)
+- **Grid** renders and controls `cover`, `lock` and `media_player` tiles: blind position with open/stop/close plus a travel slider, explicit lock/unlock buttons, and media transport. The setup wizard already offered these domains, but the board had no renderer for them and showed a bare, uncontrollable state.
+- `glasshopper.zip` is attached to every version release, so the integration can be installed by hand without HACS ([manual install](https://docs.glasshopper.dev/guide/install-hacs#manual-install-no-hacs)).
+- One-click **My Home Assistant** links: adding the HACS custom repository with the category pre-filled, and starting the integration setup.
+
+### Fixed (0.4.4)
+- Grid tiles show the entity's Home Assistant friendly name again; the board was overriding it with a humanized entity id.
+- Grid's header count includes open covers and playing media, not only entities in the `on` state.
+
 ### Added (0.3.0) — Manager panel
 - A single admin **Glasshopper Manager** sidebar panel (a bundled React app) to create/edit/delete dashboards and install/manage templates visually — no more "Add integration" per dashboard.
 - Install templates three ways: a built-in **catalog** (free templates 1-click; premium link to the store), **from URL**, and **file upload** (`.zip`).
