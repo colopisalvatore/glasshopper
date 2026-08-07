@@ -1,5 +1,17 @@
 # FAQ
 
+## HACS won't let me pick the Category / Type — can I install another way?
+
+Yes, two ways. Use the one-click badge on
+[Install via HACS](./install-hacs#one-click-recommended): it opens the dialog with the
+repository *and* the category pre-filled, so the dropdown never comes into play. Or skip
+HACS entirely and drop the folder in by hand —
+[Manual install](./install-hacs#manual-install-no-hacs).
+
+The category is always **Integration**. Glasshopper ships dashboards, but what you
+install is a custom integration that then serves them; it's not a Lovelace plugin or a
+theme, so those categories will refuse the repo.
+
 ## My dashboard's cards are empty — how do I show my data?
 
 A downloaded dashboard ships compiled and uses example entities until you map it

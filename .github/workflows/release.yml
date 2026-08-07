@@ -1,7 +1,10 @@
-name: Publish template assets
+name: Publish release assets
 
-# Builds the free template zips (aria/grid/pulse) and (re)uploads them to the
-# moving `templates-latest` release, which the Manager catalog installs 1-click.
+# Two assets:
+#  - the free template zips (aria/grid/pulse) on the moving `templates-latest`
+#    release, which the Manager catalog installs 1-click;
+#  - `glasshopper.zip` on the version tag's own release, which is what a user
+#    without HACS downloads to install the integration by hand.
 on:
   push:
     tags: ["v*"]
@@ -38,3 +41,34 @@ jobs:
               --notes "Free template zips for the Glasshopper Manager catalog. Auto-updated by CI." \
               --prerelease
           gh release upload templates-latest templates_dist/*.zip --clobber
+
+  integration:
+    name: Integration zip (manual install)
+    # Only on a version tag: the asset is pinned to that release, and
+    # docs link users to /releases/latest to find it.
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Manifest version must match the tag
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          manifest=$(python3 -c "import json,pathlib;print(json.loads(pathlib.Path('custom_components/glasshopper/manifest.json').read_text())['version'])")
+          if [ "$tag" != "$manifest" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match manifest.json version $manifest — bump the manifest before tagging."
+            exit 1
+          fi
+
+      - name: Zip the integration
+        # The zip carries the folder itself, so a manual install is just
+        # "unzip, drop glasshopper/ into custom_components/".
+        run: cd custom_components && zip -r ../glasshopper.zip glasshopper -x '*/__pycache__/*'
+
+      - name: Attach to the tag's release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 || \
+            gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --generate-notes
+          gh release upload "$GITHUB_REF_NAME" glasshopper.zip --clobber

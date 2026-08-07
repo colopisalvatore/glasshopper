@@ -11,6 +11,19 @@ Glasshopper is two things in one repo:
 
 Landing: [glasshopper.dev](https://glasshopper.dev) · Docs: [docs.glasshopper.dev](https://docs.glasshopper.dev)
 
+## Install
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=colopisalvatore&repository=glasshopper&category=integration)
+
+The badge opens HACS with the repository **and the category already filled in** — no dropdown to pick. Then **Download**, restart Home Assistant, and add the integration:
+
+[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=glasshopper)
+
+No HACS, or the category dropdown won't cooperate? Download `glasshopper.zip` from the
+[latest release](https://github.com/colopisalvatore/glasshopper/releases/latest) and drop the
+`glasshopper` folder into `config/custom_components/` —
+[manual install guide](https://docs.glasshopper.dev/guide/install-hacs#manual-install-no-hacs).
+
 ## Why
 
 Home Assistant's frontend is excellent but opinionated. If you want a dashboard that doesn't look or behave like Lovelace — a kiosk display, a wall tablet, a brand-specific control room — you currently have to choose between writing custom cards (still Lovelace) or hosting a separate web app (auth nightmare). This project gives you the third option: a real React app, served by HA itself, talking to HA's live state with one-line hooks.

@@ -10,6 +10,9 @@ hero:
       text: Quickstart
       link: /guide/quickstart
     - theme: alt
+      text: Install
+      link: /guide/install-hacs
+    - theme: alt
       text: View on GitHub
       link: https://github.com/colopisalvatore/glasshopper
 
