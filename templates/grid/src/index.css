@@ -377,6 +377,97 @@
   border: 1.5px dashed var(--text-faint);
 }
 
+/* ---- Tile controls (cover / lock / media) ------------------------------- */
+
+/* Tiles that carry their own controls are taller and clip long media titles. */
+.tile--rich {
+  min-height: 176px;
+}
+.tile--rich .tile__state {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tile__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+.tile__ctrlrow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tile__ctrl {
+  display: grid;
+  place-items: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 650;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.18s var(--ease),
+    color 0.18s var(--ease),
+    border-color 0.18s var(--ease);
+}
+.tile__ctrl--wide {
+  flex: 1;
+  padding: 0 10px;
+}
+.tile__ctrl:hover:not(:disabled) {
+  background: var(--surface-active);
+  border-color: oklch(0.62 var(--accent-c) var(--accent-h) / 0.35);
+  color: var(--on-tint);
+}
+.tile__ctrl:active:not(:disabled) {
+  transform: scale(0.96);
+}
+.tile__ctrl:disabled {
+  opacity: 0.42;
+  cursor: default;
+}
+.tile__ctrl:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 2px var(--surface),
+    0 0 0 4px var(--accent);
+}
+.tile__ctrl-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.tile__slider {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--accent);
+  touch-action: none;
+  cursor: pointer;
+}
+.tile__slider:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+
+/* An active tile tints its controls with the rest of the surface. */
+.tile--on .tile__ctrl {
+  background: var(--surface);
+  border-color: oklch(0.62 var(--accent-c) var(--accent-h) / 0.22);
+}
+
 /* ---- Footer ------------------------------------------------------------- */
 
 .footer {
@@ -397,6 +488,9 @@
     min-height: 124px;
     padding: 14px;
   }
+  .tile--rich {
+    min-height: 168px;
+  }
   .summary {
     padding: 8px 14px;
   }
@@ -411,7 +505,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .tile--button:hover,
-  .tile--button:active {
+  .tile--button:active,
+  .tile__ctrl:active:not(:disabled) {
     transform: none;
   }
 }

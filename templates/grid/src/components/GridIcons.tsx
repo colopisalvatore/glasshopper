@@ -21,6 +21,13 @@ export type IconName =
   | 'climate'
   | 'media'
   | 'cover'
+  | 'chevron-up'
+  | 'chevron-down'
+  | 'stop'
+  | 'play'
+  | 'pause'
+  | 'prev'
+  | 'next'
   | 'unknown';
 
 interface IconProps {
@@ -145,6 +152,28 @@ const PATHS: Record<IconName, JSX.Element> = {
       <rect x="4" y="4" width="16" height="4" rx="1" />
       <path d="M6 8v6M10 8v6M14 8v6M18 8v6" />
       <path d="M5 14h14" />
+    </>
+  ),
+  'chevron-up': <path d="M6 15l6-6 6 6" />,
+  'chevron-down': <path d="M6 9l6 6 6-6" />,
+  stop: <rect x="6.5" y="6.5" width="11" height="11" rx="1.6" />,
+  play: <path d="M8 5.5l10 6.5-10 6.5z" />,
+  pause: (
+    <>
+      <path d="M9.5 5.5v13" />
+      <path d="M14.5 5.5v13" />
+    </>
+  ),
+  prev: (
+    <>
+      <path d="M18 6l-8 6 8 6z" />
+      <path d="M6 5.5v13" />
+    </>
+  ),
+  next: (
+    <>
+      <path d="M6 6l8 6-8 6z" />
+      <path d="M18 5.5v13" />
     </>
   ),
   unknown: (
