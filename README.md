@@ -1,6 +1,6 @@
 # Glasshopper
 
-**React dashboards for Home Assistant.** Native sidebar panels. Five hooks. Zero auth.
+**React dashboards for Home Assistant.** Native sidebar panels. Five hooks. No tokens, no CORS.
 
 > Status: **0.x — pre-1.0**. APIs may change before 1.0.
 
@@ -52,18 +52,34 @@ npm run sync                 # builds and copies into custom_components/
 glasshopper/
 ├── custom_components/
 │   └── glasshopper/              # HA Python integration (Apache-2.0)
-│       ├── __init__.py           # registers static path + iframe panel per entry
-│       ├── config_flow.py        # multi-dashboard ConfigFlow + OptionsFlow
-│       ├── manifest.json
-│       └── bundled/minimal/      # built template, seeded into config on setup
-├── src/                          # your React app — edit freely
-│   ├── App.tsx
-│   ├── hooks/                    # useEntity, useService, useHistory
+│       ├── __init__.py           # hub setup: registry, panels, services, views, WS, upload
+│       ├── config_flow.py        # single hub ConfigFlow (migrates legacy per-dashboard entries)
+│       ├── panels.py             # registers each dashboard panel + the Manager admin panel
+│       ├── registry.py           # template registry (scan / install / remove)
+│       ├── store.py              # dashboard list in HA storage (per-dashboard `public` flag)
+│       ├── migration.py          # imports pre-hub per-dashboard entries into the store
+│       ├── services.py           # install / reload / remove template services (admin-only)
+│       ├── websocket.py          # admin WS commands for dashboards / templates / catalog
+│       ├── upload.py             # admin HTTP upload endpoint for template zips
+│       ├── views.py              # serves each dashboard full-page at /custom-dashboard/<slug>
+│       ├── catalog.py            # free-template 1-click catalog
+│       ├── brand/                # in-repo brand icons (served via brands-proxy, HA 2026.3+)
+│       ├── bundled/minimal/      # built starter template, seeded on setup
+│       └── manager_app/          # built React admin panel (Manager)
+├── src/                          # frontend scaffold + Manager app source
+│   ├── hooks/                    # useEntity, useService, useHistory, useArea, useTheme
 │   └── lib/haConnection.ts       # bridge to window.parent.hassConnection
-├── scripts/sync-panel.mjs        # build app as the bundled minimal template
-├── vite.config.ts
+├── templates/                    # free templates (aria, grid, pulse)
+├── vite.config.ts · vite.config.manager.ts
 └── hacs.json
 ```
+
+Dashboards render with the session the panel iframe inherits, so the hooks need
+no token or CORS setup. Management actions — installing a template from a URL,
+uploading a zip, adding or removing a dashboard — are **admin-only**, enforced
+on the services, the WebSocket commands and the upload endpoint alike. Each
+dashboard also has a `public` flag controlling whether its standalone
+`/custom-dashboard/<slug>` URL is reachable without signing in.
 
 ## Hooks
 

@@ -15,7 +15,7 @@ from urllib.parse import urlparse
 import aiohttp
 import voluptuous as vol
 from homeassistant.core import HomeAssistant, ServiceCall
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import HomeAssistantError, Unauthorized
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import (
@@ -49,6 +49,22 @@ REMOVE_SCHEMA = vol.Schema(
 )
 
 RELOAD_SCHEMA = vol.Schema({})
+
+
+async def _async_require_admin(hass: HomeAssistant, call: ServiceCall) -> None:
+    """Reject non-admin callers.
+
+    These services download remote content and delete template directories, so
+    they must match the admin gate the WebSocket commands (`ws_templates_*`) and
+    the upload endpoint already enforce. A system context (no user_id, e.g. an
+    automation) is trusted; a real user must be an administrator.
+    """
+    user_id = call.context.user_id
+    if user_id is None:
+        return
+    user = await hass.auth.async_get_user(user_id)
+    if user is None or not user.is_admin:
+        raise Unauthorized(context=call.context)
 
 
 def _slugify_id(name: str) -> str:
@@ -185,15 +201,18 @@ def register(hass: HomeAssistant) -> None:
         return
 
     async def install_template(call: ServiceCall) -> None:
+        await _async_require_admin(hass, call)
         url: str = call.data["url"]
         template_id: str | None = call.data.get("template_id")
         await _install_from_url(hass, url, template_id)
 
     async def reload_templates(call: ServiceCall) -> None:
+        await _async_require_admin(hass, call)
         registry: TemplateRegistry = hass.data[DOMAIN][DATA_REGISTRY]
         await hass.async_add_executor_job(registry.scan)
 
     async def remove_template(call: ServiceCall) -> None:
+        await _async_require_admin(hass, call)
         tid: str = call.data["template_id"]
         registry: TemplateRegistry = hass.data[DOMAIN][DATA_REGISTRY]
         ok = await hass.async_add_executor_job(registry.remove, tid)

@@ -4,6 +4,13 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ## [Unreleased]
 
+### Security (0.4.5)
+- The `install_template`, `reload_templates` and `remove_template` services now require an **administrator**, matching the admin gate already enforced on the equivalent WebSocket commands (`glasshopper/templates/*`) and the upload endpoint. Previously any logged-in Home Assistant user — not just admins — could install a template from an arbitrary URL or delete a dashboard directory. Reported by @frenck during HACS review.
+
+### Changed (0.4.5)
+- `hacs.json` now requires Home Assistant **2026.3.0+** — the version from which HA serves a custom integration's in-repo brand icons via the brands proxy. Below that the integration shipped no icon with nothing to explain why.
+- The README architecture section is rewritten to match what 0.4.x actually installs (Manager admin panel, template registry, per-dashboard `public` flag, admin-gated management), and the stale blanket "Zero auth" claim is dropped.
+
 ### Added (0.4.4)
 - **Grid** renders and controls `cover`, `lock` and `media_player` tiles: blind position with open/stop/close plus a travel slider, explicit lock/unlock buttons, and media transport. The setup wizard already offered these domains, but the board had no renderer for them and showed a bare, uncontrollable state.
 - `glasshopper.zip` is attached to every version release, so the integration can be installed by hand without HACS ([manual install](https://docs.glasshopper.dev/guide/install-hacs#manual-install-no-hacs)).
